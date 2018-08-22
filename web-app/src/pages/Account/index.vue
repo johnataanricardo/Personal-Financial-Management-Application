@@ -1,7 +1,7 @@
 <template>
   <div id="account">
     <Menu/>
-    <FormProfile ref="form" title="Conta" @click="onSave" :emailDisabled="true" :cleanButton="false"/>
+    <FormProfile ref="form" title="Conta" @click="onSave" :emailDisabled="true" :cleanButton="false" :titleSaveButton="saveButton"/>
   </div>
 </template>
 
@@ -20,32 +20,32 @@ export default {
   },  
   data() {
     return {
-
+      saveButton: 'Salvar'
     }
   },
   mounted () {
-    const token = 'Bearer ' + localStorage.getItem('token')
-    const fields = ''
-    const user = this.$refs.form.user
-    axios.get(api + '/user/' + JSON.stringify(fields), { 
-      headers: {        
-        'Content-Type': 'application/json',
-        'Authorization': token
-      }
-    }).then(response => (      
-      user.firstName = response.data.firstName,
-      user.lastName = response.data.lastName,
-      user.zip = response.data.zip,
-      user.state = response.data.state,
-      user.city = response.data.city,
-      user.address = response.data.address,
-      user.number = response.data.number,
-      user.email = response.data.email,
-      user.password = response.data.password,
-      user.repeatPassword = response.data.password
-    )).catch(function (error) {
-      console.log(error);
-    })
+    // const token = 'Bearer ' + localStorage.getItem('token')
+    // const fields = ''
+    // const user = this.$refs.form.user
+    // axios.get(api + '/user/' + JSON.stringify(fields), { 
+    //   headers: {        
+    //     'Content-Type': 'application/json',
+    //     'Authorization': token
+    //   }
+    // }).then(response => (      
+    //   user.firstName = response.data.firstName,
+    //   user.lastName = response.data.lastName,
+    //   user.zip = response.data.zip,
+    //   user.state = response.data.state,
+    //   user.city = response.data.city,
+    //   user.address = response.data.address,
+    //   user.number = response.data.number,
+    //   user.email = response.data.email,
+    //   user.password = response.data.password,
+    //   user.repeatPassword = response.data.password
+    // )).catch(function (error) {
+    //   console.log(error);
+    // })
   },
   methods: {
     onSave: function (){

@@ -97,8 +97,8 @@ export default {
     height: 100%;
     display: flex;
     align-items: center;        
-    background-color: rgb(246, 246, 246);  
-    background-image: url('../../../static/icon.png');    
+    background-color: #009688;  
+    background-image: url('../../../static/icon(copy).png');    
     background-position: 50% 85%;
     background-size: 15%;
   }

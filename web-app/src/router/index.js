@@ -5,6 +5,7 @@ import Account from '@/pages/Account';
 import Home from '@/pages/Home/';
 import Login from '@/pages/Login/';
 import SignUp from '@/pages/SignUp';
+import Label from '@/pages/Registers/Label';
 
 const api = process.env.API_URL;
 
@@ -50,6 +51,12 @@ const router = new Router({
       path: '/account',
       name: 'Account',
       component: Account,
+      // meta: {requiresAuth: true}
+    },
+    {
+      path: '/labels',
+      name: 'Label',
+      component: Label,
       // meta: {requiresAuth: true}
     }
   ]

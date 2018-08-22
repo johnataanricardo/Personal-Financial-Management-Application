@@ -46,7 +46,7 @@
         label="Repita a Senha"
         required>
       </v-text-field>
-      <v-btn :disabled="!valid" @click="submit">Salvar</v-btn>
+      <v-btn :disabled="!valid" @click="submit">{{titleSaveButton}}</v-btn>
       <v-btn @click="clear" v-if="cleanButton">Limpar</v-btn>
       <v-snackbar
         :timeout="6000"
@@ -63,7 +63,7 @@
 import axios from 'axios'
 export default {
   name: 'FormProfile',
-  props: ['title', 'emailDisabled', 'cleanButton'],
+  props: ['title', 'emailDisabled', 'cleanButton', 'titleSaveButton'],
   data: () => ({
     valid: true,
     invisibility1: true,
@@ -134,7 +134,7 @@ export default {
   }
 
   .form {
-    padding: 2% 30% 2% 30%;
+    padding: 5% 30% 5% 30%;
   }
 
   .text-field-left {
@@ -148,7 +148,7 @@ export default {
   @media screen and (max-width: 600px)  {
 
   .form {
-    padding: 2% 20% 2% 20%;
+    padding: 10% 20% 10% 20%;
   }
 
   }

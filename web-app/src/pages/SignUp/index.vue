@@ -1,6 +1,6 @@
 <template>
   <div id="signUp">
-    <FormProfile ref='form' title="Inscrever-se" @click="onSave" :emailDisabled="false" :cleanButton="true"/>
+    <FormProfile ref='form' title="Inscrever-se" @click="onSave" :emailDisabled="false" :cleanButton="true" :titleSaveButton="saveButton"/>
   </div>
 </template>
 
@@ -18,6 +18,7 @@ export default {
   },  
   data() {
     return {
+      saveButton: 'Inscrever-se'
     }
   },
   methods: {

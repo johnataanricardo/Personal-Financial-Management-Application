@@ -1,20 +1,18 @@
 <template>
   <div id="home">
     <Menu/>    
-    <MonthTab/>
   </div>
 </template>
 
 <script>
 import Menu from '@/components/Menu'
-import MonthTab from './components/MonthTab'
 import axios from 'axios'
 
 const api = process.env.API_URL
 
 export default {
   name: 'Home', 
-  components: { Menu, MonthTab },
+  components: { Menu },
   data: () => ({    
   }),
   methods: {
