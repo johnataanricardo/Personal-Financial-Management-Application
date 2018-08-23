@@ -100,6 +100,10 @@ export default {
 
 <style scoped>
 
+  .v-list__group:after, .v-list__group:before {
+    height: 0px;
+  }
+
   @media screen and (max-width: 600px)  {
 
   }
