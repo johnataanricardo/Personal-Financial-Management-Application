@@ -45,7 +45,10 @@
           <v-card-text>
             <v-container grid-list-md>
               <v-layout wrap>
-                <v-flex xs12 sm6 md4>
+                <v-flex v-if=deleteMode xs12>
+                  <v-card-text>Tem certeza de que deseja deletar?</v-card-text>
+                </v-flex>
+                <v-flex v-else xs12 sm6 md4>
                   <v-text-field v-model="editedItem.name" label="Nome"></v-text-field>
                 </v-flex>
               </v-layout>
@@ -54,7 +57,8 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="blue darken-1" flat @click.native="close">Cancelar</v-btn>
-            <v-btn color="blue darken-1" flat @click.native="save">Salvar</v-btn>
+            <v-btn v-if=deleteMode color="blue darken-1" flat @click.native="confirm">Confirmar</v-btn>
+            <v-btn v-else color="blue darken-1" flat @click.native="save">Salvar</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -73,6 +77,7 @@ export default {
     data: () => ({
       fab: false,
       dialog: false,
+      deleteMode: false,
       headers: [
         {
           text: 'Nome',
@@ -93,6 +98,9 @@ export default {
 
     computed: {
       formTitle () {
+        if (this.deleteMode === true) {
+          return 'Deletar'
+        }
         return this.editedIndex === -1 ? 'Novo' : 'Editar'
       }
     },
@@ -124,16 +132,23 @@ export default {
       },
 
       deleteItem (item) {
-        const index = this.categories.indexOf(item)
-        confirm('Tem certeza que quer deletar?') && this.categories.splice(index, 1)
+        this.deleteMode = !this.deleteMode
+        this.editedIndex = this.categories.indexOf(item)
+        this.dialog = true
       },
 
       close () {
         this.dialog = false
         setTimeout(() => {
+          this.deleteMode = this.deleteMode === true? !this.deleteMode : this.deleteMode
           this.editedItem = Object.assign({}, this.defaultItem)
           this.editedIndex = -1
         }, 300)
+      },
+
+      confirm () {
+        this.categories.splice(this.editedIndex, 1)
+        this.close()
       },
 
       save () {
