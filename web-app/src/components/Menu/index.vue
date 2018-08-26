@@ -71,8 +71,8 @@ export default {
         { title: 'Conta', page: '/account', icon: 'account_box' }
       ],
       registers: [
-        { title: 'Label', page:'/labels', icon: 'label'},
-      ],
+        { title: 'Categorias', page:'/categories', icon: 'label'}
+      ]
     }
   },
   mounted () {

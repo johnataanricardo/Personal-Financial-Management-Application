@@ -1,13 +1,13 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import axios from 'axios';
+// import axios from 'axios';
 import Account from '@/pages/Account';
 import Home from '@/pages/Home/';
 import Login from '@/pages/Login/';
 import SignUp from '@/pages/SignUp';
-import Label from '@/pages/Registers/Label';
+import Category from '@/pages/Registers/Category';
 
-const api = process.env.API_URL;
+// const api = process.env.API_URL;
 
 Vue.use(Router)
 
@@ -16,7 +16,7 @@ const router = new Router({
     {
       path: '/',
       name: 'Login',
-      component: Login,
+      component: Login
       // beforeEnter(to, from, next) {
       //   const token = localStorage.getItem('token');
       //   if (token) {
@@ -44,19 +44,19 @@ const router = new Router({
     {
       path: '/home',
       name: 'Home',
-      component: Home,
+      component: Home
       // meta: {requiresAuth: true}
     },
     {
       path: '/account',
       name: 'Account',
-      component: Account,
+      component: Account
       // meta: {requiresAuth: true}
     },
     {
-      path: '/labels',
-      name: 'Label',
-      component: Label,
+      path: '/categories',
+      name: 'Category',
+      component: Category
       // meta: {requiresAuth: true}
     }
   ]
