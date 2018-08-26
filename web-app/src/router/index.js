@@ -6,6 +6,9 @@ import Home from '@/pages/Home/';
 import Login from '@/pages/Login/';
 import SignUp from '@/pages/SignUp';
 import Label from '@/pages/Registers/Label';
+import GrafExample from '@/components/Graphics/GraphicBar';
+import Graphic from '@/pages/Graphic';
+
 
 const api = process.env.API_URL;
 
@@ -58,7 +61,18 @@ const router = new Router({
       name: 'Label',
       component: Label,
       // meta: {requiresAuth: true}
+    },
+    {
+      path: '/grafExample',
+      name: 'Graf',
+      component: GrafExample,
+    },
+    {
+      path: '/graphic',
+      name: 'Graphic',
+      component: Graphic,
     }
+
   ]
 })
 
