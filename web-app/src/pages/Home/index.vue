@@ -8,21 +8,9 @@
 <script>
 import Menu from '@/components/Menu'
 import MonthTab from './components/MonthTab'
-import axios from 'axios'
-
-const api = process.env.API_URL
 
 export default {
   name: 'Home', 
-  components: { Menu, MonthTab },
-  data: () => ({    
-  }),
-  methods: {
-    
-  }
+  components: { Menu, MonthTab }
 }
 </script>
-
-<style scoped>
-
-</style>

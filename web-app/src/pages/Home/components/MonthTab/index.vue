@@ -16,6 +16,8 @@
     </v-tabs-items>
     <!-- Record Dialog -->
     <RecordDialog ref="recordDialog"/>
+    <!-- Graphic Dialog -->
+    <GraphicDialog ref="graphicDialog"/>
     <!-- Action Buttons -->
     <v-speed-dial v-model="fab" :bottom="bottom" :right="right" 
       :direction="direction" :open-on-hover="hover" :transition="transition">
@@ -35,6 +37,12 @@
         </v-btn>
         <span>Saídas</span>
       </v-tooltip>
+      <v-tooltip disabled left :value="true">
+        <v-btn @click="openGraphicDialog" fab dark small color="red" slot="activator">
+          <v-icon>bar_chart</v-icon>
+        </v-btn>
+        <span>Fluxo de Caixa</span>
+      </v-tooltip>
     </v-speed-dial>
   </div>
 </template>
@@ -42,10 +50,11 @@
 <script>
 import ContentTab from '../ContentTab'
 import RecordDialog from '../RecordDialog'
+import GraphicDialog from '../GraphicDialog'
 
 export default {
   name: 'MonthTab', 
-  components: { ContentTab, RecordDialog },
+  components: { ContentTab, RecordDialog, GraphicDialog },
   data () {
     return {
       direction: 'top',
@@ -80,7 +89,7 @@ export default {
       const recordDialog = this.$refs.recordDialog
       recordDialog.showDialog = true
       recordDialog.title = "Entradas"
-      recordDialog.saveRecord = data.saveRecord
+      recordDialog.saveRecord = data.saveRecordDialog
 
     },
     openExpenseRecordDialog() {
@@ -89,10 +98,22 @@ export default {
       const recordDialog = this.$refs.recordDialog
       recordDialog.showDialog = true
       recordDialog.title = "Saídas"
-      recordDialog.saveRecord = data.saveRecord
+      recordDialog.saveRecord = data.saveRecordDialog
 
     },
-    saveRecord() {      
+    openGraphicDialog() {
+
+      const data = this
+      const graphicDialog = this.$refs.graphicDialog
+      graphicDialog.showDialog = true
+
+    },
+    saveRecordDialog() {      
+            
+      const data = this
+      const recordDialog = this.$refs.recordDialog
+      recordDialog.showDialog = false
+      
     }
   }
 }

@@ -17,6 +17,7 @@
     "@websanova/vue-auth": "^2.21.11-beta",
     "axios": "^0.18.0",
     "chart.js": "^2.7.2",
+    "v-money": "^0.8.1",
     "vue": "^2.5.2",
     "vue-chartjs": "^3.4.0",
     "vue-resource": "^1.5.1",
