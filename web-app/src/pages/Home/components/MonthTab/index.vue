@@ -1,5 +1,6 @@
 <template>
-  <div>
+  <div class="text-xs-center">
+    <!-- MonthTabs -->
     <v-toolbar color="teal" tabs>
       <v-select :items="years" label="Ano" v-model="selected" solo></v-select>
       <v-tabs slot="extension" v-model="tabs" centered color="transparent"
@@ -7,27 +8,62 @@
         <v-tab v-for="item in itemsMenu" :key="item.month">{{item.description}}</v-tab>
       </v-tabs>
     </v-toolbar>
+    <!-- ContentTab -->
     <v-tabs-items v-model="tabs">
       <v-tab-item v-for="item in itemsMenu" :key="item.month">
         <ContentTab/>
       </v-tab-item>
     </v-tabs-items>
-    <v-btn color="pink" v-model="fab" dark fab fixed bottom right>
-      <v-icon>add</v-icon>
-    </v-btn>
+    <!-- Record Dialog -->
+    <RecordDialog ref="recordDialog"/>
+    <!-- Graphic Dialog -->
+    <GraphicDialog ref="graphicDialog"/>
+    <!-- Action Buttons -->
+    <v-speed-dial v-model="fab" :bottom="bottom" :right="right" 
+      :direction="direction" :open-on-hover="hover" :transition="transition">
+      <v-btn slot="activator" v-model="fab" fab dark color="pink">
+        <v-icon>add</v-icon>
+        <v-icon>close</v-icon>
+      </v-btn>
+      <v-tooltip disabled left :value="true">
+        <v-btn @click="openIncomeRecordDialog" fab dark small color="green" slot="activator">
+          <v-icon>attach_money</v-icon>
+        </v-btn>
+        <span>Entradas</span>
+      </v-tooltip>
+      <v-tooltip disabled left :value="true">
+        <v-btn @click="openExpenseRecordDialog" fab dark small color="indigo" slot="activator">
+          <v-icon>money_off</v-icon>
+        </v-btn>
+        <span>Saídas</span>
+      </v-tooltip>
+      <v-tooltip disabled left :value="true">
+        <v-btn @click="openGraphicDialog" fab dark small color="red" slot="activator">
+          <v-icon>bar_chart</v-icon>
+        </v-btn>
+        <span>Fluxo de Caixa</span>
+      </v-tooltip>
+    </v-speed-dial>
   </div>
 </template>
 
 <script>
 import ContentTab from '../ContentTab'
+import RecordDialog from '../RecordDialog'
+import GraphicDialog from '../GraphicDialog'
 
 export default {
   name: 'MonthTab', 
-  components: { ContentTab },
+  components: { ContentTab, RecordDialog, GraphicDialog },
   data () {
     return {
+      direction: 'top',
+      fab: false,      
+      hover: false,            
+      right: true,
+      bottom: true,
+      transition: 'slide-y-reverse-transition',
       tabs: null,
-      fab: false,
       itemsMenu : [
         { month: 0, description: 'Janeiro' },
         { month: 1, description: 'Fevereiro' },
@@ -44,14 +80,53 @@ export default {
       ],
       years: [2018, 2019, 2020],
       selected: 2018,
-      text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.'
     }
   },
   methods: {
+    openIncomeRecordDialog() {
+
+      const data = this
+      const recordDialog = this.$refs.recordDialog
+      recordDialog.showDialog = true
+      recordDialog.title = "Entradas"
+      recordDialog.saveRecord = data.saveRecordDialog
+
+    },
+    openExpenseRecordDialog() {
+      
+      const data = this
+      const recordDialog = this.$refs.recordDialog
+      recordDialog.showDialog = true
+      recordDialog.title = "Saídas"
+      recordDialog.saveRecord = data.saveRecordDialog
+
+    },
+    openGraphicDialog() {
+
+      const data = this
+      const graphicDialog = this.$refs.graphicDialog
+      graphicDialog.showDialog = true
+
+    },
+    saveRecordDialog() {      
+            
+      const data = this
+      const recordDialog = this.$refs.recordDialog
+      recordDialog.showDialog = false
+      
+    }
   }
 }
 </script>
 
 <style scoped>
+
+  .v-speed-dial {
+    position: absolute;
+  }
+
+  .v-btn--floating {
+    position: relative;
+  }
 
 </style>

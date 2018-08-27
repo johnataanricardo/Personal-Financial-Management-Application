@@ -118,7 +118,7 @@ export default {
   @media screen and (max-width: 600px)  {
     #login { 
       background-position: 50% 95%;
-      background-size: 50%;
+      background-size: 40%;
     }
   }
 
