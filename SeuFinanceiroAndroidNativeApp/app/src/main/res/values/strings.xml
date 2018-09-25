@@ -1,9 +1,16 @@
 <resources>
-    <string name="app_name">Seu Financeiro - Native App</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="app_name">Seu Financeiro</string>
+    <string name="navigation_drawer_open">Abrir menu</string>
+    <string name="navigation_drawer_close">Fechar menu</string>
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Cofigurações</string>
+    <string name="password">Senha</string>
+    <string name="login">Login</string>
+    <string name="create_account">Crie sua conta</string>
+    <string name="email">E-mail</string>
+    <string name="name">Nome</string>
+    <string name="reenter_password">Repita a senha</string>
+    <string name="do_login">Já tem cadastro? Faça o login</string>
 </resources>
