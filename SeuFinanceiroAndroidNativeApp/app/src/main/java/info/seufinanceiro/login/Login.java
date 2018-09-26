@@ -1,4 +1,4 @@
-package info.seufinanceiro;
+package info.seufinanceiro.login;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -9,6 +9,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import info.seufinanceiro.R;
+import info.seufinanceiro.main.MainActivity;
 
 public class Login extends AppCompatActivity {
     private static final int REQUEST_SIGNUP = 0;
@@ -56,7 +59,7 @@ public class Login extends AppCompatActivity {
         loginButton.setEnabled(false);
 
         final ProgressDialog progressDialog = new ProgressDialog(Login.this,
-                R.style.Theme_MaterialComponents_Light_Dialog);
+                R.style.AppCompatAlertDialogStyle);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Autenticando...");
         progressDialog.show();

@@ -9,21 +9,38 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="56dp"
-        android:paddingLeft="24dp"
-        android:paddingRight="24dp">
+        android:paddingTop="50dp"
+        android:paddingLeft="25dp"
+        android:paddingRight="25dp">
 
-        <!--<ImageView android:src="@drawable/logo"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="72dp"-->
-        <!--android:layout_marginBottom="24dp"-->
-        <!--android:layout_gravity="center_horizontal" />-->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/imgLogo"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_centerInParent="false"
+                android:src="@drawable/icon" />
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="55dp"
+                android:layout_marginLeft="80dp"
+                android:textSize="20dp"
+                android:textColor="@color/colorPrimary"
+                android:gravity="center_horizontal"
+                android:layout_alignParentBottom="true"
+                android:text="@string/app_name" />
+
+        </RelativeLayout>
 
         <!-- Name Label -->
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="20dp"
             android:layout_marginBottom="8dp">
             <EditText android:id="@+id/input_name"
                 android:layout_width="match_parent"
@@ -31,8 +48,6 @@
                 android:inputType="textPersonName"
                 android:hint="@string/name" />
         </android.support.design.widget.TextInputLayout>
-
-
 
         <!--  Email Label -->
         <android.support.design.widget.TextInputLayout

@@ -1,4 +1,4 @@
-package info.seufinanceiro;
+package info.seufinanceiro.login;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import info.seufinanceiro.R;
 
 public class Signup extends AppCompatActivity {
     private EditText nameText;
