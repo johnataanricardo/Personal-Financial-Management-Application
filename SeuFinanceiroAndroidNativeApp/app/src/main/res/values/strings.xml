@@ -5,7 +5,7 @@
     <string name="nav_header_title">Android Studio</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Cofigurações</string>
+    <string name="action">Sair</string>
     <string name="password">Senha</string>
     <string name="login">Login</string>
     <string name="create_account">Crie sua conta</string>
