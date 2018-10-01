@@ -9,6 +9,7 @@
     <string name="password">Senha</string>
     <string name="login">Login</string>
     <string name="create_account">Crie sua conta</string>
+    <string name="save_account">Salvar</string>
     <string name="email">E-mail</string>
     <string name="name">Nome</string>
     <string name="reenter_password">Repita a senha</string>

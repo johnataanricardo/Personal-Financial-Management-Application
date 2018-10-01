@@ -3,6 +3,9 @@ package info.seufinanceiro.main;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -12,6 +15,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import info.seufinanceiro.R;
+import info.seufinanceiro.fragments.AccountFragment;
+import info.seufinanceiro.fragments.CategoriesFragment;
+import info.seufinanceiro.fragments.HomeFragment;
 import info.seufinanceiro.login.Login;
 
 public class MainActivity extends AppCompatActivity
@@ -23,6 +29,9 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        Fragment fragment = new HomeFragment();
+        setFragment(fragment);
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
@@ -84,16 +93,31 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
+        Fragment fragment = null;
+
         if (id == R.id.home) {
-
+            fragment = new HomeFragment();
         } else if (id == R.id.account) {
-
+            fragment = new AccountFragment();
         } else if (id == R.id.category) {
-
+            fragment = new CategoriesFragment();
         }
+
+        setFragment(fragment);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    private void setFragment(Fragment fragment) {
+
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.replace(R.id.main_frame, fragment);
+        transaction.addToBackStack(null);
+        transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+        transaction.commit();
+
+    }
+
 }
