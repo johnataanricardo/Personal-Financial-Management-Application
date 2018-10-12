@@ -14,4 +14,16 @@
     <string name="name">Nome</string>
     <string name="reenter_password">Repita a senha</string>
     <string name="do_login">Já tem cadastro? Faça o login</string>
+    <string name="month_1">Janeiro</string>
+    <string name="month_2">Fevereiro</string>
+    <string name="month_3">Março</string>
+    <string name="month_4">Abril</string>
+    <string name="month_5">Maio</string>
+    <string name="month_6">Junho</string>
+    <string name="month_7">Julho</string>
+    <string name="month_8">Agosto</string>
+    <string name="month_9">Setembro</string>
+    <string name="month_10">Outubro</string>
+    <string name="month_11">Novembro</string>
+    <string name="month_12">Dezembro</string>
 </resources>

@@ -7,7 +7,6 @@ import android.os.Handler;
 
 import info.seufinanceiro.R;
 import info.seufinanceiro.login.Login;
-import info.seufinanceiro.main.MainActivity;
 
 public class SplashScreen extends Activity {
 

@@ -12,15 +12,10 @@
             android:id="@+id/account"
             android:icon="@drawable/ic_account_box"
             android:title="Conta" />
+        <item
+            android:id="@+id/category"
+            android:icon="@drawable/ic_description"
+            android:title="Categorias" />
     </group>
-
-    <item android:title="Cadastros">
-        <menu>
-            <item
-                android:id="@+id/category"
-                android:icon="@drawable/ic_description"
-                android:title="Categorias" />
-        </menu>
-    </item>
 
 </menu>

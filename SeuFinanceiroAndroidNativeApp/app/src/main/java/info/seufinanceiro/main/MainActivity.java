@@ -3,8 +3,8 @@ package info.seufinanceiro.main;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -13,15 +13,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+
+import java.util.Date;
 
 import info.seufinanceiro.R;
 import info.seufinanceiro.fragments.AccountFragment;
 import info.seufinanceiro.fragments.CategoriesFragment;
 import info.seufinanceiro.fragments.HomeFragment;
 import info.seufinanceiro.login.Login;
+import info.seufinanceiro.service.TabContentService;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.ContentTab {
+
+    private TabContentService service;
+    private TabLayout tabLayout;
+    private Integer month = new Date().getMonth();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +38,10 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        Bundle bundle = new Bundle();
+        bundle.putInt("tab", month);
         Fragment fragment = new HomeFragment();
+        fragment.setArguments(bundle);
         setFragment(fragment);
 
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -41,6 +52,10 @@ public class MainActivity extends AppCompatActivity
 //                        .setAction("Action", null).show();
 //            }
 //        });
+
+        tabLayout = findViewById(R.id.month_tab);
+        setTabLayoutListener(tabLayout);
+        service = new TabContentService(getApplicationContext() ,findViewById(android.R.id.content));
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -78,7 +93,7 @@ public class MainActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action) {
-            Intent intent =  new Intent(MainActivity.this, Login.class);
+            Intent intent = new Intent(MainActivity.this, Login.class);
             startActivity(intent);
             finish();
             return true;
@@ -94,12 +109,19 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         Fragment fragment = null;
+        TabLayout tabLayout = findViewById(R.id.month_tab);
 
         if (id == R.id.home) {
+            tabLayout.setVisibility(View.VISIBLE);
+            Bundle bundle = new Bundle();
+            bundle.putInt("tab", month);
             fragment = new HomeFragment();
+            fragment.setArguments(bundle);
         } else if (id == R.id.account) {
+            tabLayout.setVisibility(View.GONE);
             fragment = new AccountFragment();
         } else if (id == R.id.category) {
+            tabLayout.setVisibility(View.GONE);
             fragment = new CategoriesFragment();
         }
 
@@ -110,6 +132,24 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
+    private void setTabLayoutListener(final TabLayout tabLayoutListener) {
+        tabLayoutListener.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                service.setContentTab(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+                service.setContentTab(tab.getPosition());
+            }
+        });
+    }
+
     private void setFragment(Fragment fragment) {
 
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -118,6 +158,11 @@ public class MainActivity extends AppCompatActivity
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         transaction.commit();
 
+    }
+
+    @Override
+    public void setContentTab(Integer tab) {
+        tabLayout.getTabAt(month).select();
     }
 
 }
