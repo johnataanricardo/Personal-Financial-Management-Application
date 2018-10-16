@@ -3,4 +3,20 @@
     xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <!-- Tirar esse botão, adicionar uma listview -->
+        <Button
+            android:text="@string/show_modal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:id="@+id/btnShowDialog"/>
+    </RelativeLayout>
+
 </android.support.constraint.ConstraintLayout>
