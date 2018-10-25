@@ -9,12 +9,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+
 import info.seufinanceiro.R;
+import info.seufinanceiro.adapter.CategoriaAdapter;
+import info.seufinanceiro.main.MainActivity;
+import info.seufinanceiro.model.Categoria;
+import info.seufinanceiro.model.ListDataCategoria;
 
 public class CategoriesFragment extends Fragment{
-
 
 
     @Nullable
@@ -23,7 +29,15 @@ public class CategoriesFragment extends Fragment{
 
         final View view = inflater.inflate(R.layout.categories_layout, null);
 
-        final Button mShowDialog = (Button) view.findViewById(R.id.btnShowDialog);
+        ListView listView =  view.findViewById(R.id.list_view_categories);
+
+        ArrayList<Categoria> categorias = ListDataCategoria.getList();
+
+        CategoriaAdapter categoriaAdapter = new CategoriaAdapter(view.getContext(), categorias);
+
+        listView.setAdapter(categoriaAdapter);
+
+        final Button mShowDialog = (Button) view.findViewById(R.id.novo);
 
         mShowDialog.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -39,7 +53,6 @@ public class CategoriesFragment extends Fragment{
                     public void onClick(View v) {
 
                         // Criar uma nova linha noo activity categories_layout.
-
 
                         Toast.makeText(inflater.getContext(),
                                       "CHEGOU AQUI!!",
