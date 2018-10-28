@@ -1,7 +1,7 @@
 package com.fean.seufinanceiro.security;
 
-import com.billplan.billbox.models.UserPerson;
-import com.billplan.billbox.security.enums.ProfileEnum;
+import com.fean.seufinanceiro.model.Usuario;
+import com.fean.seufinanceiro.security.enums.ProfileEnum;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
@@ -14,14 +14,14 @@ public class JwtUserFactory {
 	}
 
 	/**
-	 * Converte e gera um JwtUser com base nos dados de um funcionário.
+	 * Converte e gera um JwtUser com base nos dados de um usuário.
 	 * 
-	 * @param userPerson
+	 * @param usuario
 	 * @return JwtUser
 	 */
-	public static JwtUser create(UserPerson userPerson) {
-		return new JwtUser(userPerson.getId(), userPerson.getUsernameEmail(), userPerson.getPassword(),
-				mapToGrantedAuthorities(userPerson.getProfile()));
+	public static JwtUser create(Usuario usuario) {
+		return new JwtUser(usuario.getId(), usuario.getEmail(), usuario.getSenha(),
+				mapToGrantedAuthorities(usuario.getPerfil()));
 	}
 
 	/**

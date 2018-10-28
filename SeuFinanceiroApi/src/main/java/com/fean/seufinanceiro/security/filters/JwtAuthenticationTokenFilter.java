@@ -1,6 +1,6 @@
 package com.fean.seufinanceiro.security.filters;
 
-import com.billplan.billbox.security.utils.JwtTokenUtil;
+import com.fean.seufinanceiro.security.utils.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
