@@ -60,7 +60,6 @@ public class UsuarioController {
         return ResponseEntity.ok(response);
     }
 
-
     @PostMapping
     public ResponseEntity<Response<String>> save(@Valid @RequestBody
                                                          SignUpDto usuarioNovo,

@@ -39,7 +39,7 @@ public class CategoriaService {
     }
 
     public void update(Categoria categoria){
-        categorias.stream().filter( (cat) -> categoria.getId().equals(categoria.getId()))
+        categorias.stream().filter( (cat) -> cat.getId().equals(categoria.getId()))
                 .forEach( (cat) -> {
                     cat.setDescricao(categoria.getDescricao());
                 });

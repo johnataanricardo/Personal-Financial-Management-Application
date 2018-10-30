@@ -127,7 +127,9 @@ public class CategoriaController {
 
     private Categoria convertCategoria(CategoriaDto categoriaDto) {
         Categoria categoria = new Categoria();
-        categoria.setId(Long.parseLong(categoriaDto.getId()));
+        if(categoriaDto.getId() != null){
+            categoria.setId(Long.parseLong(categoriaDto.getId()));
+        }
         categoria.setDescricao(categoriaDto.getDescricao());
         return categoria;
     }
