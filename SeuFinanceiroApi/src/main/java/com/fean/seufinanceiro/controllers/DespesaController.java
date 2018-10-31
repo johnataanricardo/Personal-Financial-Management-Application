@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.text.ParseException;
-import java.util.List;
 
 @Controller
 @RequestMapping("despesas")
@@ -77,7 +76,7 @@ public class DespesaController {
         }
 
         despesaService.add(convertDespesa(despesaDto));
-        response.setData("Categoria salvo com sucesso!!!");
+        response.setData("Despesa salva com sucesso!!!");
 
         return ResponseEntity.ok(response);
     }
@@ -94,7 +93,7 @@ public class DespesaController {
 
         Response<String> response = new Response<>();
         if (result.hasErrors()) {
-            LOGGER.error("Erro validando usuário: {}", result.getAllErrors());
+            LOGGER.error("Erro validando despesa: {}", result.getAllErrors());
             result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
             return ResponseEntity.badRequest().body(response);
         }
@@ -123,7 +122,8 @@ public class DespesaController {
     }
 
     private DespesaDto convertDespesaDto(Despesa despesa) {
-        return  new DespesaDto(despesa.getDescricao(),
+        return  new DespesaDto(String.valueOf(despesa.getId()),
+                               despesa.getDescricao(),
                                String.valueOf(despesa.getValor()),
                                String.valueOf(despesa.getTipoDespesa()),
                                despesa.getAno(),
@@ -132,7 +132,9 @@ public class DespesaController {
 
     private Despesa convertDespesa(DespesaDto despesaDto) {
         Despesa despesa = new Despesa();
-        despesa.setId(Long.parseLong(despesaDto.getId()));
+        if(despesaDto.getId() != null){
+            despesa.setId(Long.parseLong(despesaDto.getId()));
+        }
         despesa.setDescricao(despesaDto.getDescricao());
         despesa.setValor(Double.parseDouble(despesaDto.getValor()));
         despesa.setTipoDespesa(TipoDespesa.valueOf(despesaDto.getTipoDespesa()));

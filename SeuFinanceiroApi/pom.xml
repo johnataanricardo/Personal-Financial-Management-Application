@@ -7,6 +7,7 @@
     <groupId>com.fean.seufinanceiroapi</groupId>
     <artifactId>SeuFinanceiroApi</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
 
     <parent>
         <groupId>org.springframework.boot</groupId>

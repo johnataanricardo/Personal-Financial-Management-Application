@@ -1,8 +1,5 @@
 package com.fean.seufinanceiro.dto;
 
-import com.fean.seufinanceiro.model.enums.Meses;
-import com.fean.seufinanceiro.model.enums.TipoDespesa;
-
 public class DespesaDto {
 
     private String id;
@@ -14,7 +11,8 @@ public class DespesaDto {
 
     public DespesaDto() {}
 
-    public DespesaDto(String descricao, String valor, String tipoDespesa, String ano, String mes) {
+    public DespesaDto(String id, String descricao, String valor, String tipoDespesa, String ano, String mes) {
+        this.id = id;
         this.descricao = descricao;
         this.valor = valor;
         this.tipoDespesa = tipoDespesa;
