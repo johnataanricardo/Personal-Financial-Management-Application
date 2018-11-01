@@ -20,6 +20,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("user")
+@CrossOrigin(origins = "*")
 public class UsuarioController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UsuarioController.class);
@@ -59,25 +60,6 @@ public class UsuarioController {
         response.setData(this.convertUsuarioDto(usuario));
         return ResponseEntity.ok(response);
     }
-
-    @PostMapping
-    public ResponseEntity<Response<String>> save(@Valid @RequestBody
-                                                         SignUpDto usuarioNovo,
-                                                                BindingResult result) {
-
-        Response<String> response = new Response<>();
-
-        if (result.hasErrors()){
-            result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
-            return ResponseEntity.badRequest().body(response);
-        }
-
-        usuarioService.add(convertUsuarioNovoDto(usuarioNovo));
-        response.setData("Usuário salvo com sucesso!!!");
-
-        return ResponseEntity.ok(response);
-    }
-
 
     @PutMapping("{id}")
     public ResponseEntity<Response<String>> update(@PathVariable("id") Long id,
@@ -144,20 +126,5 @@ public class UsuarioController {
         usuario.setCpf(usuarioDto.getCpf());
         return usuario;
     }
-
-
-    private Usuario convertUsuarioNovoDto(SignUpDto signUpDto) {
-        Usuario usuario = new Usuario();
-        usuario.setNome(signUpDto.getNome());
-        usuario.setSobreNome(signUpDto.getSobreNome());
-        usuario.setEmail(signUpDto.getEmail());
-        usuario.setNumero(signUpDto.getNumero());
-        usuario.setEstado(signUpDto.getEstado());
-        usuario.setCidade(signUpDto.getCidade());
-        usuario.setCpf(signUpDto.getCpf());
-        usuario.setSenha(PasswordUtils.generateBCrypt(signUpDto.getSenha()));
-        return usuario;
-    }
-
 
 }

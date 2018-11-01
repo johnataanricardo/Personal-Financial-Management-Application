@@ -1,9 +1,13 @@
 package com.fean.seufinanceiro.security.controllers;
 
+import com.fean.seufinanceiro.dto.SignUpDto;
+import com.fean.seufinanceiro.model.Usuario;
 import com.fean.seufinanceiro.responses.Response;
 import com.fean.seufinanceiro.security.dtos.JwtAuthenticationDto;
 import com.fean.seufinanceiro.security.dtos.TokenDto;
 import com.fean.seufinanceiro.security.utils.JwtTokenUtil;
+import com.fean.seufinanceiro.service.UsuarioService;
+import com.fean.seufinanceiro.utils.PasswordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +28,17 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 public class AuthenticationController {
 
 	private static final Logger log = LoggerFactory.getLogger(AuthenticationController.class);
 
 	private static final String TOKEN_HEADER = "Authorization";
 	private static final String BEARER_PREFIX = "Bearer ";
+
+	@Autowired
+	private UsuarioService usuarioService;
+
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
@@ -74,6 +82,40 @@ public class AuthenticationController {
 
 		return ResponseEntity.ok(response);
 	}
+
+
+	@PostMapping("/sign-up")
+	public ResponseEntity<Response<String>> save(@Valid @RequestBody
+														 SignUpDto usuarioNovo,
+												 BindingResult result) {
+
+		Response<String> response = new Response<>();
+
+		if (result.hasErrors()){
+			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
+			return ResponseEntity.badRequest().body(response);
+		}
+
+		usuarioService.add(convertUsuarioNovoDto(usuarioNovo));
+		response.setData("Usuário salvo com sucesso!!!");
+
+		return ResponseEntity.ok(response);
+	}
+
+
+	private Usuario convertUsuarioNovoDto(SignUpDto signUpDto) {
+		Usuario usuario = new Usuario();
+		usuario.setNome(signUpDto.getNome());
+		usuario.setSobreNome(signUpDto.getSobreNome());
+		usuario.setEmail(signUpDto.getEmail());
+		usuario.setNumero(signUpDto.getNumero());
+		usuario.setEstado(signUpDto.getEstado());
+		usuario.setCidade(signUpDto.getCidade());
+		usuario.setCpf(signUpDto.getCpf());
+		usuario.setSenha(PasswordUtils.generateBCrypt(signUpDto.getSenha()));
+		return usuario;
+	}
+
 
 	/**
 	 * Gera um novo token com uma nova data de expiração.

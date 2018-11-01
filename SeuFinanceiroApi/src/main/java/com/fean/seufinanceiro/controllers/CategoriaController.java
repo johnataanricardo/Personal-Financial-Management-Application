@@ -122,7 +122,7 @@ public class CategoriaController {
     }
 
     private CategoriaDto convertCategoriaDto(Categoria categoria) {
-        return  new CategoriaDto(categoria.getDescricao());
+        return  new CategoriaDto(String.valueOf(categoria.getId()) ,categoria.getDescricao());
     }
 
     private Categoria convertCategoria(CategoriaDto categoriaDto) {

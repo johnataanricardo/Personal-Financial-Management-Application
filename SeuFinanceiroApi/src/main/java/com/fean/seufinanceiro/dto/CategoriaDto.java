@@ -8,7 +8,8 @@ public class CategoriaDto {
 
     public CategoriaDto() {}
 
-    public CategoriaDto(String descricao) {
+    public CategoriaDto(String id, String descricao) {
+        this.id = id;
         this.descricao = descricao;
     }
 
