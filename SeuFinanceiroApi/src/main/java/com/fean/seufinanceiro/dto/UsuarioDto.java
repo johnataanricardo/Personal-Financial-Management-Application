@@ -1,15 +1,24 @@
 package com.fean.seufinanceiro.dto;
 
+import javax.validation.constraints.NotEmpty;
+
 public class UsuarioDto {
 
     private String id;
+
+    @NotEmpty
     private String nome;
+
     private String sobreNome;
+
+    @NotEmpty
     private String cpf;
     private String estado;
     private String cidade;
     private String endereco;
     private String numero;
+
+    @NotEmpty
     private String email;
 
     public UsuarioDto() {

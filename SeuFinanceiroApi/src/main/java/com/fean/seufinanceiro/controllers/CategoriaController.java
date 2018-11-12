@@ -13,13 +13,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.text.ParseException;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("categoria")
 public class CategoriaController {
-
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CategoriaController.class);
 
@@ -31,7 +30,7 @@ public class CategoriaController {
     public ResponseEntity<Response<List<Categoria>>> getUsuarios(){
         LOGGER.info("Buscando todos dados de categoria...");
         Response<List<Categoria>> response = new Response<>();
-        List<Categoria> categorias = categoriaService.categorias();
+        List<Categoria> categorias = categoriaService.showAll();
 
         if (categorias.isEmpty()){
             LOGGER.info("Nenhuma categoria foi encontrada...");
@@ -43,12 +42,11 @@ public class CategoriaController {
         return ResponseEntity.ok(response);
     }
 
-
     @GetMapping("{id}")
     public ResponseEntity<Response<CategoriaDto>> getUsuarioById(@PathVariable("id") Long id){
         LOGGER.info("Buscando dados de categoria pelo ID: ", id);
         Response<CategoriaDto> response = new Response<>();
-        Categoria categoria = categoriaService.finById(id);
+        Optional<Categoria> categoria = categoriaService.showCategoriaById(id);
 
         if (categoria == null){
             LOGGER.info("Categoria não encontrado pelo ID: ", id);
@@ -56,7 +54,7 @@ public class CategoriaController {
             return ResponseEntity.badRequest().body(response);
         }
 
-        response.setData(this.convertCategoriaDto(categoria));
+        response.setData(this.convertCategoriaDto(categoria.get()));
         return ResponseEntity.ok(response);
     }
 
@@ -73,7 +71,7 @@ public class CategoriaController {
             return ResponseEntity.badRequest().body(response);
         }
 
-        categoriaService.add(convertCategoria(categoriaDto));
+        categoriaService.novaCategoria(convertCategoria(categoriaDto));
         response.setData("Categoria salvo com sucesso!!!");
 
         return ResponseEntity.ok(response);
@@ -83,8 +81,7 @@ public class CategoriaController {
     @PutMapping("{id}")
     public ResponseEntity<Response<String>> update(@PathVariable("id") Long id,
                                                    @Valid @RequestBody CategoriaDto categoriaDto,
-                                                   BindingResult result)
-            throws ParseException {
+                                                   BindingResult result) {
 
         categoriaDto.setId(String.valueOf(id));
 
@@ -97,8 +94,7 @@ public class CategoriaController {
             return ResponseEntity.badRequest().body(response);
         }
 
-
-        this.categoriaService.update(convertCategoria(categoriaDto));
+        this.categoriaService.novaCategoria(convertCategoria(categoriaDto));
         response.setData("Categoria atualizada com sucesso!!!");
 
         return ResponseEntity.ok(response);
@@ -108,7 +104,7 @@ public class CategoriaController {
     public ResponseEntity<Response<String>> remove(@PathVariable("id") Long id){
         LOGGER.info("Removendo usuário ID: {}", id);
         Response<String> response = new Response<>();
-        Categoria categoria = this.categoriaService.finById(id);
+        Optional<Categoria> categoria = this.categoriaService.showCategoriaById(id);
 
         if (categoria == null){
             LOGGER.info("Erro ao remover devido a categoria ID: {} ser inválido", id);
@@ -116,7 +112,7 @@ public class CategoriaController {
             return ResponseEntity.badRequest().body(response);
         }
 
-        this.categoriaService.remove(id);
+        this.categoriaService.removeCategoria(id);
         response.setData("Categoria removida com sucesso!");
         return ResponseEntity.ok(response);
     }

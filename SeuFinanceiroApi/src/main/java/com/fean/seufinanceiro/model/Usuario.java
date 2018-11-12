@@ -2,6 +2,11 @@ package com.fean.seufinanceiro.model;
 
 import com.fean.seufinanceiro.security.enums.ProfileEnum;
 
+import javax.persistence.*;
+import java.util.List;
+
+
+@Entity
 public class Usuario {
 
     private Long id;
@@ -15,6 +20,8 @@ public class Usuario {
     private String email;
     private String senha;
     private ProfileEnum perfil;
+    private List<Movimentacao> movimentacoes;
+
 
     public Usuario() {}
 
@@ -32,6 +39,9 @@ public class Usuario {
         this.perfil = profileEnum;
     }
 
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     public Long getId() {
         return id;
     }
@@ -40,6 +50,7 @@ public class Usuario {
         this.id = id;
     }
 
+    @Column(nullable = false)
     public String getNome() {
         return nome;
     }
@@ -56,6 +67,7 @@ public class Usuario {
         this.sobreNome = sobreNome;
     }
 
+    @Column(unique = true, nullable = false)
     public String getCpf() {
         return cpf;
     }
@@ -96,6 +108,7 @@ public class Usuario {
         this.numero = numero;
     }
 
+    @Column(unique = true, nullable = false)
     public String getEmail() {
         return email;
     }
@@ -112,11 +125,22 @@ public class Usuario {
         this.senha = senha;
     }
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     public ProfileEnum getPerfil() {
         return perfil;
     }
 
     public void setPerfil(ProfileEnum perfil) {
         this.perfil = perfil;
+    }
+
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    public List<Movimentacao> getMovimentacoes() {
+        return movimentacoes;
+    }
+
+    public void setMovimentacoes(List<Movimentacao> movimentacoes) {
+        this.movimentacoes = movimentacoes;
     }
 }

@@ -1,20 +1,17 @@
-package com.fean.seufinanceiro.model;
+package com.fean.seufinanceiro.dto;
 
-import com.fean.seufinanceiro.model.enums.Meses;
-import com.fean.seufinanceiro.model.enums.TipoDespesa;
+public class MovimentacaoDto {
 
-public class Despesa {
-
-    private Long id;
+    private String id;
     private String descricao;
-    private Double valor;
-    private TipoDespesa tipoDespesa;
+    private String valor;
+    private String tipoDespesa;
     private String ano;
-    private Meses mes;
+    private String mes;
 
-    public Despesa() { }
+    public MovimentacaoDto() {}
 
-    public Despesa(Long id, String descricao, Double valor, TipoDespesa tipoDespesa, String ano, Meses mes) {
+    public MovimentacaoDto(String id, String descricao, String valor, String tipoDespesa, String ano, String mes) {
         this.id = id;
         this.descricao = descricao;
         this.valor = valor;
@@ -23,11 +20,11 @@ public class Despesa {
         this.mes = mes;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -39,19 +36,19 @@ public class Despesa {
         this.descricao = descricao;
     }
 
-    public Double getValor() {
+    public String getValor() {
         return valor;
     }
 
-    public void setValor(Double valor) {
+    public void setValor(String valor) {
         this.valor = valor;
     }
 
-    public TipoDespesa getTipoDespesa() {
+    public String getTipoDespesa() {
         return tipoDespesa;
     }
 
-    public void setTipoDespesa(TipoDespesa tipoDespesa) {
+    public void setTipoDespesa(String tipoDespesa) {
         this.tipoDespesa = tipoDespesa;
     }
 
@@ -63,12 +60,12 @@ public class Despesa {
         this.ano = ano;
     }
 
-    public Meses getMes() {
+
+    public String getMes() {
         return mes;
     }
 
-    public void setMes(Meses mes) {
+    public void setMes(String mes) {
         this.mes = mes;
     }
-
 }

@@ -1,13 +1,16 @@
 package com.fean.seufinanceiro.security.controllers;
 
 import com.fean.seufinanceiro.dto.SignUpDto;
+import com.fean.seufinanceiro.dto.UsuarioDto;
 import com.fean.seufinanceiro.model.Usuario;
 import com.fean.seufinanceiro.responses.Response;
 import com.fean.seufinanceiro.security.dtos.JwtAuthenticationDto;
 import com.fean.seufinanceiro.security.dtos.TokenDto;
+import com.fean.seufinanceiro.security.enums.ProfileEnum;
 import com.fean.seufinanceiro.security.utils.JwtTokenUtil;
 import com.fean.seufinanceiro.service.UsuarioService;
 import com.fean.seufinanceiro.utils.PasswordUtils;
+import com.sun.org.apache.regexp.internal.RE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,17 +32,12 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth")
-//@CrossOrigin(origins = "*")
 public class AuthenticationController {
 
-	private static final Logger log = LoggerFactory.getLogger(AuthenticationController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationController.class);
 
 	private static final String TOKEN_HEADER = "Authorization";
 	private static final String BEARER_PREFIX = "Bearer ";
-
-	@Autowired
-	private UsuarioService usuarioService;
-
 
 	@Autowired
 	private AuthenticationManager authenticationManager;
@@ -64,12 +63,12 @@ public class AuthenticationController {
 		Response<TokenDto> response = new Response<TokenDto>();
 
 		if (result.hasErrors()) {
-			log.error("Erro validando integridade dos dados: {}", result.getAllErrors());
+			LOGGER.error("Erro validando integridade dos dados: {}", result.getAllErrors());
 			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
 			return ResponseEntity.badRequest().body(response);
 		}
 
-		log.info("Gerando token para o email {}.", authenticationDto.getEmail());
+		LOGGER.info("Gerando token para o email {}.", authenticationDto.getEmail());
 
 		Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
 				authenticationDto.getEmail(), authenticationDto.getPassword()));
@@ -83,40 +82,6 @@ public class AuthenticationController {
 		return ResponseEntity.ok(response);
 	}
 
-
-	@PostMapping("/sign-up")
-	public ResponseEntity<Response<String>> save(@Valid @RequestBody
-														 SignUpDto usuarioNovo,
-												 BindingResult result) {
-
-		Response<String> response = new Response<>();
-
-		if (result.hasErrors()){
-			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
-			return ResponseEntity.badRequest().body(response);
-		}
-
-		usuarioService.add(convertUsuarioNovoDto(usuarioNovo));
-		response.setData("Usuário salvo com sucesso!!!");
-
-		return ResponseEntity.ok(response);
-	}
-
-
-	private Usuario convertUsuarioNovoDto(SignUpDto signUpDto) {
-		Usuario usuario = new Usuario();
-		usuario.setNome(signUpDto.getNome());
-		usuario.setSobreNome(signUpDto.getSobreNome());
-		usuario.setEmail(signUpDto.getEmail());
-		usuario.setNumero(signUpDto.getNumero());
-		usuario.setEstado(signUpDto.getEstado());
-		usuario.setCidade(signUpDto.getCidade());
-		usuario.setCpf(signUpDto.getCpf());
-		usuario.setSenha(PasswordUtils.generateBCrypt(signUpDto.getSenha()));
-		return usuario;
-	}
-
-
 	/**
 	 * Gera um novo token com uma nova data de expiração.
 	 * 
@@ -124,8 +89,8 @@ public class AuthenticationController {
 	 * @return ResponseEntity<Response<TokenDto>>
 	 */
 	@PostMapping(value = "/refresh")
-	public ResponseEntity<Response<TokenDto>> gerarRefreshTokenJwt(HttpServletRequest request) {
-		log.info("Gerando refresh token JWT.");
+	public ResponseEntity<Response<TokenDto>> generateRefreshTokenJwt(HttpServletRequest request) {
+		LOGGER.info("Gerando refresh token JWT.");
 		Response<TokenDto> response = new Response<TokenDto>();
 		Optional<String> token = Optional.ofNullable(request.getHeader(TOKEN_HEADER));
 		
@@ -145,6 +110,30 @@ public class AuthenticationController {
 		
 		String refreshedToken = jwtTokenUtil.refreshToken(token.get());
 		response.setData(new TokenDto(refreshedToken));
+		return ResponseEntity.ok(response);
+	}
+
+	/**
+	 * Valida o token
+	 *
+	 * @param tokenDto
+	 * @return ResponseEntity<Response<Boolean>>
+	 */
+	@PostMapping(value = "/valid")
+	public ResponseEntity<Response<Boolean>> verifyTokenJwt(@Valid @RequestBody String tokenDto){
+		LOGGER.info("Verificando o token recebido...");
+		Response<Boolean> response = new Response<>();
+
+		if (tokenDto == null){
+			response.getErrors().add("Token não informado.");
+		}
+
+		if (!response.getErrors().isEmpty()) {
+			return ResponseEntity.badRequest().body(response);
+		}
+
+		response.setData(jwtTokenUtil.validToken(tokenDto));
+
 		return ResponseEntity.ok(response);
 	}
 

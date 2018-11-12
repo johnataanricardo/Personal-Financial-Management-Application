@@ -1,7 +1,15 @@
 package com.fean.seufinanceiro.model;
 
+import javax.persistence.*;
+
+@Entity
 public class Categoria {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @Column(nullable = false)
     private String descricao;
 
     public Categoria() {}

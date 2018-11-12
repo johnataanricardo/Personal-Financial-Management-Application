@@ -27,7 +27,7 @@ public class JwtTokenUtil {
 
 	/**
 	 * Obtém o username (email) contido no token JWT.
-	 * 
+	 *
 	 * @param token
 	 * @return String
 	 */
@@ -44,7 +44,7 @@ public class JwtTokenUtil {
 
 	/**
 	 * Retorna a data de expiração de um token JWT.
-	 * 
+	 *
 	 * @param token
 	 * @return Date
 	 */
@@ -61,7 +61,7 @@ public class JwtTokenUtil {
 
 	/**
 	 * Cria um novo token (refresh).
-	 * 
+	 *
 	 * @param token
 	 * @return String
 	 */
@@ -79,7 +79,7 @@ public class JwtTokenUtil {
 
 	/**
 	 * Verifica e retorna se um token JWT é válido.
-	 * 
+	 *
 	 * @param token
 	 * @return boolean
 	 */
@@ -89,7 +89,7 @@ public class JwtTokenUtil {
 
 	/**
 	 * Retorna um novo token JWT com base nos dados do usuários.
-	 * 
+	 *
 	 * @param userDetails
 	 * @return String
 	 */
@@ -105,7 +105,7 @@ public class JwtTokenUtil {
 	/**
 	 * Realiza o parse do token JWT para extrair as informações contidas no
 	 * corpo dele.
-	 * 
+	 *
 	 * @param token
 	 * @return Claims
 	 */
@@ -121,7 +121,7 @@ public class JwtTokenUtil {
 
 	/**
 	 * Retorna a data de expiração com base na data atual.
-	 * 
+	 *
 	 * @return Date
 	 */
 	private Date generateExpirationDate() {
@@ -130,7 +130,7 @@ public class JwtTokenUtil {
 
 	/**
 	 * Verifica se um token JTW está expirado.
-	 * 
+	 *
 	 * @param token
 	 * @return boolean
 	 */
@@ -144,7 +144,7 @@ public class JwtTokenUtil {
 
 	/**
 	 * Gera um novo token JWT contendo os dados (claims) fornecidos.
-	 * 
+	 *
 	 * @param claims
 	 * @return String
 	 */

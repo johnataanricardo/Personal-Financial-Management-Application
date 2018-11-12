@@ -1,27 +1,27 @@
 package com.fean.seufinanceiro.dto;
 
-import com.fean.seufinanceiro.model.Despesa;
+import com.fean.seufinanceiro.model.Movimentacao;
 
 import java.util.List;
 
 public class FluxoDeCaixaDto {
 
-    private List<Despesa> despesas;
+    private List<Movimentacao> movimentacaos;
     private String fluxoCaixa;
 
     public FluxoDeCaixaDto() {}
 
-    public FluxoDeCaixaDto(List<Despesa> despesas, String fluxoCaixa) {
-        this.despesas = despesas;
+    public FluxoDeCaixaDto(List<Movimentacao> movimentacaos, String fluxoCaixa) {
+        this.movimentacaos = movimentacaos;
         this.fluxoCaixa = fluxoCaixa;
     }
 
-    public List<Despesa> getDespesas() {
-        return despesas;
+    public List<Movimentacao> getMovimentacaos() {
+        return movimentacaos;
     }
 
-    public void setDespesas(List<Despesa> despesas) {
-        this.despesas = despesas;
+    public void setMovimentacaos(List<Movimentacao> movimentacaos) {
+        this.movimentacaos = movimentacaos;
     }
 
     public String getFluxoCaixa() {

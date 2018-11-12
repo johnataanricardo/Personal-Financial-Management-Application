@@ -1,10 +1,13 @@
 package com.fean.seufinanceiro.dto;
 
+import javax.validation.constraints.NotEmpty;
+
 public class CategoriaDto {
 
     private String id;
-    private String descricao;
 
+    @NotEmpty
+    private String descricao;
 
     public CategoriaDto() {}
 
