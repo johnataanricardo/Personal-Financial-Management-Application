@@ -5,12 +5,11 @@ import javax.persistence.*;
 @Entity
 public class Categoria {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(nullable = false)
     private String descricao;
+
+    private Usuario usuario;
 
     public Categoria() {}
 
@@ -19,6 +18,8 @@ public class Categoria {
         this.descricao = descricao;
     }
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     public Long getId() {
         return id;
     }
@@ -27,11 +28,21 @@ public class Categoria {
         this.id = id;
     }
 
+    @Column(nullable = false)
     public String getDescricao() {
         return descricao;
     }
 
     public void setDescricao(String descricao) {
         this.descricao = descricao;
+    }
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 }

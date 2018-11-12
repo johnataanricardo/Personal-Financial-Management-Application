@@ -21,7 +21,7 @@ public class Usuario {
     private String senha;
     private ProfileEnum perfil;
     private List<Movimentacao> movimentacoes;
-
+    private List<Categoria> categorias;
 
     public Usuario() {}
 
@@ -143,4 +143,14 @@ public class Usuario {
     public void setMovimentacoes(List<Movimentacao> movimentacoes) {
         this.movimentacoes = movimentacoes;
     }
+
+    @OneToMany(mappedBy = "usuario", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    public List<Categoria> getCategorias() {
+        return categorias;
+    }
+
+    public void setCategorias(List<Categoria> categorias) {
+        this.categorias = categorias;
+    }
 }
+

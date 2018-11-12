@@ -19,8 +19,8 @@ public class CategoriaService {
         return (List<Categoria>) categoriaRepository.findAll();
     }
 
-    public Optional<Categoria> showCategoriaById(Long id){
-        return categoriaRepository.findById(id);
+    public Categoria showCategoriaById(Long id){
+        return categoriaRepository.findById(id).get();
     }
 
     public void novaCategoria(Categoria categoria){
