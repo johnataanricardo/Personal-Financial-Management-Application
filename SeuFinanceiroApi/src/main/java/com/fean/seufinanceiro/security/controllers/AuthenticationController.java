@@ -120,19 +120,15 @@ public class AuthenticationController {
 	 * @return ResponseEntity<Response<Boolean>>
 	 */
 	@PostMapping(value = "/valid")
-	public ResponseEntity<Response<Boolean>> verifyTokenJwt(@Valid @RequestBody String tokenDto){
+	public ResponseEntity<Response<Boolean>> verifyTokenJwt(@RequestBody TokenDto tokenDto){
 		LOGGER.info("Verificando o token recebido...");
 		Response<Boolean> response = new Response<>();
 
-		if (tokenDto == null){
-			response.getErrors().add("Token não informado.");
+		if (tokenDto == null || jwtTokenUtil.getUsernameFromToken(tokenDto.getToken()) == null){
+				response.setData(Boolean.FALSE);
+		}else{
+			response.setData(jwtTokenUtil.validToken(tokenDto.getToken()));
 		}
-
-		if (!response.getErrors().isEmpty()) {
-			return ResponseEntity.badRequest().body(response);
-		}
-
-		response.setData(jwtTokenUtil.validToken(tokenDto));
 
 		return ResponseEntity.ok(response);
 	}
