@@ -57,8 +57,8 @@ export default {
       invisibility: true,      
       snackbar: false,
       user: {
-        email: '',
-        password: '',
+        email: 'teste@teste.com',
+        password: 'Abc123',
       },
       userRules: {
         emailRules: [
@@ -77,7 +77,7 @@ export default {
         this.$auth.login({
           body: JSON.stringify(this.user),
           success: function (response) {
-            localStorage.token = response.body.token
+            localStorage.token = response.body.data.token
           },
           error: function () {
             delete localStorage.token

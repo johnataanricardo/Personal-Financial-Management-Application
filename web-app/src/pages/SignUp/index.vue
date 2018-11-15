@@ -25,25 +25,26 @@ export default {
     onSave: function (){
       const form = this.$refs.form
       const user = JSON.stringify(form.user)
+
+      console.log(user)
       
-      axios.post(api + '/user/new/' + user, { 
+      axios.post(api + '/user/sign-up/', user, { 
         headers: {        
           'Content-Type': 'application/json',
-        }
+        },
       }).then(response => (
-        localStorage.token = response.data.token == null ? '' : response.data.token
+        console.log(response.data)
+        // localStorage.token = response.data.token == null ? '' : response.data.token
       )).catch(function (error) {
-        console.log(error);
-      })
-
-      setTimeout(function() {
-        if (localStorage.token) {
-          router.push('/home')
-        } else {
           form.text = 'Email informado já está em uso.'
           form.snackbar = true
-        }
-      }, 100);
+      })
+
+      // setTimeout(function() {
+      //   if (localStorage.token) {
+      //     router.push('/home')
+      //   }
+      // }, 100);
     },
   }
 }

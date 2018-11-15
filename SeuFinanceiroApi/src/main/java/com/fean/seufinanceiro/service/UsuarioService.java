@@ -46,12 +46,6 @@ public class UsuarioService {
     private UsuarioDto convertUsuarioDto(Usuario usuario) {
         return  new UsuarioDto(String.valueOf(usuario.getId()),
                 usuario.getNome(),
-                usuario.getSobreNome(),
-                usuario.getCpf(),
-                usuario.getEstado(),
-                usuario.getCidade(),
-                usuario.getEndereco(),
-                usuario.getNumero(),
                 usuario.getEmail());
     }
 

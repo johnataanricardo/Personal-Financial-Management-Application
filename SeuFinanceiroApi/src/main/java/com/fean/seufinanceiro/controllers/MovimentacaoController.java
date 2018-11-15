@@ -23,6 +23,7 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping("movimentacoes")
+@CrossOrigin(origins = "*")
 public class MovimentacaoController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MovimentacaoController.class);

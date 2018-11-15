@@ -22,6 +22,7 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping("categoria")
+@CrossOrigin(origins = "*")
 public class CategoriaController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CategoriaController.class);

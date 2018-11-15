@@ -18,7 +18,7 @@ Vue.use(require('@websanova/vue-auth'), {
   http: require('@websanova/vue-auth/drivers/http/vue-resource.1.x.js'),
   router: require('@websanova/vue-auth/drivers/router/vue-router.2.x.js'),
   rolesVar: 'type',
-  loginData: {url: api + '/token', method: 'POST', redirect: '/home', fetchUser: false},
+  loginData: {url: api + '/auth/', method: 'POST', redirect: '/home', fetchUser: false},
 });
 
 new Vue({

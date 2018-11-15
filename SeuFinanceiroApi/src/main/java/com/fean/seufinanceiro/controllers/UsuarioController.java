@@ -15,8 +15,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
+
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -29,29 +29,13 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-    @GetMapping
-    public ResponseEntity<Response<List<UsuarioDto>>> getUsuarios(){
-        LOGGER.info("Buscando todos dados de usuários...");
-        Response<List<UsuarioDto>> response = new Response<>();
-        List<UsuarioDto> usuariosDto = usuarioService.showAllUsersDto();
-
-        if (usuariosDto.isEmpty()){
-            LOGGER.info("Nenhum usuário foi encontrada...");
-            response.getErrors().add("Nenhum usuário foi encontrado...");
-            return ResponseEntity.badRequest().body(response);
-        }
-
-        response.setData(usuariosDto);
-        return ResponseEntity.ok(response);
-    }
-
     @GetMapping("{id}")
-    public ResponseEntity<Response<UsuarioDto>> getUsuarioById(@PathVariable("id") Long id){
+    public ResponseEntity<Response<UsuarioDto>> getUsuarioById(@PathVariable("id") Long id) {
         LOGGER.info("Buscando dados de usuário pelo ID: ", id);
         Response<UsuarioDto> response = new Response<>();
         Optional<Usuario> usuario = usuarioService.findUsuarioById(id);
 
-        if (usuario == null){
+        if (usuario == null) {
             LOGGER.info("Usuário não encontrado pelo ID: ", id);
             response.getErrors().add("Usuário não encontrado pelo ID: " + id);
             return ResponseEntity.badRequest().body(response);
@@ -62,21 +46,19 @@ public class UsuarioController {
     }
 
 
-    @PostMapping("sign-up")
-    public ResponseEntity<Response<String>> save(@Valid @RequestBody
-                                                         SignUpDto usuarioNovo,
-                                                 BindingResult result) {
+    @PostMapping("/sign-up")
+    public ResponseEntity<Response<String>> save(@Valid @RequestBody SignUpDto signUpDto, BindingResult result) {
 
         Response<String> response = new Response<>();
 
-        checkUsuarioSignUpData(usuarioNovo, result);
-        if (result.hasErrors()){
+        checkUsuarioSignUpData(signUpDto, result);
+        if (result.hasErrors()) {
             result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
             return ResponseEntity.badRequest().body(response);
         }
 
-        usuarioService.newUser(convertUsuarioNovoDto(usuarioNovo));
-        response.setData("Usuário salvo com sucesso!!!");
+        usuarioService.newUser(convertUsuarioNovoDto(signUpDto));
+        response.setData("Usuário cadastrado com sucesso!");
 
         return ResponseEntity.ok(response);
     }
@@ -106,12 +88,12 @@ public class UsuarioController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Response<String>> remove(@PathVariable("id") Long id){
+    public ResponseEntity<Response<String>> remove(@PathVariable("id") Long id) {
         LOGGER.info("Removendo usuário ID: {}", id);
         Response<String> response = new Response<>();
         Optional<Usuario> usuario = this.usuarioService.findUsuarioById(id);
 
-        if (usuario == null){
+        if (usuario == null) {
             LOGGER.info("Erro ao remover devido ao usuário ID: {} ser inválido", id);
             response.getErrors().add("Erro ao remover usuário. Registro não encontrado para o id " + id);
             return ResponseEntity.badRequest().body(response);
@@ -123,14 +105,8 @@ public class UsuarioController {
     }
 
     private UsuarioDto convertUsuarioDto(Usuario usuario) {
-        return  new UsuarioDto(String.valueOf(usuario.getId()),
+        return new UsuarioDto(String.valueOf(usuario.getId()),
                 usuario.getNome(),
-                usuario.getSobreNome(),
-                usuario.getCpf(),
-                usuario.getEstado(),
-                usuario.getCidade(),
-                usuario.getEndereco(),
-                usuario.getNumero(),
                 usuario.getEmail());
     }
 
@@ -138,28 +114,23 @@ public class UsuarioController {
         Usuario usuario = new Usuario();
         usuario.setId(Long.parseLong(usuarioDto.getId()));
         usuario.setNome(usuarioDto.getNome());
-        usuario.setSobreNome(usuarioDto.getSobreNome());
         usuario.setEmail(usuarioDto.getEmail());
-        usuario.setNumero(usuarioDto.getNumero());
-        usuario.setEstado(usuarioDto.getEstado());
-        usuario.setCidade(usuarioDto.getCidade());
-        usuario.setCpf(usuarioDto.getCpf());
         usuario.setPerfil(ProfileEnum.ROLE_USUARIO);
         return usuario;
     }
 
     private void checkUsuarioData(UsuarioDto usuarioDto, BindingResult result) {
-        if (usuarioDto.getId() == null){
+        if (usuarioDto.getId() == null) {
             result.addError(new ObjectError("Usuário",
                     "ID do usuário não informado."));
             return;
         }
 
         LOGGER.info("Validando Usuário ID {}: ", usuarioDto.getId());
-        Optional<Usuario> usuario =  this.usuarioService
+        Optional<Usuario> usuario = this.usuarioService
                 .findUsuarioById(Long.parseLong(usuarioDto.getId()));
 
-        if (!usuario.isPresent()){
+        if (!usuario.isPresent()) {
             result.addError(new ObjectError("Usuário",
                     "Usuário não encontrado. ID inexistente."));
         }
@@ -168,12 +139,7 @@ public class UsuarioController {
     private Usuario convertUsuarioNovoDto(SignUpDto signUpDto) {
         Usuario usuario = new Usuario();
         usuario.setNome(signUpDto.getNome());
-        usuario.setSobreNome(signUpDto.getSobreNome());
         usuario.setEmail(signUpDto.getEmail());
-        usuario.setNumero(signUpDto.getNumero());
-        usuario.setEstado(signUpDto.getEstado());
-        usuario.setCidade(signUpDto.getCidade());
-        usuario.setCpf(signUpDto.getCpf());
         usuario.setSenha(PasswordUtils.generateBCrypt(signUpDto.getSenha()));
         usuario.setPerfil(ProfileEnum.ROLE_USUARIO);
         return usuario;
@@ -182,10 +148,10 @@ public class UsuarioController {
     private void checkUsuarioSignUpData(SignUpDto signUpDto, BindingResult result) {
 
         LOGGER.info("Validando Usuário ID {}: ", signUpDto.getEmail());
-        Optional<Usuario> usuario =  this.usuarioService
+        Optional<Usuario> usuario = this.usuarioService
                 .findUserByUsernameEmail(signUpDto.getEmail());
 
-        if (usuario.isPresent()){
+        if (usuario.isPresent()) {
             result.addError(new ObjectError("Usuário",
                     "Usuário já cadastrado."));
         }

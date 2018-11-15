@@ -1,16 +1,9 @@
 package com.fean.seufinanceiro.security.controllers;
 
-import com.fean.seufinanceiro.dto.SignUpDto;
-import com.fean.seufinanceiro.dto.UsuarioDto;
-import com.fean.seufinanceiro.model.Usuario;
 import com.fean.seufinanceiro.responses.Response;
 import com.fean.seufinanceiro.security.dtos.JwtAuthenticationDto;
 import com.fean.seufinanceiro.security.dtos.TokenDto;
-import com.fean.seufinanceiro.security.enums.ProfileEnum;
 import com.fean.seufinanceiro.security.utils.JwtTokenUtil;
-import com.fean.seufinanceiro.service.UsuarioService;
-import com.fean.seufinanceiro.utils.PasswordUtils;
-import com.sun.org.apache.regexp.internal.RE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +16,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +24,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/auth")
+@CrossOrigin(origins = "*")
 public class AuthenticationController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationController.class);
@@ -57,9 +50,7 @@ public class AuthenticationController {
 	 * @throws AuthenticationException
 	 */
 	@PostMapping
-	public ResponseEntity<Response<TokenDto>> gerarTokenJwt(
-			@Valid @RequestBody JwtAuthenticationDto authenticationDto, BindingResult result)
-			throws AuthenticationException {
+	public ResponseEntity<Response<TokenDto>> gerarTokenJwt(@Valid @RequestBody JwtAuthenticationDto authenticationDto, BindingResult result) throws AuthenticationException {
 		Response<TokenDto> response = new Response<TokenDto>();
 
 		if (result.hasErrors()) {
