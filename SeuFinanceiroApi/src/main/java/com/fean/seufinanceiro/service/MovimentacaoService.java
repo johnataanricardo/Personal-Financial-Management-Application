@@ -35,8 +35,8 @@ public class MovimentacaoService {
     }
 
 
-    public List<Movimentacao> showAllDespesasByYearMonth(String year, String month){
-        return  movimentacaoRepository.findByAnoAndMes(year, Meses.valueOf(month.toUpperCase()));
+    public List<Movimentacao> showAllDespesasByYearMonth(String year, String month, Long userId){
+        return  movimentacaoRepository.findByAnoAndMesAndUsuarioId(year, Meses.valueOf(month.toUpperCase()), userId);
     }
 
     public Movimentacao findDespesaById(Long id){

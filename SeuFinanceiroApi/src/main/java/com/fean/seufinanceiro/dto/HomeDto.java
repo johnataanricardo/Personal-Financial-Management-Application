@@ -7,8 +7,8 @@ import java.util.List;
 
 public class HomeDto {
 
-    private List<Movimentacao> entrada = new ArrayList<>();
-    private List<Movimentacao> saida   = new ArrayList<>();
+    private List<MovimentacaoDto> entrada;
+    private List<MovimentacaoDto> saida;
     private Double totalEntrada;
     private Double totalSaida;
     private Double fluxoCaixa;
@@ -16,7 +16,7 @@ public class HomeDto {
 
     public HomeDto() { }
 
-    public HomeDto(List<Movimentacao> entrada, List<Movimentacao> saida, Double totalEntrada, Double totalSaida, Double fluxoCaixa) {
+    public HomeDto(List<MovimentacaoDto> entrada, List<MovimentacaoDto> saida, Double totalEntrada, Double totalSaida, Double fluxoCaixa) {
         this.entrada = entrada;
         this.saida = saida;
         this.totalEntrada = totalEntrada;
@@ -24,23 +24,23 @@ public class HomeDto {
         this.fluxoCaixa = fluxoCaixa;
     }
 
-    public List<Movimentacao> getEntrada() {
+    public List<MovimentacaoDto> getEntrada() {
         if(this.entrada == null)
             this.entrada  = new ArrayList<>();
         return entrada;
     }
 
-    public List<Movimentacao> getSaida() {
+    public List<MovimentacaoDto> getSaida() {
         if (this.saida == null)
              this.saida = new ArrayList<>();
         return saida;
     }
 
-    public void setEntrada(List<Movimentacao> entrada) {
+    public void setEntrada(List<MovimentacaoDto> entrada) {
         this.entrada = entrada;
     }
 
-    public void setSaida(List<Movimentacao> saida) {
+    public void setSaida(List<MovimentacaoDto> saida) {
         this.saida = saida;
     }
 

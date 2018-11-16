@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface MovimentacaoRepository extends CrudRepository<Movimentacao, Long> {
 
-    List<Movimentacao> findByAnoAndMes(String year, Meses month);
+    List<Movimentacao> findByAnoAndMesAndUsuarioId(String year, Meses month, Long userId);
     List<Movimentacao> findAllByUsuarioId(Long userId);
     Movimentacao findByIdAndUsuarioId(Long movimentacaoId, Long userId);
 }

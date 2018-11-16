@@ -1,7 +1,6 @@
 package com.fean.seufinanceiro.controllers;
 
 import com.fean.seufinanceiro.dto.MovimentacaoDto;
-import com.fean.seufinanceiro.dto.FluxoDeCaixaDto;
 import com.fean.seufinanceiro.model.Movimentacao;
 import com.fean.seufinanceiro.model.Usuario;
 import com.fean.seufinanceiro.model.enums.Meses;
@@ -50,7 +49,7 @@ public class MovimentacaoController {
         List<MovimentacaoDto> movimentacaoesDto = new ArrayList<>();
 
         movimentacaoService.showAllMovimentacoesByUser(jwtUser.getId()).forEach( movimentacao -> {
-            movimentacaoesDto.add(convertDespesaDto(movimentacao));
+            movimentacaoesDto.add(convertMovimentacaoDto(movimentacao));
         });
 
         if (movimentacaoesDto.isEmpty()){
@@ -77,7 +76,7 @@ public class MovimentacaoController {
             response.getErrors().add("Movimentacao não encontrada pelo ID: " + id);
             return ResponseEntity.badRequest().body(response);
         }
-        response.setData(this.convertDespesaDto(movimentacao));
+        response.setData(this.convertMovimentacaoDto(movimentacao));
         return ResponseEntity.ok(response);
     }
 
@@ -146,7 +145,7 @@ public class MovimentacaoController {
         return ResponseEntity.ok(response);
     }
 
-    private MovimentacaoDto convertDespesaDto(Movimentacao movimentacao) {
+    private MovimentacaoDto convertMovimentacaoDto(Movimentacao movimentacao) {
         return  new MovimentacaoDto(String.valueOf(movimentacao.getId()),
                                movimentacao.getDescricao(),
                                String.valueOf(movimentacao.getValor()),

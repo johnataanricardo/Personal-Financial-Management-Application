@@ -1,6 +1,7 @@
 package com.fean.seufinanceiro.service;
 
 import com.fean.seufinanceiro.dto.HomeDto;
+import com.fean.seufinanceiro.dto.MovimentacaoDto;
 import com.fean.seufinanceiro.model.Movimentacao;
 import com.fean.seufinanceiro.model.enums.TipoDespesa;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,24 +11,28 @@ import java.util.List;
 @Service
 public class HomeService {
 
-    @Autowired
     private MovimentacaoService movimentacaoService;
 
-    public HomeDto showMovimentacaoByMonthYear(String year, String month){
+    @Autowired
+    public HomeService(MovimentacaoService movimentacaoService) {
+        this.movimentacaoService = movimentacaoService;
+    }
+
+    public HomeDto showMovimentacaoByMonthYear(String year, String month, Long userId){
 
         HomeDto homeDto = new HomeDto();
 
-        List<Movimentacao> movimentacaos = movimentacaoService.showAllDespesasByYearMonth(year, month);
+        List<Movimentacao> movimentacaos = movimentacaoService.showAllDespesasByYearMonth(year, month, userId);
 
         if (movimentacaos.isEmpty()) { return null; }
 
-        movimentacaos.forEach(despesa -> {
-            if (despesa.getTipoDespesa().equals(TipoDespesa.ENTRADA)){
-                    homeDto.getEntrada().add(despesa);
-                    homeDto.setTotalEntrada(homeDto.getTotalEntrada() + despesa.getValor());
+        movimentacaos.forEach(movimentacao -> {
+            if (movimentacao.getTipoDespesa().equals(TipoDespesa.ENTRADA)){
+                    homeDto.getEntrada().add(convertMovimentacaoDto(movimentacao));
+                    homeDto.setTotalEntrada(homeDto.getTotalEntrada() + movimentacao.getValor());
             }else  {
-                    homeDto.getSaida().add(despesa);
-                    homeDto.setTotalSaida(homeDto.getTotalSaida() + despesa.getValor());
+                    homeDto.getSaida().add(convertMovimentacaoDto(movimentacao));
+                    homeDto.setTotalSaida(homeDto.getTotalSaida() + movimentacao.getValor());
             }
         });
 
@@ -35,5 +40,13 @@ public class HomeService {
         return homeDto;
     }
 
+    private MovimentacaoDto convertMovimentacaoDto(Movimentacao movimentacao) {
+        return  new MovimentacaoDto(String.valueOf(movimentacao.getId()),
+                movimentacao.getDescricao(),
+                String.valueOf(movimentacao.getValor()),
+                String.valueOf(movimentacao.getTipoDespesa()),
+                movimentacao.getAno(),
+                String.valueOf(movimentacao.getMes()));
+    }
 
 }
