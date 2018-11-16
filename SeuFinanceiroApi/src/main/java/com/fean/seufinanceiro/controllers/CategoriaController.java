@@ -27,17 +27,24 @@ public class CategoriaController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CategoriaController.class);
 
-    @Autowired
-    private CategoriaService categoriaService;
+    private final CategoriaService categoriaService;
+
+    private final UsuarioService usuarioService;
 
     @Autowired
-    private UsuarioService usuarioService;
+    public CategoriaController(CategoriaService categoriaService, UsuarioService usuarioService) {
+        this.categoriaService = categoriaService;
+        this.usuarioService = usuarioService;
+    }
 
     @GetMapping
-    public ResponseEntity<Response<List<Categoria>>> getCategorias(){
-        LOGGER.info("Buscando todos dados de categoria...");
+    public ResponseEntity<Response<List<Categoria>>> getCategorias(@AuthenticationPrincipal JwtUser jwtUser){
+
+        LOGGER.info("Buscando todos dados de categoria do usuário ID: ", jwtUser.getId());
+
         Response<List<Categoria>> response = new Response<>();
-        List<Categoria> categorias = categoriaService.showAll();
+
+        List<Categoria> categorias = categoriaService.showAllCategoryByUserId(jwtUser.getId());
 
         if (categorias.isEmpty()){
             LOGGER.info("Nenhuma categoria foi encontrada...");
@@ -50,10 +57,11 @@ public class CategoriaController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Response<CategoriaDto>> getCategoriaById(@PathVariable("id") Long id){
+    public ResponseEntity<Response<CategoriaDto>> getCategoriaById(@PathVariable("id") Long id,
+                                                                   @AuthenticationPrincipal JwtUser jwtUser){
         LOGGER.info("Buscando dados de categoria pelo ID: ", id);
         Response<CategoriaDto> response = new Response<>();
-        Categoria categoria = categoriaService.showCategoriaById(id);
+        Categoria categoria = categoriaService.showCategoriaByIdAndUserId(id, jwtUser.getId());
 
         if (categoria == null){
             LOGGER.info("Categoria não encontrado pelo ID: ", id);
@@ -64,7 +72,6 @@ public class CategoriaController {
         response.setData(this.convertCategoriaDto(categoria));
         return ResponseEntity.ok(response);
     }
-
 
     @PostMapping
     public ResponseEntity<Response<String>> save(@Valid @RequestBody

@@ -1,11 +1,6 @@
 package com.fean.seufinanceiro.dto;
 
-import com.fean.seufinanceiro.model.Categoria;
-import com.fean.seufinanceiro.model.Movimentacao;
-import com.fean.seufinanceiro.security.enums.ProfileEnum;
-
 import javax.validation.constraints.NotEmpty;
-import java.util.List;
 
 public class UsuarioDto {
 
@@ -15,9 +10,6 @@ public class UsuarioDto {
     @NotEmpty
     private String email;
     private String senha;
-
-    public UsuarioDto() {
-    }
 
     public UsuarioDto(String id, @NotEmpty String nome, @NotEmpty String email) {
         this.id = id;

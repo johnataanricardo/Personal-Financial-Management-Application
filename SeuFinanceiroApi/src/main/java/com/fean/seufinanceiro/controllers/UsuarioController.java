@@ -4,6 +4,7 @@ import com.fean.seufinanceiro.dto.SignUpDto;
 import com.fean.seufinanceiro.dto.UsuarioDto;
 import com.fean.seufinanceiro.model.Usuario;
 import com.fean.seufinanceiro.responses.Response;
+import com.fean.seufinanceiro.security.JwtUser;
 import com.fean.seufinanceiro.security.enums.ProfileEnum;
 import com.fean.seufinanceiro.service.UsuarioService;
 import com.fean.seufinanceiro.utils.PasswordUtils;
@@ -11,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -26,18 +28,22 @@ public class UsuarioController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UsuarioController.class);
 
+    private final UsuarioService usuarioService;
+
     @Autowired
-    private UsuarioService usuarioService;
+    public UsuarioController(UsuarioService usuarioService) {
+        this.usuarioService = usuarioService;
+    }
 
-    @GetMapping("{id}")
-    public ResponseEntity<Response<UsuarioDto>> getUsuarioById(@PathVariable("id") Long id) {
-        LOGGER.info("Buscando dados de usuário pelo ID: ", id);
+    @GetMapping
+    public ResponseEntity<Response<UsuarioDto>> getUsuario(@AuthenticationPrincipal JwtUser jwtUser) {
+        LOGGER.info("Buscando dados de usuário pelo ID: ", jwtUser.getId());
         Response<UsuarioDto> response = new Response<>();
-        Optional<Usuario> usuario = usuarioService.findUsuarioById(id);
+        Optional<Usuario> usuario = usuarioService.findUsuarioById(jwtUser.getId());
 
-        if (usuario == null) {
-            LOGGER.info("Usuário não encontrado pelo ID: ", id);
-            response.getErrors().add("Usuário não encontrado pelo ID: " + id);
+        if (!usuario.isPresent()) {
+            LOGGER.info("Usuário não encontrado pelo ID: ", jwtUser.getId());
+            response.getErrors().add("Usuário não encontrado pelo ID: " + jwtUser.getId());
             return ResponseEntity.badRequest().body(response);
         }
 
@@ -62,14 +68,13 @@ public class UsuarioController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("{id}")
-    public ResponseEntity<Response<String>> update(@PathVariable("id") Long id, @Valid @RequestBody UsuarioDto usuarioDto, BindingResult result) {
-        usuarioDto.setId(String.valueOf(id));
+    @PutMapping
+    public ResponseEntity<Response<String>> update(@Valid @RequestBody UsuarioDto usuarioDto,
+                                                   @AuthenticationPrincipal JwtUser jwtUser,
+                                                   BindingResult result) {
 
         LOGGER.info("Atualizando usuário: {}", usuarioDto.toString());
         Response<String> response = new Response<>();
-
-        Usuario usuario = checkUsuarioData(usuarioDto, result);
 
         if (result.hasErrors()) {
             LOGGER.error("Erro validando usuário: {}", result.getAllErrors());
@@ -77,51 +82,34 @@ public class UsuarioController {
             return ResponseEntity.badRequest().body(response);
         }
 
-        this.usuarioService.newUser(convertUsuario(usuario, usuarioDto));
+        this.usuarioService.newUser(convertUsuario(usuarioDto, jwtUser));
         response.setData("Usuário atualizado com sucesso!!!");
 
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<Response<String>> remove(@PathVariable("id") Long id) {
-        LOGGER.info("Removendo usuário ID: {}", id);
+    @DeleteMapping
+    public ResponseEntity<Response<String>> remove(@AuthenticationPrincipal JwtUser jwtUser) {
+        LOGGER.info("Removendo usuário ID: {}", jwtUser.getId());
         Response<String> response = new Response<>();
-        Optional<Usuario> usuario = this.usuarioService.findUsuarioById(id);
+        Optional<Usuario> usuario = this.usuarioService.findUsuarioById(jwtUser.getId());
 
         if (usuario == null) {
-            LOGGER.info("Erro ao remover devido ao usuário ID: {} ser inválido", id);
-            response.getErrors().add("Erro ao remover usuário. Registro não encontrado para o id " + id);
+            LOGGER.info("Erro ao remover devido ao usuário ID: {} ser inválido", jwtUser.getId());
+            response.getErrors().add("Erro ao remover usuário. Registro não encontrado para o id " + jwtUser.getId());
             return ResponseEntity.badRequest().body(response);
         }
 
-        this.usuarioService.removeUser(id);
+        this.usuarioService.removeUser(jwtUser.getId());
         response.setData("Usuário removido com sucesso!");
         return ResponseEntity.ok(response);
     }
 
-    private Usuario checkUsuarioData(UsuarioDto usuarioDto, BindingResult result) {
-        if (usuarioDto.getId() == null) {
-            result.addError(new ObjectError("Usuário",
-                    "ID do usuário não informado."));
-        }
-
-        LOGGER.info("Validando Usuário ID {}: ", usuarioDto.getId());
-        Optional<Usuario> usuario = this.usuarioService
-                .findUsuarioById(Long.parseLong(usuarioDto.getId()));
-
-        if (!usuario.isPresent()) {
-            result.addError(new ObjectError("Usuário",
-                    "Usuário não encontrado. ID inexistente."));
-        }
-
-        return usuario.get();
-    }
-
     private void checkUsuarioSignUpData(SignUpDto signUpDto, BindingResult result) {
         LOGGER.info("Validando Usuário ID {}: ", signUpDto.getEmail());
+
         Optional<Usuario> usuario = this.usuarioService
-                .findUserByUsernameEmail(signUpDto.getEmail());
+                                    .findUserByUsernameEmail(signUpDto.getEmail());
 
         if (usuario.isPresent()) {
             result.addError(new ObjectError("Usuário",
@@ -138,22 +126,27 @@ public class UsuarioController {
         return usuario;
     }
 
-
     private UsuarioDto convertUsuarioDto(Usuario usuario) {
         return new UsuarioDto(String.valueOf(usuario.getId()),
                 usuario.getNome(),
                 usuario.getEmail());
     }
 
-    private Usuario convertUsuario(Usuario usuario, UsuarioDto usuarioDto) {
-        usuario.setId(usuario.getId());
+    private Usuario convertUsuario(UsuarioDto usuarioDto, JwtUser jwtUser) {
+        Usuario usuario = new Usuario();
+
+        if(usuarioDto.getSenha() == null || usuarioDto.getSenha().isEmpty()){
+            usuario.setSenha(
+                    PasswordUtils.generateBCrypt(usuarioService.findUsuarioById(jwtUser.getId()).get().getSenha())
+            );
+        }else{
+            usuario.setSenha(PasswordUtils.generateBCrypt(usuarioDto.getSenha()));
+        }
+
+        usuario.setId(jwtUser.getId());
         usuario.setNome(usuarioDto.getNome());
         usuario.setEmail(usuarioDto.getEmail());
         usuario.setPerfil(ProfileEnum.ROLE_USUARIO);
-        if (!usuarioDto.getSenha().isEmpty()) {
-            usuario.setSenha(PasswordUtils.generateBCrypt(usuarioDto.getSenha()));
-        }
         return usuario;
     }
-
 }
