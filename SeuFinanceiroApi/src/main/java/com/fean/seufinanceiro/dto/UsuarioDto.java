@@ -11,6 +11,9 @@ public class UsuarioDto {
     private String email;
     private String senha;
 
+    public UsuarioDto() {
+    }
+
     public UsuarioDto(String id, @NotEmpty String nome, @NotEmpty String email) {
         this.id = id;
         this.nome = nome;

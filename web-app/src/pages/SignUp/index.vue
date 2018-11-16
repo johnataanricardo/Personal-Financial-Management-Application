@@ -1,6 +1,6 @@
 <template>
   <div id="signUp">
-    <FormProfile ref='form' title="Inscrever-se" @click="onSave" :emailDisabled="false" :cleanButton="true" :titleSaveButton="saveButton"/>
+    <FormProfile ref='form' :account="false" @click="onSave" :emailDisabled="false" :cleanButton="true" :titleSaveButton="saveButton"/>
   </div>
 </template>
 
@@ -25,8 +25,6 @@ export default {
     onSave: function (){
       const form = this.$refs.form
       const user = JSON.stringify(form.user)
-
-      console.log(user)
       
       axios.post(api + '/user/sign-up/', user, { 
         headers: {        
@@ -49,11 +47,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-
-  @media screen and (max-width: 600px)  {
-
-  }
-
-</style>

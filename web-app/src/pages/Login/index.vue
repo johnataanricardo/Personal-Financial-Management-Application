@@ -3,13 +3,14 @@
     <v-layout id="card" row wrap>
       <v-flex 
         xs10 offset-xs1 
-        lg2 offset-lg5
-        sm4 offset-sm4
-        md4 offset-md4 >
+        sm6 offset-sm3
+        md6 offset-md3
+        lg4 offset-lg4
+        ll2 offset-ll5>
         <v-card color="blue-grey lighten-5">
           <v-card-title primary-title class="center">
             <div>
-              <h3 class="headline mb-0">Finança Pessoal</h3>
+              <h3 class="headline mb-0 text">Finança Pessoal</h3>
             </div>            
           </v-card-title>
           <v-form id="form" ref="form" v-model="valid" @keyup.native.enter="submit" lazy-validation>
@@ -57,8 +58,8 @@ export default {
       invisibility: true,      
       snackbar: false,
       user: {
-        email: 'teste@teste.com',
-        password: 'Abc123',
+        email: '',
+        password: '',
       },
       userRules: {
         emailRules: [
@@ -98,7 +99,7 @@ export default {
     display: flex;
     align-items: center;        
     background-color: #009688;  
-    background-image: url('../../../static/icon(copy).png');    
+    background-image: url('../../../static/icon.png');    
     background-position: 50% 85%;
     background-size: 15%;
   }
@@ -114,6 +115,18 @@ export default {
   .center {
     justify-content: center;
   } 
+
+  .text {
+    color: #009688;
+    font-weight: bold;
+  }
+
+  @media screen and (max-width: 800px)  {
+    #login { 
+      background-position: 50% 95%;
+      background-size: 40%;
+    }
+  }
 
   @media screen and (max-width: 600px)  {
     #login { 
