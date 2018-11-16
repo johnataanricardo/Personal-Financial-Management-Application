@@ -1,67 +1,61 @@
 <template>
   <div id="category">
-    <Menu/>
-    <v-toolbar flat color="white">
-      <v-toolbar-title>Categorias</v-toolbar-title>
-      <v-spacer></v-spacer>
-    </v-toolbar>
-    <v-data-table
-      :headers="headers"
-      :items="categories"
-      hide-actions
-      class="elevation-1"
-    >
-      <template slot="items" slot-scope="props">
-        <td class="text-xs-left">{{ props.item.name }}</td>
-        <td class="justify-center layout px-0">
-          <v-icon
-            small
-            class="mr-2"
-            @click="editItem(props.item)"
-          >
-            edit
-          </v-icon>
-          <v-icon
-            small
-            @click="deleteItem(props.item)"
-          >
-            delete
-          </v-icon>
-        </td>
-      </template>
-      <template slot="no-data">
-        <v-btn color="primary" @click="initialize">Reset</v-btn>
-      </template>
-    </v-data-table>
-    <v-dialog v-model="dialog" max-width="500px">
-        <v-btn slot="activator" color="pink" v-model="fab" dark fab fixed bottom right>
-          <v-icon>add</v-icon>
-        </v-btn>
-        <v-card>
-          <v-card-title>
-            <span class="headline">{{ formTitle }}</span>
-          </v-card-title>
-
-          <v-card-text>
-            <v-container grid-list-md>
-              <v-layout wrap>
-                <v-flex v-if=deleteMode xs12>
-                  <v-card-text>Tem certeza de que deseja deletar?</v-card-text>
-                </v-flex>
-                <v-flex v-else xs12 sm6 md4>
-                  <v-text-field v-model="editedItem.name" label="Nome"></v-text-field>
-                </v-flex>
-              </v-layout>
-            </v-container>
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" flat @click.native="close">Cancelar</v-btn>
-            <v-btn v-if=deleteMode color="blue darken-1" flat @click.native="confirm">Confirmar</v-btn>
-            <v-btn v-else color="blue darken-1" flat @click.native="save">Salvar</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
+    <Menu/>  
+    <!-- Table -->
+    <div style="padding: 1%">
+      <h2>Categorias</h2>
+      <v-data-table :headers="headers" :items="categories" class="elevation-1"
+        :rows-per-page-items="rowsPerPage" :rows-per-page-text="rowsPerPageText" :no-data-text="noDataText">
+        <template slot="items" slot-scope="props">
+          <td class="text-xs-left">{{ props.item.descricao }}</td>
+          <td class="justify-center layout px-0">
+            <v-icon small class="mr-2" @click="editItem(props.item)">
+              edit
+            </v-icon>
+            <v-icon small @click="deleteItem(props.item)">
+              delete
+            </v-icon>
+          </td>
+        </template>        
+      </v-data-table>
+    </div>
+    <!-- Dialog -->
+    <v-dialog v-model="dialog" max-width="300">
+      <v-btn slot="activator" color="pink" v-model="fab" dark fab fixed bottom right>
+        <v-icon>add</v-icon>
+      </v-btn>
+      <v-card>
+        <v-card-title>
+          <span class="headline">{{ formTitle }}</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container grid-list-md>
+            <v-layout wrap>
+              <v-flex v-if=deleteMode>
+                <v-card-text>Tem certeza de que deseja deletar?</v-card-text>
+              </v-flex>
+              <v-flex v-else>
+                <v-text-field color="teal" v-model="categoria.descricao" label="Nome"></v-text-field>
+              </v-flex>
+            </v-layout>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="teal darken-1" flat @click.native="close">Cancelar</v-btn>
+          <v-btn v-if=deleteMode color="teal darken-1" flat @click.native="confirm">Confirmar</v-btn>
+          <v-btn v-else color="teal darken-1" flat @click.native="save">Salvar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    <!-- SnackBar -->
+    <v-snackbar
+      :timeout="6000"
+      :bottom="true"
+      v-model="snackbar">
+        {{ snackbarText }}        
+      <v-btn flat color="teal" @click.native="snackbar = false">Fechar</v-btn>
+    </v-snackbar>
   </div>
 </template>
 
@@ -88,74 +82,119 @@ export default {
       ],
       categories: [],
       editedIndex: -1,
-      editedItem: {
-        name: '',
+      categoria: {
+        id: '',
+        descricao: ''
       },
       defaultItem: {
-        name: '',
-      }
+        descricao: '',
+      },
+      rowsPerPage: [5,10],
+      rowsPerPageText: 'Items por página',
+      noDataText: 'Desculpa, nenhum registro para ser apresentado!',
+      snackbar: '',
+      snackbarText: ''
     }),
-
     computed: {
       formTitle () {
         if (this.deleteMode === true) {
-          return 'Deletar'
+          return 'Deletar Categoria'
         }
-        return this.editedIndex === -1 ? 'Novo' : 'Editar'
+        return this.editedIndex === -1 ? 'Nova Categoria' : 'Editar Categoria'
       }
     },
-
     watch: {
       dialog (val) {
         val || this.close()
       }
     },
-
     created () {
       this.initialize()
     },
-
     methods: {
       initialize () {
-        this.categories = [
-          {name: 'Alimentação'},
-          {name: 'Transporte'},
-          {name: 'Escola'},
-          {name: 'Pets'}
-        ]
+        const token = 'Bearer ' + localStorage.getItem('token')
+        axios.get(api + '/categoria/', {
+          headers: {       
+            'Content-Type': 'application/json',
+            'Authorization': token
+          }
+        }).then(response => (      
+          this.categories = response.data.data
+        )).catch(function (error) {
+          console.log(error);
+        })
       },
-
       editItem (item) {
         this.editedIndex = this.categories.indexOf(item)
-        this.editedItem = Object.assign({}, item)
+        this.categoria = Object.assign({}, item)
         this.dialog = true
       },
-
       deleteItem (item) {
         this.deleteMode = !this.deleteMode
+        this.categoria = item
         this.editedIndex = this.categories.indexOf(item)
         this.dialog = true
       },
-
       close () {
         this.dialog = false
         setTimeout(() => {
           this.deleteMode = this.deleteMode === true? !this.deleteMode : this.deleteMode
-          this.editedItem = Object.assign({}, this.defaultItem)
+          this.categoria = Object.assign({}, this.defaultItem)
           this.editedIndex = -1
         }, 300)
       },
-
       confirm () {
-        this.categories.splice(this.editedIndex, 1)
+        const token = 'Bearer ' + localStorage.getItem('token');        
+        axios.delete(api + '/categoria/' + this.categoria.id, {
+          headers: {        
+            'Content-Type': 'application/json',
+            'Authorization': token
+          }
+        }).then(response => (
+          this.categories.splice(this.editedIndex, 1),
+          this.initSnackbar('Categoria deletada com sucesso!')
+        )).catch(function (error) {
+          console.log(error);
+          this.initSnackbar('Problema ao deletar!')
+        })
         this.close()
       },
-
+      initSnackbar(text) {
+        this.snackbarText = text
+        this.snackbar = true
+      },
       save () {
         if (this.editedIndex > -1) {
-          Object.assign(this.categories[this.editedIndex], this.editedItem)
+          const token = 'Bearer ' + localStorage.getItem('token');
+          const categoria = this.categoria
+          axios.put(api + '/categoria/' + categoria.id, JSON.stringify(categoria), {
+            headers: {        
+              'Content-Type': 'application/json',
+              'Authorization': token
+            }
+          }).then(response => (
+            Object.assign(this.categories[this.editedIndex], this.categoria),
+            this.initSnackbar('Categoria salva com sucesso!')
+          )).catch(function (error) {
+            console.log(error);
+            this.initSnackbar('Problema ao deletar!')
+          })
         } else {
-          this.categories.push(this.editedItem)
+          const token = 'Bearer ' + localStorage.getItem('token');
+          const categoria = JSON.stringify(this.categoria)
+          axios.post(api + '/categoria/', categoria, {
+            headers: {        
+              'Content-Type': 'application/json',
+              'Authorization': token
+            }
+          }).then(response => (    
+            this.categories.push(response.data.data),
+            this.initSnackbar('Categoria salva com sucesso!')
+          )).catch(function (error) {
+            console.log(error);
+            this.initSnackbar('Problema ao deletar!')
+          })
         }
         this.close()
       }
@@ -164,5 +203,12 @@ export default {
 </script>
 
 <style scoped>
+
+  h2 {
+    color: #009688;
+    align-items: flex-end;
+    margin: 10px;
+    font-size: 20pt;
+  }
 
 </style>
