@@ -1,6 +1,5 @@
 package com.fean.seufinanceiro.service;
 
-
 import com.fean.seufinanceiro.model.Categoria;
 import com.fean.seufinanceiro.repository.CategoriaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +22,9 @@ public class CategoriaService {
         return categoriaRepository.findById(id).get();
     }
 
-    public void novaCategoria(Categoria categoria){
+    public Categoria novaCategoria(Categoria categoria){
         categoriaRepository.save(categoria);
+        return categoria;
     }
 
     public void removeCategoria(Long id){

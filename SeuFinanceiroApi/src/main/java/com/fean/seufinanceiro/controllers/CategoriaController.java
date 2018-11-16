@@ -17,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -34,18 +35,22 @@ public class CategoriaController {
     private UsuarioService usuarioService;
 
     @GetMapping
-    public ResponseEntity<Response<List<Categoria>>> getCategorias(){
+    public ResponseEntity<Response<List<CategoriaDto>>> getCategorias(){
         LOGGER.info("Buscando todos dados de categoria...");
-        Response<List<Categoria>> response = new Response<>();
+        Response<List<CategoriaDto>> response = new Response<>();
         List<Categoria> categorias = categoriaService.showAll();
 
         if (categorias.isEmpty()){
             LOGGER.info("Nenhuma categoria foi encontrada...");
-            response.getErrors().add("Nenhuma categoria foi encontrada...");
-            return ResponseEntity.badRequest().body(response);
         }
 
-        response.setData(categorias);
+        List<CategoriaDto> categoriaDtos = new ArrayList<>();
+
+        for (Categoria categoria: categorias) {
+            categoriaDtos.add(convertCategoriaDto(categoria));
+        }
+
+        response.setData(categoriaDtos);
         return ResponseEntity.ok(response);
     }
 
@@ -67,12 +72,8 @@ public class CategoriaController {
 
 
     @PostMapping
-    public ResponseEntity<Response<String>> save(@Valid @RequestBody
-                                                 CategoriaDto categoriaDto,
-                                                 @AuthenticationPrincipal JwtUser jwtUser,
-                                                 BindingResult result) {
-
-        Response<String> response = new Response<>();
+    public ResponseEntity<Response<CategoriaDto>> save(@Valid @RequestBody CategoriaDto categoriaDto, @AuthenticationPrincipal JwtUser jwtUser, BindingResult result) {
+        Response<CategoriaDto> response = new Response<>();
 
         if (result.hasErrors()){
             result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
@@ -80,21 +81,15 @@ public class CategoriaController {
         }
 
         Optional<Usuario> usuario = usuarioService.findUsuarioById(jwtUser.getId());
-        categoriaService.novaCategoria(convertCategoria(categoriaDto, usuario.get()));
-        response.setData("Categoria salvo com sucesso!!!");
+        Categoria categoria = categoriaService.novaCategoria(convertCategoria(categoriaDto, usuario.get()));
+        response.setData(convertCategoriaDto(categoria));
 
         return ResponseEntity.ok(response);
     }
 
 
     @PutMapping("{id}")
-    public ResponseEntity<Response<String>> update(@PathVariable("id") Long id,
-                                                   @Valid @RequestBody CategoriaDto categoriaDto,
-                                                   @AuthenticationPrincipal JwtUser jwtUser,
-                                                   BindingResult result) {
-
-        categoriaDto.setId(String.valueOf(id));
-
+    public ResponseEntity<Response<String>> update(@Valid @RequestBody CategoriaDto categoriaDto, @AuthenticationPrincipal JwtUser jwtUser, BindingResult result) {
         LOGGER.info("Atualizando categoria: {}", categoriaDto.toString());
 
         Response<String> response = new Response<>();
@@ -129,13 +124,13 @@ public class CategoriaController {
     }
 
     private CategoriaDto convertCategoriaDto(Categoria categoria) {
-        return  new CategoriaDto(String.valueOf(categoria.getId()) ,categoria.getDescricao());
+        return new CategoriaDto(categoria.getId() ,categoria.getDescricao());
     }
 
     private Categoria convertCategoria(CategoriaDto categoriaDto, Usuario usuario) {
-        Categoria categoria ;
+        Categoria categoria;
         if(categoriaDto.getId() != null){
-            categoria =  categoriaService.showCategoriaById(Long.parseLong(categoriaDto.getId()));
+            categoria =  categoriaService.showCategoriaById(categoriaDto.getId());
         }else {
             categoria = new Categoria();
         }
@@ -143,4 +138,5 @@ public class CategoriaController {
         categoria.setUsuario(usuario);
         return categoria;
     }
+
 }

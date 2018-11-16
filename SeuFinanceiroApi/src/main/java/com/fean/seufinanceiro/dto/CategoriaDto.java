@@ -4,23 +4,23 @@ import javax.validation.constraints.NotEmpty;
 
 public class CategoriaDto {
 
-    private String id;
+    private Long id;
 
     @NotEmpty
     private String descricao;
 
     public CategoriaDto() {}
 
-    public CategoriaDto(String id, String descricao) {
+    public CategoriaDto(Long id, String descricao) {
         this.id = id;
         this.descricao = descricao;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
