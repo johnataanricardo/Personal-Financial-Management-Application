@@ -1,8 +1,10 @@
 <template>
-  <div class="form">    
+  <div class="form">   
+    <h1 v-if="!account">Seu Financeiro</h1>
     <v-layout row wrap>
       <v-flex>
-        <h3 class="headline mb-0">{{ title }}</h3>
+        <h3 class="headline mb-0" v-if="account">Conta</h3>
+        <h3 class="headline mb-0" v-else>Inscrever-se</h3>
       </v-flex>
     </v-layout>
     <v-form ref="form" v-model="valid" @keyup.native.enter="submit" lazy-validation>
@@ -13,7 +15,7 @@
         :append-icon="invisibility1 ? 'visibility' : 'visibility_off'"
         @click:append="() => (invisibility1 = !invisibility1)"
         :type="invisibility1 ? 'password' : 'text'"
-        :rules="passwordRules" 
+        :rules="account ? simplePasswordRules : passwordRules"
         color="red"
         label="Senha"
         required>
@@ -23,13 +25,16 @@
         :append-icon="invisibility2 ? 'visibility' : 'visibility_off'"
         @click:append="() => (invisibility2 = !invisibility2)"
         :type="invisibility2 ? 'password' : 'text'"
-        :rules="textFieldRule" 
+        :rules="account ? simplePasswordRules : passwordRules"
         color="red"
         label="Repita a Senha"
         required>
       </v-text-field>
       <v-btn :disabled="!valid" @click="submit">{{titleSaveButton}}</v-btn>
       <v-btn @click="clear" v-if="cleanButton">Limpar</v-btn>
+      <div style="margin-top: 10px;">
+        <span v-if="!account">Já possui cadastro ? <a class="button-text" @click="changeRoute('/')">Login</a></span>
+      </div>
       <v-snackbar
         :timeout="6000"
         :bottom="true"
@@ -45,7 +50,7 @@
 import axios from 'axios'
 export default {
   name: 'FormProfile',
-  props: ['title', 'emailDisabled', 'cleanButton', 'titleSaveButton'],
+  props: ['account', 'emailDisabled', 'cleanButton', 'titleSaveButton'],
   data: () => ({
     valid: true,
     invisibility1: true,
@@ -53,7 +58,7 @@ export default {
     snackbar: false,
     text: '',
     user: {
-      nome: 'teste',
+      nome: '',
       email: '',
       senha: '',
     },
@@ -65,6 +70,16 @@ export default {
     passwordRules: [
       v => !!v || 'Campo obrigatório!',
       v =>  /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])/.test(v) || 'A senha precisa ter uma no mínimo um número, uma letra maíscula e uma mínuscula.'
+    ],
+    simplePasswordRules:[
+       v => {
+        const pattern =  /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])/
+        if (v.length) {
+          return pattern.test(v) || 'A senha precisa ter uma no mínimo um número, uma letra maíscula e uma mínuscula.'
+        } else {
+          return true;
+        }
+      }
     ],
     textFieldRule: [
       v => !!v || 'Campo obrigatório!'
@@ -83,12 +98,20 @@ export default {
     },
     clear () {
       this.$refs.form.reset()
-    }  
+    },  
+    changeRoute (router) {
+      this.$router.push(router)
+    }
   }  
 }
 </script>
 
 <style scoped>
+
+  h1 {
+    color: #009688;
+    margin-bottom: 10px
+  }
 
   .title {
     padding: 1%;
@@ -106,11 +129,16 @@ export default {
     padding-right: 1%;
   }
 
+  .button-text {    
+    color: #009688;
+    cursor: pointer;
+  }
+
   @media screen and (max-width: 600px)  {
 
-  .form {
-    padding: 10% 20% 10% 20%;
-  }
+    .form {
+      padding: 10% 20% 10% 20%;
+    }
 
   }
 

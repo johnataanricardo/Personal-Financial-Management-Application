@@ -64,7 +64,7 @@ export default {
       drawer: null,
       company: "Finança Pessoal",
       user :{
-        name: 'Johnatan Ricardo Martins'
+        name: ''
       },
       itemsMenu: [
         { title: 'Início', page: '/home', icon: 'dashboard' },
@@ -76,18 +76,17 @@ export default {
     }
   },
   mounted () {
-    // const token = 'Bearer ' + localStorage.getItem('token');
-    // const fields = {fields: {'firstName': 1, 'lastName': 1, '_id': 0}}
-    // axios.get(api + '/user/' + JSON.stringify(fields), { 
-    //   headers: {        
-    //     'Content-Type': 'application/json',
-    //     'Authorization': token
-    //   }
-    // }).then(response => (      
-    //   this.user.name = response.data.firstName + " " + response.data.lastName
-    // )).catch(function (error) {
-    //   console.log(error);
-    // })
+    const token = 'Bearer ' + localStorage.getItem('token')
+    axios.get(api + '/user/', {
+      headers: {        
+        'Content-Type': 'application/json',
+        'Authorization': token
+      }
+    }).then(response => (      
+      this.user.name = response.data.data.nome
+    )).catch(function (error) {
+      console.log(error);
+    })
   },
   methods: {
     logOut () {    
