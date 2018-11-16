@@ -1,7 +1,5 @@
 package com.fean.seufinanceiro.dto;
 
-import com.fean.seufinanceiro.model.Movimentacao;
-
 import java.util.ArrayList;
 import java.util.List;
 
