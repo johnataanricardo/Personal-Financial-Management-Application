@@ -1,7 +1,5 @@
 package com.fean.seufinanceiro.dto;
 
-import com.fean.seufinanceiro.model.enums.Meses;
-
 public class FluxoDeCaixaMensalDto {
 
     private Integer month;

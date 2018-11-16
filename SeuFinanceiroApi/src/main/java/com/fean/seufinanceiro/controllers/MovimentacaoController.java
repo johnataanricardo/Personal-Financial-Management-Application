@@ -3,7 +3,6 @@ package com.fean.seufinanceiro.controllers;
 import com.fean.seufinanceiro.dto.MovimentacaoDto;
 import com.fean.seufinanceiro.model.Movimentacao;
 import com.fean.seufinanceiro.model.Usuario;
-import com.fean.seufinanceiro.model.enums.Meses;
 import com.fean.seufinanceiro.model.enums.TipoDespesa;
 import com.fean.seufinanceiro.responses.Response;
 import com.fean.seufinanceiro.security.JwtUser;
@@ -167,7 +166,7 @@ public class MovimentacaoController {
         movimentacao.setDescricao(movimentacaoDto.getDescricao());
         movimentacao.setValor(Double.parseDouble(movimentacaoDto.getValor()));
         movimentacao.setTipoDespesa(TipoDespesa.valueOf(movimentacaoDto.getTipoDespesa()));
-        movimentacao.setMes(Meses.valueOf(movimentacaoDto.getMes()));
+        movimentacao.setMes(Integer.parseInt(movimentacaoDto.getMes()));
         movimentacao.setAno(movimentacaoDto.getAno());
         return movimentacao;
 

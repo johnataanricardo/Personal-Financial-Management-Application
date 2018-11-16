@@ -55,10 +55,14 @@ public class HomeDto {
     }
 
     public Double getTotalSaida() {
+        if (this.totalSaida == null)
+            this.totalSaida = 0.0;
         return totalSaida;
     }
 
     public void setTotalSaida(Double totalSaida) {
+        if (this.totalEntrada == null)
+            this.totalEntrada = 0.0;
         this.totalSaida = totalSaida;
     }
 

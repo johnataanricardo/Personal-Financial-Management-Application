@@ -1,6 +1,5 @@
 package com.fean.seufinanceiro.model;
 
-import com.fean.seufinanceiro.model.enums.Meses;
 import com.fean.seufinanceiro.model.enums.TipoDespesa;
 
 import javax.persistence.*;
@@ -13,12 +12,12 @@ public class Movimentacao {
     private Double valor;
     private TipoDespesa tipoDespesa;
     private String ano;
-    private Meses mes;
+    private Integer mes;
     private Usuario usuario;
 
     public Movimentacao() { }
 
-    public Movimentacao(Long id, String descricao, Double valor, TipoDespesa tipoDespesa, String ano, Meses mes) {
+    public Movimentacao(Long id, String descricao, Double valor, TipoDespesa tipoDespesa, String ano, Integer mes) {
         this.id = id;
         this.descricao = descricao;
         this.valor = valor;
@@ -69,12 +68,11 @@ public class Movimentacao {
         this.ano = ano;
     }
 
-    @Enumerated(EnumType.STRING)
-    public Meses getMes() {
+    public Integer getMes() {
         return mes;
     }
 
-    public void setMes(Meses mes) {
+    public void setMes(Integer mes) {
         this.mes = mes;
     }
 

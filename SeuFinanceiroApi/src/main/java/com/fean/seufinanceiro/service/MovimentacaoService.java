@@ -3,7 +3,6 @@ package com.fean.seufinanceiro.service;
 import com.fean.seufinanceiro.dto.FluxoDeCaixaDto;
 import com.fean.seufinanceiro.dto.MovimentacaoDto;
 import com.fean.seufinanceiro.model.Movimentacao;
-import com.fean.seufinanceiro.model.enums.Meses;
 import com.fean.seufinanceiro.model.enums.TipoDespesa;
 import com.fean.seufinanceiro.repository.MovimentacaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +35,7 @@ public class MovimentacaoService {
 
 
     public List<Movimentacao> showAllDespesasByYearMonth(String year, String month, Long userId){
-        return  movimentacaoRepository.findByAnoAndMesAndUsuarioId(year, Meses.valueOf(month.toUpperCase()), userId);
+        return  movimentacaoRepository.findByAnoAndMesAndUsuarioId(year, Integer.parseInt(month), userId);
     }
 
     public Movimentacao findDespesaById(Long id){
