@@ -28,20 +28,25 @@ public class MovimentacaoController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MovimentacaoController.class);
 
-    @Autowired
     private MovimentacaoService movimentacaoService;
 
-    @Autowired
     private UsuarioService usuarioService;
 
-    @GetMapping
-    public ResponseEntity<Response<FluxoDeCaixaDto>> getMovimentacoes(){
+    @Autowired
+    public MovimentacaoController(MovimentacaoService movimentacaoService, UsuarioService usuarioService) {
+        this.movimentacaoService = movimentacaoService;
+        this.usuarioService = usuarioService;
+    }
 
-        LOGGER.info("Buscando todos dados de movimentações...");
+    @GetMapping
+    public ResponseEntity<Response<FluxoDeCaixaDto>> getMovimentacoes(@AuthenticationPrincipal JwtUser jwtUser){
+
+        LOGGER.info("Buscando todos os dados de movimentações do usuário ID: ", jwtUser.getId());
+
         Response<FluxoDeCaixaDto> response = new Response<>();
 
         FluxoDeCaixaDto fluxoDeCaixaDto = new FluxoDeCaixaDto();
-        fluxoDeCaixaDto.setMovimentacaos(movimentacaoService.showAllDespesas());
+        fluxoDeCaixaDto.setMovimentacaos(movimentacaoService.showAllMovimentacoesByUser(jwtUser.getId()));
         fluxoDeCaixaDto.setFluxoCaixa(String.valueOf(movimentacaoService.calcFluxoCaixa(fluxoDeCaixaDto)));
 
         if (fluxoDeCaixaDto.getMovimentacaos() == null){
@@ -55,11 +60,13 @@ public class MovimentacaoController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Response<MovimentacaoDto>> getMovimentacaoById(@PathVariable("id") Long id){
+    public ResponseEntity<Response<MovimentacaoDto>> getMovimentacaoById(@PathVariable("id") Long id,
+                                                                         @AuthenticationPrincipal JwtUser jwtUser){
 
         LOGGER.info("Buscando dados de movimentação pelo ID: ", id);
+
         Response<MovimentacaoDto> response = new Response<>();
-        Movimentacao movimentacao = movimentacaoService.findDespesaById(id);
+        Movimentacao movimentacao = movimentacaoService.showMovimentacaoByIdByUserId(id, jwtUser.getId());
 
         if (movimentacao == null){
             LOGGER.info("Movimentacao não encontrada pelo ID: ", id);
@@ -83,8 +90,7 @@ public class MovimentacaoController {
             return ResponseEntity.badRequest().body(response);
         }
 
-        Optional<Usuario> usuario = usuarioService.findUsuarioById(jwtUser.getId());
-        movimentacaoService.novoDespesa(convertDespesa(movimentacaoDto, usuario.get()));
+        movimentacaoService.novoDespesa(convertDespesa(movimentacaoDto, jwtUser));
         response.setData("Movimentacao salva com sucesso!!!");
 
         return ResponseEntity.ok(response);
@@ -109,21 +115,21 @@ public class MovimentacaoController {
             return ResponseEntity.badRequest().body(response);
         }
 
-        Optional<Usuario> usuario = usuarioService.findUsuarioById(jwtUser.getId());
-        this.movimentacaoService.novoDespesa(convertDespesa(movimentacaoDto, usuario.get()));
+        this.movimentacaoService.novoDespesa(convertDespesa(movimentacaoDto, jwtUser));
         response.setData("Movimentação atualizada com sucesso!!!");
 
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Response<String>> remove(@PathVariable("id") Long id){
+    public ResponseEntity<Response<String>> remove(@PathVariable("id") Long id,
+                                                   @AuthenticationPrincipal JwtUser jwtUser){
 
-        LOGGER.info("Removendo movimentação ID: {}", id);
+        LOGGER.info("Removendo movimentação ID:"+ id +" do usuário ID: {}", jwtUser.getId());
 
         Response<String> response = new Response<>();
 
-        Movimentacao movimentacao = this.movimentacaoService.findDespesaById(id);
+        Movimentacao movimentacao = this.movimentacaoService.showMovimentacaoByIdByUserId(id, jwtUser.getId());
 
         if (movimentacao == null){
             LOGGER.info("Erro ao remover devido a movimentação ID: {} ser inválido", id);
@@ -145,12 +151,14 @@ public class MovimentacaoController {
                                String.valueOf(movimentacao.getMes()));
     }
 
-    private Movimentacao convertDespesa(MovimentacaoDto movimentacaoDto, Usuario usuario) {
+    private Movimentacao convertDespesa(MovimentacaoDto movimentacaoDto, JwtUser jwtUser) {
         Movimentacao movimentacao;
         if(movimentacaoDto.getId() != null){
-            movimentacao = movimentacaoService.findDespesaById(Long.parseLong(movimentacaoDto.getId()));
+            movimentacao = movimentacaoService.showMovimentacaoByIdByUserId(Long.parseLong(movimentacaoDto.getId()), jwtUser.getId());
         }else {
             movimentacao = new Movimentacao();
+            Optional<Usuario> usuario = usuarioService.findUsuarioById(jwtUser.getId());
+            usuario.ifPresent(movimentacao::setUsuario);
         }
 
         movimentacao.setDescricao(movimentacaoDto.getDescricao());
@@ -158,8 +166,8 @@ public class MovimentacaoController {
         movimentacao.setTipoDespesa(TipoDespesa.valueOf(movimentacaoDto.getTipoDespesa()));
         movimentacao.setMes(Meses.valueOf(movimentacaoDto.getMes()));
         movimentacao.setAno(movimentacaoDto.getAno());
-        movimentacao.setUsuario(usuario);
         return movimentacao;
+
     }
 
 }

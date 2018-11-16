@@ -9,18 +9,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class MovimentacaoService {
 
-    @Autowired
     private MovimentacaoRepository movimentacaoRepository;
+
+    @Autowired
+    public MovimentacaoService(MovimentacaoRepository movimentacaoRepository) {
+        this.movimentacaoRepository = movimentacaoRepository;
+    }
 
 
     public List<Movimentacao> showAllDespesas(){
         return (List<Movimentacao>) movimentacaoRepository.findAll();
     }
+
+    public List<Movimentacao> showAllMovimentacoesByUser(Long id){
+        return movimentacaoRepository.findAllByUsuarioId(id);
+    }
+
+    public Movimentacao showMovimentacaoByIdByUserId(Long idMovimentacao, Long idUser){
+        return movimentacaoRepository.findByIdAndUsuarioId(idMovimentacao, idUser);
+    }
+
 
     public List<Movimentacao> showAllDespesasByYearMonth(String year, String month){
         return  movimentacaoRepository.findByAnoAndMes(year, Meses.valueOf(month.toUpperCase()));

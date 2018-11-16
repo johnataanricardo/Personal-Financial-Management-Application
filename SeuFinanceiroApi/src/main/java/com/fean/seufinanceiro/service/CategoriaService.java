@@ -1,19 +1,22 @@
 package com.fean.seufinanceiro.service;
 
-
 import com.fean.seufinanceiro.model.Categoria;
 import com.fean.seufinanceiro.repository.CategoriaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CategoriaService {
 
     @Autowired
     private CategoriaRepository categoriaRepository;
+
+    public CategoriaService(CategoriaRepository categoriaRepository) {
+        this.categoriaRepository = categoriaRepository;
+    }
+
 
     public List<Categoria> showAll(){
         return (List<Categoria>) categoriaRepository.findAll();
@@ -28,12 +31,12 @@ public class CategoriaService {
     }
 
     public Categoria showCategoriaByIdAndUserId(Long idCategoria, Long idUser){
-        return categoriaRepository.findByIdAndUsuarioId(idCategoria, idCategoria);
+        return categoriaRepository.findByIdAndUsuarioId(idCategoria, idUser);
     }
 
-
-    public void novaCategoria(Categoria categoria){
+    public Categoria novaCategoria(Categoria categoria){
         categoriaRepository.save(categoria);
+        return categoria;
     }
 
     public void removeCategoria(Long id){

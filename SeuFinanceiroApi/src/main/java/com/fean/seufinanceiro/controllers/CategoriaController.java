@@ -17,6 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,21 +39,25 @@ public class CategoriaController {
     }
 
     @GetMapping
-    public ResponseEntity<Response<List<Categoria>>> getCategorias(@AuthenticationPrincipal JwtUser jwtUser){
+    public ResponseEntity<Response<List<CategoriaDto>>> getCategorias(@AuthenticationPrincipal JwtUser jwtUser){
 
         LOGGER.info("Buscando todos dados de categoria do usuário ID: ", jwtUser.getId());
 
-        Response<List<Categoria>> response = new Response<>();
+        Response<List<CategoriaDto>> response = new Response<>();
 
         List<Categoria> categorias = categoriaService.showAllCategoryByUserId(jwtUser.getId());
 
         if (categorias.isEmpty()){
             LOGGER.info("Nenhuma categoria foi encontrada...");
-            response.getErrors().add("Nenhuma categoria foi encontrada...");
-            return ResponseEntity.badRequest().body(response);
         }
 
-        response.setData(categorias);
+        List<CategoriaDto> categoriaDtos = new ArrayList<>();
+
+        for (Categoria categoria: categorias) {
+            categoriaDtos.add(convertCategoriaDto(categoria));
+        }
+
+        response.setData(categoriaDtos);
         return ResponseEntity.ok(response);
     }
 
@@ -64,8 +69,8 @@ public class CategoriaController {
         Categoria categoria = categoriaService.showCategoriaByIdAndUserId(id, jwtUser.getId());
 
         if (categoria == null){
-            LOGGER.info("Categoria não encontrado pelo ID: ", id);
-            response.getErrors().add("Usuário não encontrado pelo ID: " + id);
+            LOGGER.info("Categoria não encontrada pelo ID: ", id);
+            response.getErrors().add("Categoria não encontrada pelo ID: " + id);
             return ResponseEntity.badRequest().body(response);
         }
 
@@ -74,55 +79,55 @@ public class CategoriaController {
     }
 
     @PostMapping
-    public ResponseEntity<Response<String>> save(@Valid @RequestBody
-                                                 CategoriaDto categoriaDto,
-                                                 @AuthenticationPrincipal JwtUser jwtUser,
-                                                 BindingResult result) {
+    public ResponseEntity<Response<CategoriaDto>> save(@Valid @RequestBody CategoriaDto categoriaDto,
+                                                       @AuthenticationPrincipal JwtUser jwtUser, BindingResult result) {
 
-        Response<String> response = new Response<>();
+        LOGGER.info("Salvando uma nova categoria para o usuário ID: ", jwtUser.getId());
+        Response<CategoriaDto> response = new Response<>();
 
         if (result.hasErrors()){
             result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
             return ResponseEntity.badRequest().body(response);
         }
 
-        Optional<Usuario> usuario = usuarioService.findUsuarioById(jwtUser.getId());
-        categoriaService.novaCategoria(convertCategoria(categoriaDto, usuario.get()));
-        response.setData("Categoria salvo com sucesso!!!");
+        Categoria categoria = categoriaService.novaCategoria(convertCategoria(categoriaDto,jwtUser));
+        response.setData(convertCategoriaDto(categoria));
 
         return ResponseEntity.ok(response);
     }
 
 
     @PutMapping("{id}")
-    public ResponseEntity<Response<String>> update(@PathVariable("id") Long id,
+    public ResponseEntity<Response<String>> update(@PathVariable("id") Long idCategoria,
                                                    @Valid @RequestBody CategoriaDto categoriaDto,
                                                    @AuthenticationPrincipal JwtUser jwtUser,
                                                    BindingResult result) {
 
-        categoriaDto.setId(String.valueOf(id));
-
         LOGGER.info("Atualizando categoria: {}", categoriaDto.toString());
+        categoriaDto.setId(idCategoria);
 
         Response<String> response = new Response<>();
         if (result.hasErrors()) {
-            LOGGER.error("Erro validando usuário: {}", result.getAllErrors());
+            LOGGER.error("Erro validando categoria: {}", result.getAllErrors());
             result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
             return ResponseEntity.badRequest().body(response);
         }
 
-        Optional<Usuario> usuario = usuarioService.findUsuarioById(jwtUser.getId());
-        this.categoriaService.novaCategoria(convertCategoria(categoriaDto, usuario.get()));
+        this.categoriaService.novaCategoria(convertCategoria(categoriaDto, jwtUser));
         response.setData("Categoria atualizada com sucesso!!!");
 
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Response<String>> remove(@PathVariable("id") Long id){
-        LOGGER.info("Removendo usuário ID: {}", id);
+    public ResponseEntity<Response<String>> remove(@PathVariable("id") Long id,
+                                                   @AuthenticationPrincipal JwtUser jwtUser){
+
+        LOGGER.info("Removendo categoria ID:"+ id +" do usuário ID: {}", jwtUser.getId());
+
         Response<String> response = new Response<>();
-        Categoria categoria = this.categoriaService.showCategoriaById(id);
+
+        Categoria categoria = this.categoriaService.showCategoriaByIdAndUserId(id, jwtUser.getId());
 
         if (categoria == null){
             LOGGER.info("Erro ao remover devido a categoria ID: {} ser inválido", id);
@@ -136,18 +141,20 @@ public class CategoriaController {
     }
 
     private CategoriaDto convertCategoriaDto(Categoria categoria) {
-        return  new CategoriaDto(String.valueOf(categoria.getId()) ,categoria.getDescricao());
+        return new CategoriaDto(categoria.getId() ,categoria.getDescricao());
     }
 
-    private Categoria convertCategoria(CategoriaDto categoriaDto, Usuario usuario) {
-        Categoria categoria ;
+    private Categoria convertCategoria(CategoriaDto categoriaDto,JwtUser jwtUser) {
+        Categoria categoria;
         if(categoriaDto.getId() != null){
-            categoria =  categoriaService.showCategoriaById(Long.parseLong(categoriaDto.getId()));
+            categoria = categoriaService.showCategoriaByIdAndUserId(categoriaDto.getId(), jwtUser.getId());
         }else {
             categoria = new Categoria();
+            Optional<Usuario> usuario = usuarioService.findUsuarioById(jwtUser.getId());
+            usuario.ifPresent(categoria::setUsuario);
         }
         categoria.setDescricao(categoriaDto.getDescricao());
-        categoria.setUsuario(usuario);
         return categoria;
     }
+
 }
