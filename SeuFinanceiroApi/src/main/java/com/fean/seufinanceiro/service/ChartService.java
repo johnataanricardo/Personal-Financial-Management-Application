@@ -30,7 +30,7 @@ public class ChartService {
         List<Meses> months = Arrays.asList(Meses.values());
 
         months.forEach( month ->{
-            FluxoDeCaixaMensalDto fluxoDeCaixaMensalDto = new FluxoDeCaixaMensalDto(month.name());
+            FluxoDeCaixaMensalDto fluxoDeCaixaMensalDto = new FluxoDeCaixaMensalDto(month.ordinal());
 
             List<Movimentacao> movimentacaos = movimentacaoService.showAllDespesasByYearMonth(year, month.name(), userId);
             movimentacaos.forEach( movimentacao -> {

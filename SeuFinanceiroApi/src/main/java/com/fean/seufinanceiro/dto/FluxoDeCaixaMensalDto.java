@@ -4,17 +4,17 @@ import com.fean.seufinanceiro.model.enums.Meses;
 
 public class FluxoDeCaixaMensalDto {
 
-    private String month;
+    private Integer month;
     private Double fluxoDeCaixa;
 
 
     public FluxoDeCaixaMensalDto() {}
 
-    public FluxoDeCaixaMensalDto(String month) {
+    public FluxoDeCaixaMensalDto(Integer month) {
         this.month = month;
     }
 
-    public String getMonth() {
+    public Integer getMonth() {
         return month;
     }
 
