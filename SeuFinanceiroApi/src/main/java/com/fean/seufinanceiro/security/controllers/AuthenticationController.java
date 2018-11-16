@@ -41,6 +41,12 @@ public class AuthenticationController {
 	@Autowired
 	private UserDetailsService userDetailsService;
 
+	public AuthenticationController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserDetailsService userDetailsService) {
+		this.authenticationManager = authenticationManager;
+		this.jwtTokenUtil = jwtTokenUtil;
+		this.userDetailsService = userDetailsService;
+	}
+
 	/**
 	 * Gera e retorna um novo token JWT.
 	 * 

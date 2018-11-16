@@ -5,14 +5,22 @@ import com.fean.seufinanceiro.dto.UsuarioDto;
 import com.fean.seufinanceiro.model.Usuario;
 import com.fean.seufinanceiro.responses.Response;
 import com.fean.seufinanceiro.security.JwtUser;
+import com.fean.seufinanceiro.security.dtos.TokenDto;
 import com.fean.seufinanceiro.security.enums.ProfileEnum;
+import com.fean.seufinanceiro.security.utils.JwtTokenUtil;
 import com.fean.seufinanceiro.service.UsuarioService;
 import com.fean.seufinanceiro.utils.PasswordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
@@ -28,12 +36,25 @@ public class UsuarioController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UsuarioController.class);
 
-    private final UsuarioService usuarioService;
+    @Autowired
+    private UsuarioService usuarioService;
 
     @Autowired
-    public UsuarioController(UsuarioService usuarioService) {
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
+    @Autowired
+    private UserDetailsService userDetailsService;
+
+    public UsuarioController(UsuarioService usuarioService, AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserDetailsService userDetailsService) {
         this.usuarioService = usuarioService;
+        this.authenticationManager = authenticationManager;
+        this.jwtTokenUtil = jwtTokenUtil;
+        this.userDetailsService = userDetailsService;
     }
+
 
     @GetMapping
     public ResponseEntity<Response<UsuarioDto>> getUsuario(@AuthenticationPrincipal JwtUser jwtUser) {
@@ -53,8 +74,8 @@ public class UsuarioController {
 
 
     @PostMapping("/sign-up")
-    public ResponseEntity<Response<String>> save(@Valid @RequestBody SignUpDto signUpDto, BindingResult result) {
-        Response<String> response = new Response<>();
+    public ResponseEntity<Response<TokenDto>> save(@Valid @RequestBody SignUpDto signUpDto, BindingResult result) {
+        Response<TokenDto> response = new Response<>();
 
         checkUsuarioSignUpData(signUpDto, result);
         if (result.hasErrors()) {
@@ -62,8 +83,12 @@ public class UsuarioController {
             return ResponseEntity.badRequest().body(response);
         }
 
-        usuarioService.newUser(convertUsuarioNovoDto(signUpDto));
-        response.setData("Usuário cadastrado com sucesso!");
+        Usuario usuario = usuarioService.newUser(convertUsuarioNovoDto(signUpDto));
+
+        UserDetails userDetails = userDetailsService.loadUserByUsername(usuario.getEmail());
+        String token = jwtTokenUtil.obtainToken(userDetails);
+
+        response.setData(new TokenDto(token));
 
         return ResponseEntity.ok(response);
     }

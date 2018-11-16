@@ -39,8 +39,8 @@ public class UsuarioService {
         return usuarioRepository.findById(id);
     }
 
-    public void newUser(Usuario usuario){
-        usuarioRepository.save(usuario);
+    public Usuario newUser(Usuario usuario){
+       return usuarioRepository.save(usuario);
     }
 
     public void removeUser(Long id){
