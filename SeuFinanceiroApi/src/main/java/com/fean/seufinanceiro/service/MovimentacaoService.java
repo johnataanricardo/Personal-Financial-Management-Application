@@ -1,6 +1,7 @@
 package com.fean.seufinanceiro.service;
 
 import com.fean.seufinanceiro.dto.FluxoDeCaixaDto;
+import com.fean.seufinanceiro.dto.MovimentacaoDto;
 import com.fean.seufinanceiro.model.Movimentacao;
 import com.fean.seufinanceiro.model.enums.Meses;
 import com.fean.seufinanceiro.model.enums.TipoDespesa;
@@ -55,11 +56,11 @@ public class MovimentacaoService {
         Double depSaida = 0.0;
         Double depEntrada = 0.0;
 
-        for (Movimentacao movimentacao : fluxoDeCaixaDto.getMovimentacaos()) {
-            if (movimentacao.getTipoDespesa().equals(TipoDespesa.ENTRADA)){
-                depEntrada +=  movimentacao.getValor();
+        for (MovimentacaoDto movimentacaoDto : fluxoDeCaixaDto.getMovimentacaos()) {
+            if (movimentacaoDto.getTipoDespesa().equals(TipoDespesa.ENTRADA)){
+                depEntrada +=  Double.parseDouble(movimentacaoDto.getValor());
             }else{
-                depSaida +=  movimentacao.getValor();
+                depSaida +=  Double.parseDouble(movimentacaoDto.getValor());
             }
         }
 

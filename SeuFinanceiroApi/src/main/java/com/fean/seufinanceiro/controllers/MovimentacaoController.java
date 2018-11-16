@@ -19,6 +19,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -39,23 +41,25 @@ public class MovimentacaoController {
     }
 
     @GetMapping
-    public ResponseEntity<Response<FluxoDeCaixaDto>> getMovimentacoes(@AuthenticationPrincipal JwtUser jwtUser){
+    public ResponseEntity<Response<List<MovimentacaoDto>>> getMovimentacoes(@AuthenticationPrincipal JwtUser jwtUser){
 
         LOGGER.info("Buscando todos os dados de movimentações do usuário ID: ", jwtUser.getId());
 
-        Response<FluxoDeCaixaDto> response = new Response<>();
+        Response<List<MovimentacaoDto>> response = new Response<>();
 
-        FluxoDeCaixaDto fluxoDeCaixaDto = new FluxoDeCaixaDto();
-        fluxoDeCaixaDto.setMovimentacaos(movimentacaoService.showAllMovimentacoesByUser(jwtUser.getId()));
-        fluxoDeCaixaDto.setFluxoCaixa(String.valueOf(movimentacaoService.calcFluxoCaixa(fluxoDeCaixaDto)));
+        List<MovimentacaoDto> movimentacaoesDto = new ArrayList<>();
 
-        if (fluxoDeCaixaDto.getMovimentacaos() == null){
+        movimentacaoService.showAllMovimentacoesByUser(jwtUser.getId()).forEach( movimentacao -> {
+            movimentacaoesDto.add(convertDespesaDto(movimentacao));
+        });
+
+        if (movimentacaoesDto.isEmpty()){
             LOGGER.info("Nenhum fluxo de caixia foi encontrado...");
             response.getErrors().add("Nenhum fluxo de caixa foi encontrado...");
             return ResponseEntity.badRequest().body(response);
         }
 
-        response.setData(fluxoDeCaixaDto);
+        response.setData(movimentacaoesDto);
         return ResponseEntity.ok(response);
     }
 
