@@ -1,16 +1,20 @@
 package com.fean.seufinanceiro.dto;
 
+import com.fean.seufinanceiro.model.Categoria;
+import com.fean.seufinanceiro.model.Movimentacao;
+import com.fean.seufinanceiro.security.enums.ProfileEnum;
+
 import javax.validation.constraints.NotEmpty;
+import java.util.List;
 
 public class UsuarioDto {
 
     private String id;
-
     @NotEmpty
     private String nome;
-
     @NotEmpty
     private String email;
+    private String senha;
 
     public UsuarioDto() {
     }
@@ -44,4 +48,13 @@ public class UsuarioDto {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
 }

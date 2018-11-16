@@ -48,7 +48,6 @@ public class UsuarioController {
 
     @PostMapping("/sign-up")
     public ResponseEntity<Response<String>> save(@Valid @RequestBody SignUpDto signUpDto, BindingResult result) {
-
         Response<String> response = new Response<>();
 
         checkUsuarioSignUpData(signUpDto, result);
@@ -64,16 +63,13 @@ public class UsuarioController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Response<String>> update(@PathVariable("id") Long id,
-                                                   @Valid @RequestBody UsuarioDto usuarioDto,
-                                                   BindingResult result) {
-
+    public ResponseEntity<Response<String>> update(@PathVariable("id") Long id, @Valid @RequestBody UsuarioDto usuarioDto, BindingResult result) {
         usuarioDto.setId(String.valueOf(id));
 
         LOGGER.info("Atualizando usuário: {}", usuarioDto.toString());
         Response<String> response = new Response<>();
 
-        checkUsuarioData(usuarioDto, result);
+        Usuario usuario = checkUsuarioData(usuarioDto, result);
 
         if (result.hasErrors()) {
             LOGGER.error("Erro validando usuário: {}", result.getAllErrors());
@@ -81,7 +77,7 @@ public class UsuarioController {
             return ResponseEntity.badRequest().body(response);
         }
 
-        this.usuarioService.newUser(convertUsuario(usuarioDto));
+        this.usuarioService.newUser(convertUsuario(usuario, usuarioDto));
         response.setData("Usuário atualizado com sucesso!!!");
 
         return ResponseEntity.ok(response);
@@ -104,26 +100,10 @@ public class UsuarioController {
         return ResponseEntity.ok(response);
     }
 
-    private UsuarioDto convertUsuarioDto(Usuario usuario) {
-        return new UsuarioDto(String.valueOf(usuario.getId()),
-                usuario.getNome(),
-                usuario.getEmail());
-    }
-
-    private Usuario convertUsuario(UsuarioDto usuarioDto) {
-        Usuario usuario = new Usuario();
-        usuario.setId(Long.parseLong(usuarioDto.getId()));
-        usuario.setNome(usuarioDto.getNome());
-        usuario.setEmail(usuarioDto.getEmail());
-        usuario.setPerfil(ProfileEnum.ROLE_USUARIO);
-        return usuario;
-    }
-
-    private void checkUsuarioData(UsuarioDto usuarioDto, BindingResult result) {
+    private Usuario checkUsuarioData(UsuarioDto usuarioDto, BindingResult result) {
         if (usuarioDto.getId() == null) {
             result.addError(new ObjectError("Usuário",
                     "ID do usuário não informado."));
-            return;
         }
 
         LOGGER.info("Validando Usuário ID {}: ", usuarioDto.getId());
@@ -133,6 +113,19 @@ public class UsuarioController {
         if (!usuario.isPresent()) {
             result.addError(new ObjectError("Usuário",
                     "Usuário não encontrado. ID inexistente."));
+        }
+
+        return usuario.get();
+    }
+
+    private void checkUsuarioSignUpData(SignUpDto signUpDto, BindingResult result) {
+        LOGGER.info("Validando Usuário ID {}: ", signUpDto.getEmail());
+        Optional<Usuario> usuario = this.usuarioService
+                .findUserByUsernameEmail(signUpDto.getEmail());
+
+        if (usuario.isPresent()) {
+            result.addError(new ObjectError("Usuário",
+                    "Usuário já cadastrado."));
         }
     }
 
@@ -145,16 +138,22 @@ public class UsuarioController {
         return usuario;
     }
 
-    private void checkUsuarioSignUpData(SignUpDto signUpDto, BindingResult result) {
 
-        LOGGER.info("Validando Usuário ID {}: ", signUpDto.getEmail());
-        Optional<Usuario> usuario = this.usuarioService
-                .findUserByUsernameEmail(signUpDto.getEmail());
+    private UsuarioDto convertUsuarioDto(Usuario usuario) {
+        return new UsuarioDto(String.valueOf(usuario.getId()),
+                usuario.getNome(),
+                usuario.getEmail());
+    }
 
-        if (usuario.isPresent()) {
-            result.addError(new ObjectError("Usuário",
-                    "Usuário já cadastrado."));
+    private Usuario convertUsuario(Usuario usuario, UsuarioDto usuarioDto) {
+        usuario.setId(usuario.getId());
+        usuario.setNome(usuarioDto.getNome());
+        usuario.setEmail(usuarioDto.getEmail());
+        usuario.setPerfil(ProfileEnum.ROLE_USUARIO);
+        if (!usuarioDto.getSenha().isEmpty()) {
+            usuario.setSenha(PasswordUtils.generateBCrypt(usuarioDto.getSenha()));
         }
+        return usuario;
     }
 
 }

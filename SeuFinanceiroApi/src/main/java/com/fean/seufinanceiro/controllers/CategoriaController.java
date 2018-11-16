@@ -34,7 +34,7 @@ public class CategoriaController {
     private UsuarioService usuarioService;
 
     @GetMapping
-    public ResponseEntity<Response<List<Categoria>>> getUsuarios(){
+    public ResponseEntity<Response<List<Categoria>>> getCategorias(){
         LOGGER.info("Buscando todos dados de categoria...");
         Response<List<Categoria>> response = new Response<>();
         List<Categoria> categorias = categoriaService.showAll();
@@ -50,7 +50,7 @@ public class CategoriaController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Response<CategoriaDto>> getUsuarioById(@PathVariable("id") Long id){
+    public ResponseEntity<Response<CategoriaDto>> getCategoriaById(@PathVariable("id") Long id){
         LOGGER.info("Buscando dados de categoria pelo ID: ", id);
         Response<CategoriaDto> response = new Response<>();
         Categoria categoria = categoriaService.showCategoriaById(id);

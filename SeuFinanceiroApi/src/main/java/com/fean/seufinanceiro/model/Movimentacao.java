@@ -16,7 +16,6 @@ public class Movimentacao {
     private Meses mes;
     private Usuario usuario;
 
-
     public Movimentacao() { }
 
     public Movimentacao(Long id, String descricao, Double valor, TipoDespesa tipoDespesa, String ano, Meses mes) {
