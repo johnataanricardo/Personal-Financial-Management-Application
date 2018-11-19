@@ -10,7 +10,7 @@
         </v-avatar>
         <v-list>
           <v-list-tile>
-            <v-list-tile-title @click="logOut">Sair</v-list-tile-title>
+            <v-list-tile-title @click="logOut" style="cursor: pointer;">Sair</v-list-tile-title>
           </v-list-tile>
         </v-list>
       </v-menu>
@@ -62,7 +62,7 @@ export default {
   data () {
     return {
       drawer: null,
-      company: "Finança Pessoal",
+      company: "Seu Financeiro",
       user :{
         name: ''
       },

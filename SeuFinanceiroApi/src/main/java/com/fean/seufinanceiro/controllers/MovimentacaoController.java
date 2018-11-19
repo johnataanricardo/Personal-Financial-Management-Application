@@ -1,11 +1,13 @@
 package com.fean.seufinanceiro.controllers;
 
 import com.fean.seufinanceiro.dto.MovimentacaoDto;
+import com.fean.seufinanceiro.model.Categoria;
 import com.fean.seufinanceiro.model.Movimentacao;
 import com.fean.seufinanceiro.model.Usuario;
 import com.fean.seufinanceiro.model.enums.TipoDespesa;
 import com.fean.seufinanceiro.responses.Response;
 import com.fean.seufinanceiro.security.JwtUser;
+import com.fean.seufinanceiro.service.CategoriaService;
 import com.fean.seufinanceiro.service.MovimentacaoService;
 import com.fean.seufinanceiro.service.UsuarioService;
 import org.slf4j.Logger;
@@ -16,6 +18,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,10 +35,13 @@ public class MovimentacaoController {
 
     private UsuarioService usuarioService;
 
+    private CategoriaService categoriaService;
+
     @Autowired
-    public MovimentacaoController(MovimentacaoService movimentacaoService, UsuarioService usuarioService) {
+    public MovimentacaoController(MovimentacaoService movimentacaoService, UsuarioService usuarioService, CategoriaService categoriaService) {
         this.movimentacaoService = movimentacaoService;
         this.usuarioService = usuarioService;
+        this.categoriaService = categoriaService;
     }
 
     @GetMapping
@@ -53,8 +59,6 @@ public class MovimentacaoController {
 
         if (movimentacaoesDto.isEmpty()){
             LOGGER.info("Nenhum fluxo de caixia foi encontrado...");
-            response.getErrors().add("Nenhum fluxo de caixa foi encontrado...");
-            return ResponseEntity.badRequest().body(response);
         }
 
         response.setData(movimentacaoesDto);
@@ -146,6 +150,8 @@ public class MovimentacaoController {
 
     private MovimentacaoDto convertMovimentacaoDto(Movimentacao movimentacao) {
         return  new MovimentacaoDto(String.valueOf(movimentacao.getId()),
+                               String.valueOf(movimentacao.getCategoria() != null ? movimentacao.getCategoria().getId() : ""),
+                               movimentacao.getCategoria() != null ? movimentacao.getCategoria().getDescricao() : "",
                                movimentacao.getDescricao(),
                                String.valueOf(movimentacao.getValor()),
                                String.valueOf(movimentacao.getTipoDespesa()),
@@ -164,10 +170,16 @@ public class MovimentacaoController {
         }
 
         movimentacao.setDescricao(movimentacaoDto.getDescricao());
-        movimentacao.setValor(Double.parseDouble(movimentacaoDto.getValor()));
+        movimentacao.setValor(Double.valueOf(movimentacaoDto.getValor()));
         movimentacao.setTipoDespesa(TipoDespesa.valueOf(movimentacaoDto.getTipoDespesa()));
         movimentacao.setMes(Integer.parseInt(movimentacaoDto.getMes()));
         movimentacao.setAno(movimentacaoDto.getAno());
+        if (movimentacaoDto.getIdCategoria() != null) {
+            Categoria categoria = categoriaService.showCategoriaById(Long.valueOf(movimentacaoDto.getIdCategoria()));
+            if (categoria != null) {
+                movimentacao.setCategoria(categoria);
+            }
+        }
         return movimentacao;
 
     }

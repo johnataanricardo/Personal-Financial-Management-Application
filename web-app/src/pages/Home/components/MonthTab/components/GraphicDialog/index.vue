@@ -5,7 +5,7 @@
         <v-card-title>
           <span class="headline">Fluxo de Caixa</span>
         </v-card-title>
-        <GraphicBar :label="label" :labels="labels" :data="data"/>
+        <GraphicBar ref="graphic" :label="label" :labels="labels"/>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="teal" flat @click.native="showDialog = false">Fechar</v-btn>
@@ -28,13 +28,17 @@ export default {
       showDialog: false,
       label: null,
       labels: null,
-      data: null
     }
   },
-  created() {    
-    this.label = 'Fluxo de Caixa',
-    this.labels = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
-    this.data = [1829.66, 1829.66, 1829.66, 1829.66, 1829.66, 1829.66, 1829.66, 1829.66, 1829.66, 1829.66, 1829.66, 1829.66]
+  mounted() {    
+    this.fillData([])
+  },
+  methods: {
+    fillData(data) {
+      this.label = 'Fluxo de Caixa'
+      this.labels = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
+      this.$refs.graphic.fillData(data)
+    }
   }
 }
 </script>
@@ -43,10 +47,6 @@ export default {
 
   #graphicDialog {
     padding: 5%;
-  }
-
-  @media screen and (max-width: 600px)  {
-
   }
 
 </style>

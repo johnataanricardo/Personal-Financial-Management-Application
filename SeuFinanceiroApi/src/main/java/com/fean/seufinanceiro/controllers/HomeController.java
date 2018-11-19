@@ -39,8 +39,6 @@ public class HomeController {
 
         if (homeDto == null ||  (homeDto.getEntrada() == null && homeDto.getSaida() == null)){
             LOGGER.info("Nenhuma movimentação foi encontrada...");
-            response.getErrors().add("Nenhuma movimentação foi encontrada...");
-            return ResponseEntity.badRequest().body(response);
         }
 
         response.setData(homeDto);
