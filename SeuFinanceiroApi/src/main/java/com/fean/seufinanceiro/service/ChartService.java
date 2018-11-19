@@ -3,6 +3,7 @@ package com.fean.seufinanceiro.service;
 import com.fean.seufinanceiro.dto.ChartDto;
 import com.fean.seufinanceiro.dto.FluxoDeCaixaMensalDto;
 import com.fean.seufinanceiro.model.Movimentacao;
+import com.fean.seufinanceiro.model.enums.TipoDespesa;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +30,14 @@ public class ChartService {
 
             List<Movimentacao> movimentacaos = movimentacaoService.showAllDespesasByYearMonth(year, String.valueOf(month), userId);
             movimentacaos.forEach( movimentacao -> {
-                fluxoDeCaixaMensalDto.setFluxoDeCaixa(fluxoDeCaixaMensalDto.getFluxoDeCaixa() + movimentacao.getValor());
+                if( movimentacao.getTipoDespesa().equals(TipoDespesa.ENTRADA)){
+                    fluxoDeCaixaMensalDto.setFluxoDeCaixa(fluxoDeCaixaMensalDto.getFluxoDeCaixa() + movimentacao.getValor());
+                    //        entrada =+ movimentacao.getValor();
+                }else {
+                    fluxoDeCaixaMensalDto.setFluxoDeCaixa(fluxoDeCaixaMensalDto.getFluxoDeCaixa() - movimentacao.getValor());
+                    //        saida   =+ movimentacao.getValor();
+                }
+                //fluxoDeCaixaMensalDto.setFluxoDeCaixa(fluxoDeCaixaMensalDto.getFluxoDeCaixa() + movimentacao.getValor());
             });
 
             fluxoDeCaixaMensalDtos.add(fluxoDeCaixaMensalDto);
