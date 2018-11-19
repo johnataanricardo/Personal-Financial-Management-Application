@@ -41,7 +41,9 @@ public class HomeService {
     }
 
     private MovimentacaoDto convertMovimentacaoDto(Movimentacao movimentacao) {
-        return  new MovimentacaoDto(String.valueOf(movimentacao.getId()),
+        return new MovimentacaoDto(String.valueOf(movimentacao.getId()),
+                String.valueOf(movimentacao.getCategoria() != null ? movimentacao.getCategoria().getId() : ""),
+                movimentacao.getCategoria() != null ? movimentacao.getCategoria().getDescricao() : "",
                 movimentacao.getDescricao(),
                 String.valueOf(movimentacao.getValor()),
                 String.valueOf(movimentacao.getTipoDespesa()),

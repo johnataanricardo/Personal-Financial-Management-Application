@@ -1,6 +1,13 @@
 <template>
   <div class="form">   
-    <h1 v-if="!account">Seu Financeiro</h1>
+    <div v-if="!account">
+      <div style="padding: 10px">
+        <img src="static/icon.png" alt="BillBox" height="80">
+      </div>
+      <div>
+        <h1>Seu Financeiro</h1>
+      </div>              
+    </div>    
     <v-layout row wrap>
       <v-flex>
         <h3 class="headline mb-0" v-if="account">Conta</h3>
@@ -30,8 +37,8 @@
         label="Repita a Senha"
         required>
       </v-text-field>
-      <v-btn :disabled="!valid" @click="submit">{{titleSaveButton}}</v-btn>
-      <v-btn @click="clear" v-if="cleanButton">Limpar</v-btn>
+      <v-btn class="bold-text" :disabled="!valid" @click="submit">{{titleSaveButton}}</v-btn>
+      <v-btn class="bold-text" @click="clear" v-if="cleanButton">Limpar</v-btn>
       <div style="margin-top: 10px;">
         <span v-if="!account">Já possui cadastro ? <a class="button-text" @click="changeRoute('/')">Login</a></span>
       </div>
@@ -40,7 +47,7 @@
         :bottom="true"
         v-model="snackbar">
           {{ text }}        
-        <v-btn flat color="red" @click.native="snackbar = false">Close</v-btn>
+        <v-btn flat color="teal" @click.native="snackbar = false">Fechar</v-btn>
       </v-snackbar>
     </v-form>
   </div>
@@ -132,6 +139,10 @@ export default {
   .button-text {    
     color: #009688;
     cursor: pointer;
+  }
+
+  .bold-text {
+    font-weight: bold;
   }
 
   @media screen and (max-width: 600px)  {
