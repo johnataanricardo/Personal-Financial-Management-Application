@@ -15,7 +15,7 @@ const router = new Router({
   mode: 'history',
   routes: [
     {
-      path: '/',
+      path: '/login',
       name: 'Login',
       component: Login,
       beforeEnter(to, from, next) {
@@ -30,7 +30,7 @@ const router = new Router({
               return next({ path: '/home'});   
             } else {
               delete localStorage.token
-              return next({path: '/'});    
+              return next({path: '/login'});    
             }
           }).catch(function(error) {
             throw error
@@ -79,13 +79,13 @@ router.beforeEach((to, from, next) => {
           return next();
         } else {
           delete localStorage.token
-          return next({path: '/'});   
+          return next({path: '/login'});   
         }
       }).catch(function(error){
         throw error
       });
     } else {
-      return next({path: '/'});   
+      return next({path: '/login'});   
     }
   } else {
     return next();

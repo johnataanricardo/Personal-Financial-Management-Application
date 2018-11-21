@@ -70,7 +70,7 @@ export default {
     return {
       direction: 'top',
       fab: false,      
-      hover: false,            
+      hover: true,            
       right: true,
       bottom: true,
       transition: 'slide-y-reverse-transition',
@@ -125,11 +125,11 @@ export default {
       if (data != null) {
         const items = []
         const itemsEntrada = {
-          name: 'Entradas: ' + data.totalEntrada,
+          name: 'Entradas R$: ' + data.totalEntrada,
           registers: data.entrada
         }
         const itemsSaida = {
-          name: 'Saídas:' + data.totalSaida,
+          name: 'Saídas R$:' + data.totalSaida,
           registers: data.saida
         }
         items.push(itemsEntrada)

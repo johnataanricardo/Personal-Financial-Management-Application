@@ -4,7 +4,7 @@
       <v-data-iterator v-if="items.length > 0" :items="items" :rows-per-page-items="rowsPerPageItems"
         :pagination.sync="pagination" content-tag="v-layout" hide-actions row wrap>
         <v-flex slot="item" slot-scope="props" xs12 sm12 md12 lg12>
-          <v-card>
+          <v-card v-if="props.item.registers.length !== 0 ">
             <v-card-title class="subheading font-weight-bold">{{ props.item.name }}</v-card-title>
             <v-divider></v-divider>
             <v-list dense>
@@ -21,7 +21,7 @@
         </v-toolbar>
       </v-data-iterator>
       <div v-else>
-        Sem registros
+        <img class="image" src="../../../../../../../static/empty.png" >
       </div>
     </v-container>
   </div>
@@ -36,7 +36,23 @@ export default {
       rowsPerPage: 4
     },
     items: [],
-    flow: '' //Fluxo de Caixa: R$: 1829,66
+    flow: ''
   })
 }
 </script>
+
+<style scoped>
+
+  .image {
+    width: 25%;
+    margin-top: 5%;
+  }
+
+  @media screen and (max-width: 800px)  {
+    .image { 
+      width: 65%;
+      margin-top: 10%;
+    }
+  }
+
+</style>
