@@ -70,7 +70,7 @@ export default {
     return {
       direction: 'top',
       fab: false,      
-      hover: true,            
+      hover: false,            
       right: true,
       bottom: true,
       transition: 'slide-y-reverse-transition',
@@ -226,7 +226,7 @@ export default {
 <style scoped>
 
   .v-speed-dial {
-    position: absolute;
+    position: fixed;
   }
 
   .v-btn--floating {

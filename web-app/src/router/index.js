@@ -5,6 +5,7 @@ import Account from '@/pages/Account';
 import Home from '@/pages/Home/';
 import Login from '@/pages/Login/';
 import SignUp from '@/pages/SignUp';
+import Welcome from '@/pages/Welcome';
 import Category from '@/pages/Registers/Category';
 
 const api = process.env.API_URL;
@@ -14,6 +15,11 @@ Vue.use(Router)
 const router = new Router({
   mode: 'history',
   routes: [
+    {
+      path: '/',
+      name: 'Welcome',
+      component: Welcome
+    },
     {
       path: '/login',
       name: 'Login',

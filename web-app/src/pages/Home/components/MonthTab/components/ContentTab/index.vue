@@ -8,9 +8,12 @@
             <v-card-title class="subheading font-weight-bold">{{ props.item.name }}</v-card-title>
             <v-divider></v-divider>
             <v-list dense>
-              <v-list-tile v-for="register in props.item.registers" :key="register.id">
-                <v-list-tile-content>{{register.nomeCategoria}}</v-list-tile-content>
-                <v-list-tile-content>{{register.descricao}}</v-list-tile-content>
+              <v-list-tile v-for="register in props.item.registers" :key="register.id" xs12>
+                <v-list-tile-content>
+                  {{register.nomeCategoria ? 
+                    register.nomeCategoria + ': ' + (register.descricao ? register.descricao : 'sem descrição') : 
+                    'Sem Categoria' + ': ' + (register.descricao ? register.descricao : 'sem descrição')}}
+                </v-list-tile-content>
                 <v-list-tile-content class="align-end">R$: {{ register.valor }}</v-list-tile-content>
               </v-list-tile>              
             </v-list>
@@ -44,7 +47,7 @@ export default {
 <style scoped>
 
   .image {
-    width: 25%;
+    width: 20%;
     margin-top: 5%;
   }
 

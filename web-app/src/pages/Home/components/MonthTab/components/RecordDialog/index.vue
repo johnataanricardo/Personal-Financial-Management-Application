@@ -41,7 +41,7 @@ export default {
       mes: '',
       money: {
         decimal: '.',
-        thousands: '', // ajustar máscara monetária
+        thousands: '',
         suffix: '',
         precision: 2,
       },

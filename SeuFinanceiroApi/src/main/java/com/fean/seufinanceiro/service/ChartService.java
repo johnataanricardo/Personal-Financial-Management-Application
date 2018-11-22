@@ -4,9 +4,12 @@ import com.fean.seufinanceiro.dto.ChartDto;
 import com.fean.seufinanceiro.dto.FluxoDeCaixaMensalDto;
 import com.fean.seufinanceiro.model.Movimentacao;
 import com.fean.seufinanceiro.model.enums.TipoDespesa;
+import com.fean.seufinanceiro.utils.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,13 +34,10 @@ public class ChartService {
             List<Movimentacao> movimentacaos = movimentacaoService.showAllDespesasByYearMonth(year, String.valueOf(month), userId);
             movimentacaos.forEach( movimentacao -> {
                 if( movimentacao.getTipoDespesa().equals(TipoDespesa.ENTRADA)){
-                    fluxoDeCaixaMensalDto.setFluxoDeCaixa(fluxoDeCaixaMensalDto.getFluxoDeCaixa() + movimentacao.getValor());
-                    //        entrada =+ movimentacao.getValor();
+                    fluxoDeCaixaMensalDto.setFluxoDeCaixa(NumberUtils.formatDouble(fluxoDeCaixaMensalDto.getFluxoDeCaixa() + movimentacao.getValor()));
                 }else {
-                    fluxoDeCaixaMensalDto.setFluxoDeCaixa(fluxoDeCaixaMensalDto.getFluxoDeCaixa() - movimentacao.getValor());
-                    //        saida   =+ movimentacao.getValor();
+                    fluxoDeCaixaMensalDto.setFluxoDeCaixa(NumberUtils.formatDouble(fluxoDeCaixaMensalDto.getFluxoDeCaixa() - movimentacao.getValor()));
                 }
-                //fluxoDeCaixaMensalDto.setFluxoDeCaixa(fluxoDeCaixaMensalDto.getFluxoDeCaixa() + movimentacao.getValor());
             });
 
             fluxoDeCaixaMensalDtos.add(fluxoDeCaixaMensalDto);
@@ -46,4 +46,5 @@ public class ChartService {
         chartDto.getFluxoDeCaixaMensalDtos().addAll(fluxoDeCaixaMensalDtos);
         return chartDto;
     }
+
 }
