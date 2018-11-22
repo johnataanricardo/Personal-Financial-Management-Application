@@ -14,6 +14,7 @@ public class Movimentacao {
     private String ano;
     private Integer mes;
     private Usuario usuario;
+    private Categoria categoria;
 
     public Movimentacao() { }
 
@@ -84,4 +85,14 @@ public class Movimentacao {
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
     }
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    public Categoria getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(Categoria categoria) {
+        this.categoria = categoria;
+    }
+
 }

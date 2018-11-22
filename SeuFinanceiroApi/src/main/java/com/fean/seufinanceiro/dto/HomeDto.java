@@ -11,7 +11,6 @@ public class HomeDto {
     private Double totalSaida;
     private Double fluxoCaixa;
 
-
     public HomeDto() { }
 
     public HomeDto(List<MovimentacaoDto> entrada, List<MovimentacaoDto> saida, Double totalEntrada, Double totalSaida, Double fluxoCaixa) {

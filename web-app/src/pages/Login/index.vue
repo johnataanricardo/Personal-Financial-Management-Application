@@ -10,14 +10,14 @@
         <v-card color="blue-grey lighten-5">
           <v-card-title primary-title class="center">
             <div>
-              <h3 class="headline mb-0 text">Finança Pessoal</h3>
+              <h3 class="headline mb-0 text">Seu Financeiro</h3>
             </div>            
           </v-card-title>
           <v-form id="form" ref="form" v-model="valid" @keyup.native.enter="submit" lazy-validation>
             <v-text-field
               v-model="user.email"
               :rules="userRules.emailRules"
-              color="red"
+              color="teal"
               label="E-mail"
               required>
             </v-text-field>
@@ -27,21 +27,21 @@
               @click:append="() => (invisibility = !invisibility)"
               :type="invisibility ? 'password' : 'text'"
               :rules="userRules.passwordRule"
-              color="red"
+              color="teal"
               label="Senha"
               required>
             </v-text-field>
           </v-form>
           <v-card-actions class="center">
-            <v-btn color="blue-grey lighten-5" @click="submit" class="black--text">Entrar</v-btn>
-            <v-btn color="blue-grey lighten-5" :to="signUpAction" class="black--text">Inscrever-se</v-btn>
+            <v-btn color="blue-grey lighten-5" @click="submit" class="black--text bold-text">Entrar</v-btn>
+            <v-btn color="blue-grey lighten-5" :to="signUpAction" class="black--text bold-text">Inscrever-se</v-btn>
           </v-card-actions>
           <v-snackbar
             :timeout="6000"
             :bottom="true"
             v-model="snackbar">
               Usuário ou senha incorretos!
-            <v-btn flat color="red" @click.native="snackbar = false">Close</v-btn>
+            <v-btn flat color="red" @click.native="snackbar = false">Fechar</v-btn>
           </v-snackbar>
         </v-card>
       </v-flex>
@@ -118,6 +118,10 @@ export default {
 
   .text {
     color: #009688;
+    font-weight: bold;
+  }
+
+  .bold-text {
     font-weight: bold;
   }
 

@@ -72,7 +72,6 @@ public class UsuarioController {
         return ResponseEntity.ok(response);
     }
 
-
     @PostMapping("/sign-up")
     public ResponseEntity<Response<TokenDto>> save(@Valid @RequestBody SignUpDto signUpDto, BindingResult result) {
         Response<TokenDto> response = new Response<>();

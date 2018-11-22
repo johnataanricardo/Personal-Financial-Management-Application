@@ -31,18 +31,16 @@ export default {
           'Content-Type': 'application/json',
         },
       }).then(response => (
-        console.log(response.data)
-        // localStorage.token = response.data.token == null ? '' : response.data.token
+        localStorage.token = response.data.data.token == null ? '' : response.data.data.token,
+        setTimeout(function() {
+          if (localStorage.token) {
+            router.push('/home')
+          }
+        }, 100)
       )).catch(function (error) {
           form.text = 'Email informado já está em uso.'
           form.snackbar = true
-      })
-
-      // setTimeout(function() {
-      //   if (localStorage.token) {
-      //     router.push('/home')
-      //   }
-      // }, 100);
+      })      
     },
   }
 }

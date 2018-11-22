@@ -4,6 +4,7 @@ import com.fean.seufinanceiro.dto.HomeDto;
 import com.fean.seufinanceiro.dto.MovimentacaoDto;
 import com.fean.seufinanceiro.model.Movimentacao;
 import com.fean.seufinanceiro.model.enums.TipoDespesa;
+import com.fean.seufinanceiro.utils.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -36,12 +37,14 @@ public class HomeService {
             }
         });
 
-        homeDto.setFluxoCaixa(homeDto.getTotalEntrada() - homeDto.getTotalSaida());
+        homeDto.setFluxoCaixa(NumberUtils.formatDouble(homeDto.getTotalEntrada() - homeDto.getTotalSaida()));
         return homeDto;
     }
 
     private MovimentacaoDto convertMovimentacaoDto(Movimentacao movimentacao) {
-        return  new MovimentacaoDto(String.valueOf(movimentacao.getId()),
+        return new MovimentacaoDto(String.valueOf(movimentacao.getId()),
+                String.valueOf(movimentacao.getCategoria() != null ? movimentacao.getCategoria().getId() : ""),
+                movimentacao.getCategoria() != null ? movimentacao.getCategoria().getDescricao() : "",
                 movimentacao.getDescricao(),
                 String.valueOf(movimentacao.getValor()),
                 String.valueOf(movimentacao.getTipoDespesa()),

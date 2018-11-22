@@ -5,7 +5,6 @@ public class FluxoDeCaixaMensalDto {
     private Integer month;
     private Double fluxoDeCaixa;
 
-
     public FluxoDeCaixaMensalDto() {}
 
     public FluxoDeCaixaMensalDto(Integer month) {

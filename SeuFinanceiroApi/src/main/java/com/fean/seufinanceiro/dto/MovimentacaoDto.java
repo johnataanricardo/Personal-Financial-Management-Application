@@ -3,6 +3,8 @@ package com.fean.seufinanceiro.dto;
 public class MovimentacaoDto {
 
     private String id;
+    private String idCategoria;
+    private String nomeCategoria;
     private String descricao;
     private String valor;
     private String tipoDespesa;
@@ -11,8 +13,10 @@ public class MovimentacaoDto {
 
     public MovimentacaoDto() {}
 
-    public MovimentacaoDto(String id, String descricao, String valor, String tipoDespesa, String ano, String mes) {
+    public MovimentacaoDto(String id, String idCategoria, String nomeCategoria, String descricao, String valor, String tipoDespesa, String ano, String mes) {
         this.id = id;
+        this.idCategoria = idCategoria;
+        this.nomeCategoria = nomeCategoria;
         this.descricao = descricao;
         this.valor = valor;
         this.tipoDespesa = tipoDespesa;
@@ -26,6 +30,22 @@ public class MovimentacaoDto {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getIdCategoria() {
+        return idCategoria;
+    }
+
+    public void setIdCategoria(String idCategoria) {
+        this.idCategoria = idCategoria;
+    }
+
+    public String getNomeCategoria() {
+        return nomeCategoria;
+    }
+
+    public void setNomeCategoria(String nomeCategoria) {
+        this.nomeCategoria = nomeCategoria;
     }
 
     public String getDescricao() {
