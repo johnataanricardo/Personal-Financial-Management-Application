@@ -15,10 +15,10 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import info.seufinanceiro.R;
-import info.seufinanceiro.adapter.CategoriaAdapter;
-import info.seufinanceiro.main.MainActivity;
-import info.seufinanceiro.model.Categoria;
-import info.seufinanceiro.model.ListDataCategoria;
+//import info.seufinanceiro.adapter.CategoriaAdapter;
+//import info.seufinanceiro.main.MainActivity;
+//import info.seufinanceiro.model.Categoria;
+//import info.seufinanceiro.model.ListDataCategoria;
 
 public class CategoriesFragment extends Fragment{
 
@@ -30,12 +30,12 @@ public class CategoriesFragment extends Fragment{
         final View view = inflater.inflate(R.layout.categories_layout, null);
 
         ListView listView =  view.findViewById(R.id.list_view_categories);
-
-        ArrayList<Categoria> categorias = ListDataCategoria.getList();
-
-        CategoriaAdapter categoriaAdapter = new CategoriaAdapter(view.getContext(), categorias);
-
-        listView.setAdapter(categoriaAdapter);
+//
+//        ArrayList<Categoria> categorias = ListDataCategoria.getList();
+//
+//        CategoriaAdapter categoriaAdapter = new CategoriaAdapter(view.getContext(), categorias);
+//
+//        listView.setAdapter(categoriaAdapter);
 
         final Button mShowDialog = (Button) view.findViewById(R.id.novo);
 

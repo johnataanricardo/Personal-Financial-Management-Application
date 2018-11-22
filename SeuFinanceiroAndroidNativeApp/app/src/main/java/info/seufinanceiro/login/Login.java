@@ -2,6 +2,7 @@ package info.seufinanceiro.login;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.content.Intent;
 import android.view.View;
@@ -12,6 +13,12 @@ import android.widget.Toast;
 
 import info.seufinanceiro.R;
 import info.seufinanceiro.main.MainActivity;
+import info.seufinanceiro.model.User;
+import info.seufinanceiro.service.HttpClientService;
+import info.seufinanceiro.service.HttpClientServiceCreator;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Login extends AppCompatActivity {
     private static final int REQUEST_SIGNUP = 0;
@@ -19,6 +26,8 @@ public class Login extends AppCompatActivity {
     private EditText emailText;
     private EditText passwordText;
     private Button loginButton;
+    private ProgressDialog progressDialog;
+    User user = new User();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -29,6 +38,7 @@ public class Login extends AppCompatActivity {
         passwordText = findViewById(R.id.input_password);
         loginButton = findViewById(R.id.btn_login);
         TextView signupLink = findViewById(R.id.link_signup);
+        progressDialog = new ProgressDialog(Login.this, R.style.AppCompatAlertDialogStyle);
 
 
         loginButton.setOnClickListener(new View.OnClickListener() {
@@ -52,25 +62,62 @@ public class Login extends AppCompatActivity {
 
     public void login() {
         if (!validate()) {
-            onLoginFailed();
+            onLoginFailed("E-mail ou senha inválida");
             return;
         }
 
         loginButton.setEnabled(false);
-
-        final ProgressDialog progressDialog = new ProgressDialog(Login.this,
-                R.style.AppCompatAlertDialogStyle);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Autenticando...");
         progressDialog.show();
 
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        onLoginSuccess();
-                        progressDialog.dismiss();
+        makeCall();
+    }
+
+    private void makeCall() {
+        HttpClientService service = HttpClientServiceCreator.createService(HttpClientService.class);
+
+        user.setEmail(emailText.getText().toString());
+        user.setPassword(passwordText.getText().toString());
+        Call<User> call = service.authorize(user);
+
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
+                if (response.isSuccessful()) {
+
+                    User userResponse = response.body();
+
+                    if (userResponse != null) {
+                        new android.os.Handler().postDelayed(
+                                new Runnable() {
+                                    public void run() {
+                                        onLoginSuccess();
+                                    }
+                                }, 3000);
+                    } else {
+                        onLoginFailed("");
                     }
-                }, 3000);
+
+                } else {
+                    String message = "";
+
+                    if (response.code() == 401) {
+                        message = "Usuásrio não encontrado";
+                    }
+
+                    onLoginFailed(message);
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
+                onLoginFailed("");
+            }
+        });
+
+        progressDialog.dismiss();
+
     }
 
 
@@ -98,8 +145,12 @@ public class Login extends AppCompatActivity {
         finish();
     }
 
-    public void onLoginFailed() {
-        Toast.makeText(getBaseContext(), "Falha no login", Toast.LENGTH_LONG).show();
+    public void onLoginFailed(String message) {
+        if (message.equals("")){
+            message = "Ops! Algo deu errado...";
+        }
+
+        Toast.makeText(getBaseContext(), message, Toast.LENGTH_LONG).show();
 
         loginButton.setEnabled(true);
     }
