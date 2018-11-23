@@ -32,12 +32,9 @@ public class ChartService {
             movimentacaos.forEach( movimentacao -> {
                 if( movimentacao.getTipoDespesa().equals(TipoDespesa.ENTRADA)){
                     fluxoDeCaixaMensalDto.setFluxoDeCaixa(fluxoDeCaixaMensalDto.getFluxoDeCaixa() + movimentacao.getValor());
-                    //        entrada =+ movimentacao.getValor();
                 }else {
                     fluxoDeCaixaMensalDto.setFluxoDeCaixa(fluxoDeCaixaMensalDto.getFluxoDeCaixa() - movimentacao.getValor());
-                    //        saida   =+ movimentacao.getValor();
                 }
-                //fluxoDeCaixaMensalDto.setFluxoDeCaixa(fluxoDeCaixaMensalDto.getFluxoDeCaixa() + movimentacao.getValor());
             });
 
             fluxoDeCaixaMensalDtos.add(fluxoDeCaixaMensalDto);

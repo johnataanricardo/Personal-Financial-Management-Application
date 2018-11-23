@@ -20,7 +20,6 @@ public class MovimentacaoService {
         this.movimentacaoRepository = movimentacaoRepository;
     }
 
-
     public List<Movimentacao> showAllDespesas(){
         return (List<Movimentacao>) movimentacaoRepository.findAll();
     }
@@ -49,22 +48,4 @@ public class MovimentacaoService {
     public void removeDespesa(Long id){
         movimentacaoRepository.deleteById(id);
     }
-
-    public Double calcFluxoCaixa(FluxoDeCaixaDto fluxoDeCaixaDto){
-
-        Double depSaida = 0.0;
-        Double depEntrada = 0.0;
-
-        for (MovimentacaoDto movimentacaoDto : fluxoDeCaixaDto.getMovimentacaos()) {
-            if (movimentacaoDto.getTipoDespesa().equals(TipoDespesa.ENTRADA)){
-                depEntrada +=  Double.parseDouble(movimentacaoDto.getValor());
-            }else{
-                depSaida +=  Double.parseDouble(movimentacaoDto.getValor());
-            }
-        }
-
-        return depEntrada - depSaida;
-
-    }
-
 }

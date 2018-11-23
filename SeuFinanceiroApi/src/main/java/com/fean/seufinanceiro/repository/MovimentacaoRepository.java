@@ -12,4 +12,5 @@ public interface MovimentacaoRepository extends CrudRepository<Movimentacao, Lon
     List<Movimentacao> findByAnoAndMesAndUsuarioId(String year, Integer month, Long userId);
     List<Movimentacao> findAllByUsuarioId(Long userId);
     Movimentacao findByIdAndUsuarioId(Long movimentacaoId, Long userId);
+
 }
