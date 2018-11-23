@@ -17,7 +17,7 @@
             <v-text-field
               v-model="user.email"
               :rules="userRules.emailRules"
-              color="red"
+              color="teal"
               label="E-mail"
               required>
             </v-text-field>
@@ -27,7 +27,7 @@
               @click:append="() => (invisibility = !invisibility)"
               :type="invisibility ? 'password' : 'text'"
               :rules="userRules.passwordRule"
-              color="red"
+              color="teal"
               label="Senha"
               required>
             </v-text-field>
@@ -41,7 +41,7 @@
             :bottom="true"
             v-model="snackbar">
               Usuário ou senha incorretos!
-            <v-btn flat color="red" @click.native="snackbar = false">Close</v-btn>
+            <v-btn flat color="red" @click.native="snackbar = false">Fechar</v-btn>
           </v-snackbar>
         </v-card>
       </v-flex>

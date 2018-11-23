@@ -15,15 +15,15 @@
       </v-flex>
     </v-layout>
     <v-form ref="form" v-model="valid" @keyup.native.enter="submit" lazy-validation>
-      <v-text-field  v-model="user.nome" :rules="textFieldRule" color="red" label="Nome" required ></v-text-field>
-      <v-text-field v-model="user.email" :rules="emailRules" color="red" label="E-mail" required :disabled="emailDisabled"></v-text-field>    
+      <v-text-field  v-model="user.nome" :rules="textFieldRule" color="teal" label="Nome" required ></v-text-field>
+      <v-text-field v-model="user.email" :rules="emailRules" color="teal" label="E-mail" required :disabled="emailDisabled"></v-text-field>    
       <v-text-field
         v-model="user.senha"
         :append-icon="invisibility1 ? 'visibility' : 'visibility_off'"
         @click:append="() => (invisibility1 = !invisibility1)"
         :type="invisibility1 ? 'password' : 'text'"
         :rules="account ? simplePasswordRules : passwordRules"
-        color="red"
+        color="teal"
         label="Senha"
         required>
       </v-text-field>
@@ -33,14 +33,14 @@
         @click:append="() => (invisibility2 = !invisibility2)"
         :type="invisibility2 ? 'password' : 'text'"
         :rules="account ? simplePasswordRules : passwordRules"
-        color="red"
+        color="teal"
         label="Repita a Senha"
         required>
       </v-text-field>
       <v-btn class="bold-text" :disabled="!valid" @click="submit">{{titleSaveButton}}</v-btn>
       <v-btn class="bold-text" @click="clear" v-if="cleanButton">Limpar</v-btn>
       <div style="margin-top: 10px;">
-        <span v-if="!account">Já possui cadastro ? <a class="button-text" @click="changeRoute('/')">Login</a></span>
+        <span v-if="!account">Já possui cadastro ? <a class="button-text" @click="changeRoute('/login')">Login</a></span>
       </div>
       <v-snackbar
         :timeout="6000"

@@ -125,11 +125,11 @@ export default {
       if (data != null) {
         const items = []
         const itemsEntrada = {
-          name: 'Entradas: ' + data.totalEntrada,
+          name: 'Entradas R$: ' + data.totalEntrada,
           registers: data.entrada
         }
         const itemsSaida = {
-          name: 'Saídas:' + data.totalSaida,
+          name: 'Saídas R$:' + data.totalSaida,
           registers: data.saida
         }
         items.push(itemsEntrada)
@@ -226,7 +226,7 @@ export default {
 <style scoped>
 
   .v-speed-dial {
-    position: absolute;
+    position: fixed;
   }
 
   .v-btn--floating {

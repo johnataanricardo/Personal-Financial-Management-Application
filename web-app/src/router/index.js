@@ -5,6 +5,7 @@ import Account from '@/pages/Account';
 import Home from '@/pages/Home/';
 import Login from '@/pages/Login/';
 import SignUp from '@/pages/SignUp';
+import Welcome from '@/pages/Welcome';
 import Category from '@/pages/Registers/Category';
 
 const api = process.env.API_URL;
@@ -16,6 +17,11 @@ const router = new Router({
   routes: [
     {
       path: '/',
+      name: 'Welcome',
+      component: Welcome
+    },
+    {
+      path: '/login',
       name: 'Login',
       component: Login,
       beforeEnter(to, from, next) {
@@ -30,7 +36,7 @@ const router = new Router({
               return next({ path: '/home'});   
             } else {
               delete localStorage.token
-              return next({path: '/'});    
+              return next({path: '/login'});    
             }
           }).catch(function(error) {
             throw error
@@ -79,13 +85,13 @@ router.beforeEach((to, from, next) => {
           return next();
         } else {
           delete localStorage.token
-          return next({path: '/'});   
+          return next({path: '/login'});   
         }
       }).catch(function(error){
         throw error
       });
     } else {
-      return next({path: '/'});   
+      return next({path: '/login'});   
     }
   } else {
     return next();

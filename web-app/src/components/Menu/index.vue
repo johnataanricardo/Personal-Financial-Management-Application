@@ -91,7 +91,7 @@ export default {
   methods: {
     logOut () {    
       delete localStorage.token
-      router.push('/')
+      router.push('/login')
     }
   }
 }
