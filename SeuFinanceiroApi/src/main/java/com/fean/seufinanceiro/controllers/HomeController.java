@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("home")
-@CrossOrigin(origins = "*")
 public class HomeController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HomeController.class);

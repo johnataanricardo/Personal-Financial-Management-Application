@@ -6,10 +6,9 @@ import javax.persistence.*;
 public class Categoria {
 
     private Long id;
-
     private String descricao;
-
     private Usuario usuario;
+    private Movimentacao movimentacao;
 
     public Categoria() {}
 
@@ -44,5 +43,14 @@ public class Categoria {
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
+    }
+
+    @OneToOne(fetch = FetchType.LAZY)
+    public Movimentacao getMovimentacao() {
+        return movimentacao;
+    }
+
+    public void setMovimentacao(Movimentacao movimentacao) {
+        this.movimentacao = movimentacao;
     }
 }

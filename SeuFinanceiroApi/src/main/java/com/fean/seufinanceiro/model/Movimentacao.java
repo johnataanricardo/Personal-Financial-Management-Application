@@ -86,7 +86,7 @@ public class Movimentacao {
         this.usuario = usuario;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "movimentacao", cascade = CascadeType.ALL)
     public Categoria getCategoria() {
         return categoria;
     }

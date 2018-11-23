@@ -26,7 +26,6 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping("movimentacoes")
-@CrossOrigin(origins = "*")
 public class MovimentacaoController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MovimentacaoController.class);
@@ -38,7 +37,10 @@ public class MovimentacaoController {
     private CategoriaService categoriaService;
 
     @Autowired
-    public MovimentacaoController(MovimentacaoService movimentacaoService, UsuarioService usuarioService, CategoriaService categoriaService) {
+    public MovimentacaoController(MovimentacaoService movimentacaoService,
+                                  UsuarioService usuarioService,
+                                  CategoriaService categoriaService) {
+
         this.movimentacaoService = movimentacaoService;
         this.usuarioService = usuarioService;
         this.categoriaService = categoriaService;
@@ -150,19 +152,20 @@ public class MovimentacaoController {
 
     private MovimentacaoDto convertMovimentacaoDto(Movimentacao movimentacao) {
         return  new MovimentacaoDto(String.valueOf(movimentacao.getId()),
-                               String.valueOf(movimentacao.getCategoria() != null ? movimentacao.getCategoria().getId() : ""),
-                               movimentacao.getCategoria() != null ? movimentacao.getCategoria().getDescricao() : "",
-                               movimentacao.getDescricao(),
-                               String.valueOf(movimentacao.getValor()),
-                               String.valueOf(movimentacao.getTipoDespesa()),
-                               movimentacao.getAno(),
-                               String.valueOf(movimentacao.getMes()));
+                         String.valueOf(movimentacao.getCategoria() != null ? movimentacao.getCategoria().getId() : ""),
+                         movimentacao.getCategoria() != null ? movimentacao.getCategoria().getDescricao() : "",
+                         movimentacao.getDescricao(),
+                         String.valueOf(movimentacao.getValor()),
+                         String.valueOf(movimentacao.getTipoDespesa()),
+                         movimentacao.getAno(),
+                         String.valueOf(movimentacao.getMes()));
     }
 
     private Movimentacao convertDespesa(MovimentacaoDto movimentacaoDto, JwtUser jwtUser) {
         Movimentacao movimentacao;
         if(movimentacaoDto.getId() != null){
-            movimentacao = movimentacaoService.showMovimentacaoByIdByUserId(Long.parseLong(movimentacaoDto.getId()), jwtUser.getId());
+            movimentacao = movimentacaoService.showMovimentacaoByIdByUserId(Long.parseLong(movimentacaoDto.getId()),
+                                                                            jwtUser.getId());
         }else {
             movimentacao = new Movimentacao();
             Optional<Usuario> usuario = usuarioService.findUsuarioById(jwtUser.getId());
@@ -174,14 +177,14 @@ public class MovimentacaoController {
         movimentacao.setTipoDespesa(TipoDespesa.valueOf(movimentacaoDto.getTipoDespesa()));
         movimentacao.setMes(Integer.parseInt(movimentacaoDto.getMes()));
         movimentacao.setAno(movimentacaoDto.getAno());
+
         if (movimentacaoDto.getIdCategoria() != null) {
             Categoria categoria = categoriaService.showCategoriaById(Long.valueOf(movimentacaoDto.getIdCategoria()));
             if (categoria != null) {
                 movimentacao.setCategoria(categoria);
+                categoria.setMovimentacao(movimentacao);
             }
         }
         return movimentacao;
-
     }
-
 }

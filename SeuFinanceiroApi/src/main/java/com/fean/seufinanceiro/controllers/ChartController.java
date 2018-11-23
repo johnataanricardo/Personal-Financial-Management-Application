@@ -1,7 +1,6 @@
 package com.fean.seufinanceiro.controllers;
 
 import com.fean.seufinanceiro.dto.ChartDto;
-import com.fean.seufinanceiro.dto.HomeDto;
 import com.fean.seufinanceiro.responses.Response;
 import com.fean.seufinanceiro.security.JwtUser;
 import com.fean.seufinanceiro.service.ChartService;
@@ -11,14 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("chart")
-@CrossOrigin(origins = "*")
 public class ChartController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ChartController.class);
