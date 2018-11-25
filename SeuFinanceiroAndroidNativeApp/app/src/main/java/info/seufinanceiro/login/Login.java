@@ -103,7 +103,7 @@ public class Login extends AppCompatActivity {
                     String message = "";
 
                     if (response.code() == 401) {
-                        message = "Usuásrio não encontrado";
+                        message = "Usuário não encontrado";
                     }
 
                     onLoginFailed(message);
