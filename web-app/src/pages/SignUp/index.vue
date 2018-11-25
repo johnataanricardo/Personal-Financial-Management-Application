@@ -18,7 +18,7 @@ export default {
   },  
   data() {
     return {
-      saveButton: 'Inscrever-se'
+      saveButton: 'Cadastrar-se'
     }
   },
   methods: {

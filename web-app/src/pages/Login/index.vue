@@ -34,7 +34,7 @@
           </v-form>
           <v-card-actions class="center">
             <v-btn color="blue-grey lighten-5" @click="submit" class="black--text bold-text">Entrar</v-btn>
-            <v-btn color="blue-grey lighten-5" :to="signUpAction" class="black--text bold-text">Inscrever-se</v-btn>
+            <v-btn color="blue-grey lighten-5" :to="signUpAction" class="black--text bold-text">Cadastrar-se</v-btn>
           </v-card-actions>
           <v-snackbar
             :timeout="6000"
@@ -63,7 +63,7 @@ export default {
       },
       userRules: {
         emailRules: [
-          v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail inválido!'
+          v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,4})+$/.test(v) || 'E-mail inválido!'
         ],
         passwordRule: [
           v => !!v || 'Senha é obrigatória!'

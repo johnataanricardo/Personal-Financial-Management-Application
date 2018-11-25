@@ -7,7 +7,7 @@
         </v-card-title>
         <v-form ref="recordDialog" v-model="valid" @keyup.native.enter="saveRecord" lazy-validation>
           <div class="form">
-            <v-text-field color="teal" v-model.lazy="valor" v-money="money" label="Valor"></v-text-field>
+            <v-text-field color="teal" ref="valor" v-model.lazy="valor" v-money="money" label="Valor"></v-text-field>
             <v-select no-data-text="Nenhuma categoria cadastrada" color="teal" v-model="idCategoria" 
               :items="items" item-value="id" item-text="descricao" label="Categoria"></v-select>
             <v-text-field color="teal" v-model="descricao" label="Descrição"></v-text-field>
@@ -56,6 +56,8 @@ export default {
   },
   watch: {
     showDialog: function() {
+       // the only way to reset de value of valor, v-money has a bug in v-text-field of vuetify
+      this.$refs.valor.$el.getElementsByTagName('input')[0].value = 0;
       this.$refs.recordDialog.reset()
     }
   }

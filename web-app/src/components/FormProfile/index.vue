@@ -11,7 +11,7 @@
     <v-layout row wrap>
       <v-flex>
         <h3 class="headline mb-0" v-if="account">Conta</h3>
-        <h3 class="headline mb-0" v-else>Inscrever-se</h3>
+        <h3 class="headline mb-0" v-else>Cadastrar-se</h3>
       </v-flex>
     </v-layout>
     <v-form ref="form" v-model="valid" @keyup.native.enter="submit" lazy-validation>
@@ -72,7 +72,7 @@ export default {
     senhaRepetida: '',
     emailRules: [
       v => !!v || 'Campo obrigatório!',
-      v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(v) || 'E-mail inválido'
+      v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,4})+$/.test(v) || 'E-mail inválido'
     ],
     passwordRules: [
       v => !!v || 'Campo obrigatório!',
