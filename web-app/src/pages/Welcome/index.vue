@@ -123,7 +123,7 @@
                       </v-avatar>
                     </v-list-tile-action>
                     <v-list-tile-content>
-                      <a target="_blank" href="https://www.linkedin.com/in/lucas-ribeiro691/">tianoxz.lr@gmail.com</a>
+                      <a target="_blank" href="https://www.linkedin.com/in/lucas-ribeiro691/">Lucas Ribeiro</a>
                     </v-list-tile-content>
                   </v-list-tile>
                 </v-list>
