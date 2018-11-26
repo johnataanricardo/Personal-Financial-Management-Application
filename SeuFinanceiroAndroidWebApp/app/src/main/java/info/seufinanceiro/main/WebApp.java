@@ -30,7 +30,7 @@ public class WebApp extends AppCompatActivity {
         WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setDomStorageEnabled(true);
-        mWebView.loadUrl("https://seufinanceiro.info/login");
+        mWebView.loadUrl("https://seufinanceiro.info");
         mWebView.setWebViewClient(new HelloWebViewClient());
     }
 

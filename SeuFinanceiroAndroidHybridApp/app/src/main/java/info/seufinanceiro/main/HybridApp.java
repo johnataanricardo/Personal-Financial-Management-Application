@@ -30,7 +30,7 @@ public class HybridApp extends AppCompatActivity {
         WebSettings webSettings = mWebView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setDomStorageEnabled(true);
-        mWebView.loadUrl("file:///android_asset/index.html#/login");
+        mWebView.loadUrl("file:///android_asset/index.html#/");
         mWebView.setWebViewClient(new HelloWebViewClient());
     }
 
