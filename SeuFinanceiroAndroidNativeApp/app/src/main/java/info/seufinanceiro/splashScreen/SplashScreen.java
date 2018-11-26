@@ -11,18 +11,18 @@ import info.seufinanceiro.main.MainActivity;
 
 public class SplashScreen extends Activity {
 
-    private static int SPLASH_TIME_OUT = 3000;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
+
+        int SPLASH_TIME_OUT = 3000;
+
         new Handler().postDelayed(new Runnable() {
 
             @Override
             public void run() {
-                //Intent i = new Intent(SplashScreen.this, Login.class);
-                Intent i = new Intent(SplashScreen.this, MainActivity.class);
+                Intent i = new Intent(SplashScreen.this, Login.class);
                 startActivity(i);
 
                 finish();
