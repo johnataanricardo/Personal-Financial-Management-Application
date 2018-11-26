@@ -11,7 +11,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HttpClientServiceCreator {
 
-    private static final String API_BASE_URL = "http://seufinanceiro.info:8080/";
+    private static final String API_BASE_URL = "https://seufinanceiro.info/api/";
 
     public static <S> S createService(Class<S> serviceClass) {
 

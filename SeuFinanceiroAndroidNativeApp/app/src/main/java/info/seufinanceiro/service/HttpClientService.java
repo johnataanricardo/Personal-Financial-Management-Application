@@ -1,5 +1,6 @@
 package info.seufinanceiro.service;
 
+import info.seufinanceiro.model.Token;
 import info.seufinanceiro.model.User;
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -11,4 +12,7 @@ public interface HttpClientService {
 
     @POST("auth")
     Call<User> authorize(@Body User user);
+
+    @POST("auth/valid")
+    Call<Token> validate(@Body Token token);
 }

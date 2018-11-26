@@ -1,6 +1,6 @@
 package info.seufinanceiro.login;
 
-import android.app.ProgressDialog;
+ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -58,7 +58,7 @@ public class Signup extends AppCompatActivity {
         signupButton.setEnabled(false);
 
         final ProgressDialog progressDialog = new ProgressDialog(Signup.this,
-                R.style.Theme_MaterialComponents_Light_Dialog);
+                R.style.AppCompatAlertDialogStyle);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Criando conta...");
         progressDialog.show();

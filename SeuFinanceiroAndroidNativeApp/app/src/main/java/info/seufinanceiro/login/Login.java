@@ -16,18 +16,19 @@ import info.seufinanceiro.main.MainActivity;
 import info.seufinanceiro.model.User;
 import info.seufinanceiro.service.HttpClientService;
 import info.seufinanceiro.service.HttpClientServiceCreator;
+import info.seufinanceiro.service.SharedPreferencesService;
+import info.seufinanceiro.utils.SoftKeyboardUtils;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class Login extends AppCompatActivity {
     private static final int REQUEST_SIGNUP = 0;
-
     private EditText emailText;
     private EditText passwordText;
     private Button loginButton;
     private ProgressDialog progressDialog;
-    User user = new User();
+    private SharedPreferencesService preferences;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -38,13 +39,13 @@ public class Login extends AppCompatActivity {
         passwordText = findViewById(R.id.input_password);
         loginButton = findViewById(R.id.btn_login);
         TextView signupLink = findViewById(R.id.link_signup);
-        progressDialog = new ProgressDialog(Login.this, R.style.AppCompatAlertDialogStyle);
 
 
         loginButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
+                SoftKeyboardUtils.hideKeyboardFrom(getBaseContext(), v);
                 login();
             }
         });
@@ -67,6 +68,9 @@ public class Login extends AppCompatActivity {
         }
 
         loginButton.setEnabled(false);
+
+        progressDialog = new ProgressDialog(Login.this,
+                R.style.AppCompatAlertDialogStyle);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Autenticando...");
         progressDialog.show();
@@ -76,6 +80,8 @@ public class Login extends AppCompatActivity {
 
     private void makeCall() {
         HttpClientService service = HttpClientServiceCreator.createService(HttpClientService.class);
+
+        User user = new User();
 
         user.setEmail(emailText.getText().toString());
         user.setPassword(passwordText.getText().toString());
@@ -89,6 +95,9 @@ public class Login extends AppCompatActivity {
                     User userResponse = response.body();
 
                     if (userResponse != null) {
+                        preferences = new SharedPreferencesService(getApplicationContext());
+                        preferences.writeToken(userResponse.getData().getToken());
+
                         new android.os.Handler().postDelayed(
                                 new Runnable() {
                                     public void run() {
@@ -103,7 +112,7 @@ public class Login extends AppCompatActivity {
                     String message = "";
 
                     if (response.code() == 401) {
-                        message = "Usuário não encontrado";
+                        message = "Usuário não encontrado ou senha incorreta";
                     }
 
                     onLoginFailed(message);
@@ -115,17 +124,13 @@ public class Login extends AppCompatActivity {
                 onLoginFailed("");
             }
         });
-
-        progressDialog.dismiss();
-
     }
 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(requestCode == REQUEST_SIGNUP) {
+        if (requestCode == REQUEST_SIGNUP) {
             if (resultCode == RESULT_OK) {
-                // TODO: fazer login aqui
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
                 finish();
@@ -139,14 +144,18 @@ public class Login extends AppCompatActivity {
     }
 
     public void onLoginSuccess() {
+        progressDialog.dismiss();
         loginButton.setEnabled(true);
+
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivity(intent);
         finish();
     }
 
     public void onLoginFailed(String message) {
-        if (message.equals("")){
+        progressDialog.dismiss();
+
+        if (message.equals("")) {
             message = "Ops! Algo deu errado...";
         }
 

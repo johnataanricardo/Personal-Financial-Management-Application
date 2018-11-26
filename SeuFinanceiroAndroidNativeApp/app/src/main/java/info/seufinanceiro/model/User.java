@@ -1,10 +1,8 @@
 package info.seufinanceiro.model;
 
-import java.util.List;
-
 public class User {
-    private String data, error, message, email, password;
-    private List errors;
+    private String email, message, name, password;
+    private UserResponseData data;
 
     public User(){}
 
@@ -24,35 +22,27 @@ public class User {
         this.password = password;
     }
 
-    public String getData() {
-        return data;
-    }
-
-    public void setData(String data) {
-        this.data = data;
-    }
-
-    public String getError() {
-        return error;
-    }
-
-    public void setError(String error) {
-        this.error = error;
-    }
-
-    public List getErrors() {
-        return errors;
-    }
-
-    public void setErrors(List errors) {
-        this.errors = errors;
-    }
-
     public String getMessage() {
         return message;
     }
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public UserResponseData getData() {
+        return data;
+    }
+
+    public void setData(UserResponseData data) {
+        this.data = data;
     }
 }
