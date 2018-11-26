@@ -8,8 +8,6 @@ import com.fean.seufinanceiro.utils.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +30,7 @@ public class ChartService {
             FluxoDeCaixaMensalDto fluxoDeCaixaMensalDto = new FluxoDeCaixaMensalDto(month);
 
             List<Movimentacao> movimentacaos = movimentacaoService.showAllDespesasByYearMonth(year, String.valueOf(month), userId);
-            movimentacaos.forEach( movimentacao -> {
+            movimentacaos.forEach(movimentacao -> {
                 if( movimentacao.getTipoDespesa().equals(TipoDespesa.ENTRADA)){
                     fluxoDeCaixaMensalDto.setFluxoDeCaixa(NumberUtils.formatDouble(fluxoDeCaixaMensalDto.getFluxoDeCaixa() + movimentacao.getValor()));
                 }else {

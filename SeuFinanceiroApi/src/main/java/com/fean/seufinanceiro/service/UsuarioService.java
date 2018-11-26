@@ -2,7 +2,7 @@ package com.fean.seufinanceiro.service;
 
 import com.fean.seufinanceiro.dto.UsuarioDto;
 import com.fean.seufinanceiro.model.Usuario;
-import com.fean.seufinanceiro.repository.UsuarioRepository;
+import com.fean.seufinanceiro.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.LinkedList;
@@ -12,15 +12,15 @@ import java.util.Optional;
 @Service
 public class UsuarioService {
 
-    private final UsuarioRepository usuarioRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public UsuarioService(UsuarioRepository usuarioRepository) {
-        this.usuarioRepository = usuarioRepository;
+    public UsuarioService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     public List<Usuario> showAllUsers(){
-       return (List<Usuario>) usuarioRepository.findAll();
+       return (List<Usuario>) userRepository.findAll();
     }
 
     public List<UsuarioDto> showAllUsersDto(){
@@ -32,19 +32,19 @@ public class UsuarioService {
     }
 
     public Optional<Usuario> findUserByUsernameEmail(String usernameEmail){
-        return  Optional.ofNullable(this.usuarioRepository.findByEmail(usernameEmail));
+        return  Optional.ofNullable(this.userRepository.findByEmail(usernameEmail));
     }
 
     public Optional<Usuario> findUsuarioById(Long id){
-        return usuarioRepository.findById(id);
+        return userRepository.findById(id);
     }
 
     public Usuario newUser(Usuario usuario){
-       return usuarioRepository.save(usuario);
+       return userRepository.save(usuario);
     }
 
     public void removeUser(Long id){
-        usuarioRepository.deleteById(id);
+        userRepository.deleteById(id);
     }
 
     private UsuarioDto convertUsuarioDto(Usuario usuario) {
