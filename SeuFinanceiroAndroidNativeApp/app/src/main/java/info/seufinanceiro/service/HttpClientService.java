@@ -1,7 +1,8 @@
 package info.seufinanceiro.service;
 
+import info.seufinanceiro.model.Auth;
+import info.seufinanceiro.model.SignUp;
 import info.seufinanceiro.model.Token;
-import info.seufinanceiro.model.User;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.Headers;
@@ -11,8 +12,11 @@ public interface HttpClientService {
     @Headers("Content-Type: application/json")
 
     @POST("auth")
-    Call<User> authorize(@Body User user);
+    Call<Auth> authorize(@Body Auth auth);
 
     @POST("auth/valid")
     Call<Token> validate(@Body Token token);
+
+    @POST("user/sign-up/")
+    Call<SignUp> signup(@Body SignUp signUp);
 }

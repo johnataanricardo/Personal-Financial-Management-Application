@@ -2,11 +2,11 @@ package info.seufinanceiro.model;
 
 import java.util.List;
 
-public class UserResponseData {
+public class Data {
     private String token;
-    private List errors;
+    private List<String> errors;
 
-    public UserResponseData(){}
+    public Data(){}
 
     public String getToken() {
         return token;
@@ -20,7 +20,7 @@ public class UserResponseData {
         return errors;
     }
 
-    public void setErrors(List errors) {
+    public void setErrors(List<String> errors) {
         this.errors = errors;
     }
 }

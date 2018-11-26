@@ -1,10 +1,10 @@
 package info.seufinanceiro.login;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 import info.seufinanceiro.R;
 import info.seufinanceiro.main.MainActivity;
-import info.seufinanceiro.model.User;
+import info.seufinanceiro.model.Auth;
 import info.seufinanceiro.service.HttpClientService;
 import info.seufinanceiro.service.HttpClientServiceCreator;
 import info.seufinanceiro.service.SharedPreferencesService;
@@ -62,41 +62,47 @@ public class Login extends AppCompatActivity {
     }
 
     public void login() {
-        if (!validate()) {
-            onLoginFailed("E-mail ou senha inválida");
-            return;
-        }
-
-        loginButton.setEnabled(false);
-
         progressDialog = new ProgressDialog(Login.this,
                 R.style.AppCompatAlertDialogStyle);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Autenticando...");
         progressDialog.show();
 
+        if (!validate()) {
+            onLoginFailed("E-mail ou senha inválida");
+            return;
+        }
+
+        loginButton.setEnabled(false);
         makeCall();
     }
 
     private void makeCall() {
         HttpClientService service = HttpClientServiceCreator.createService(HttpClientService.class);
 
-        User user = new User();
+        Auth auth = new Auth();
 
-        user.setEmail(emailText.getText().toString());
-        user.setPassword(passwordText.getText().toString());
-        Call<User> call = service.authorize(user);
+        auth.setEmail(emailText.getText().toString());
+        auth.setPassword(passwordText.getText().toString());
+        Call<Auth> call = service.authorize(auth);
 
-        call.enqueue(new Callback<User>() {
+        call.enqueue(new Callback<Auth>() {
             @Override
-            public void onResponse(@NonNull Call<User> call, @NonNull Response<User> response) {
+            public void onResponse(@NonNull Call<Auth> call, @NonNull Response<Auth> response) {
                 if (response.isSuccessful()) {
 
-                    User userResponse = response.body();
+                    Auth authResponse = response.body();
+                    String token;
 
-                    if (userResponse != null) {
+                    try {
+                        token = authResponse.getData().getToken();
+                    } catch (NullPointerException e) {
+                        token = "";
+                    }
+
+                    if (token != null) {
                         preferences = new SharedPreferencesService(getApplicationContext());
-                        preferences.writeToken(userResponse.getData().getToken());
+                        preferences.writeToken(token);
 
                         new android.os.Handler().postDelayed(
                                 new Runnable() {
@@ -120,7 +126,7 @@ public class Login extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(@NonNull Call<User> call, @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<Auth> call, @NonNull Throwable t) {
                 onLoginFailed("");
             }
         });
@@ -154,13 +160,8 @@ public class Login extends AppCompatActivity {
 
     public void onLoginFailed(String message) {
         progressDialog.dismiss();
-
-        if (message.equals("")) {
-            message = "Ops! Algo deu errado...";
-        }
-
+        if (message.equals("")) message = "Ops! Algo deu errado...";
         Toast.makeText(getBaseContext(), message, Toast.LENGTH_LONG).show();
-
         loginButton.setEnabled(true);
     }
 

@@ -1,26 +1,10 @@
 package info.seufinanceiro.model;
 
-public class User {
-    private String id, email, nome, senha;
+public class SignUp {
+    private String nome, email, senha;
     private Data data;
 
-    public User() {
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public SignUp() {
     }
 
     public String getNome() {
@@ -29,6 +13,14 @@ public class User {
 
     public void setNome(String nome) {
         this.nome = nome;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getSenha() {
