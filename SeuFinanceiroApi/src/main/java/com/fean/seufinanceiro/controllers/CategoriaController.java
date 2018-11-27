@@ -44,15 +44,15 @@ public class CategoriaController {
 
         Response<List<CategoriaDto>> response = new Response<>();
 
-        List<Categoria> categorias = categoriaService.showAllCategoryByUserId(jwtUser.getId());
+        List<Categoria> categories = categoriaService.showAllCategoryByUserId(jwtUser.getId());
 
-        if (categorias.isEmpty()){
+        if (categories.isEmpty()){
             LOGGER.info("Nenhuma categoria foi encontrada...");
         }
 
         List<CategoriaDto> categoriaDtos = new ArrayList<>();
 
-        for (Categoria categoria: categorias) {
+        for (Categoria categoria : categories) {
             categoriaDtos.add(convertCategoriaDto(categoria));
         }
 
@@ -140,10 +140,10 @@ public class CategoriaController {
     }
 
     private CategoriaDto convertCategoriaDto(Categoria categoria) {
-        return new CategoriaDto(categoria.getId() ,categoria.getDescricao());
+        return new CategoriaDto(categoria.getId() , categoria.getDescricao());
     }
 
-    private Categoria convertCategoria(CategoriaDto categoriaDto,JwtUser jwtUser) {
+    private Categoria convertCategoria(CategoriaDto categoriaDto, JwtUser jwtUser) {
         Categoria categoria;
         if(categoriaDto.getId() != null){
             categoria = categoriaService.showCategoriaByIdAndUserId(categoriaDto.getId(), jwtUser.getId());

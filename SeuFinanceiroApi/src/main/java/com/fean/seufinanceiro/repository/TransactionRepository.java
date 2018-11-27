@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface MovimentacaoRepository extends CrudRepository<Movimentacao, Long> {
+public interface TransactionRepository extends CrudRepository<Movimentacao, Long> {
 
     List<Movimentacao> findByAnoAndMesAndUsuarioId(String year, Integer month, Long userId);
     List<Movimentacao> findAllByUsuarioId(Long userId);

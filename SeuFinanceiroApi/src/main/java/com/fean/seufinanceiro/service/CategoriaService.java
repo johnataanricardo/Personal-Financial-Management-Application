@@ -1,7 +1,7 @@
 package com.fean.seufinanceiro.service;
 
 import com.fean.seufinanceiro.model.Categoria;
-import com.fean.seufinanceiro.repository.CategoriaRepository;
+import com.fean.seufinanceiro.repository.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,35 +11,35 @@ import java.util.List;
 public class CategoriaService {
 
     @Autowired
-    private CategoriaRepository categoriaRepository;
+    private CategoryRepository categoryRepository;
 
-    public CategoriaService(CategoriaRepository categoriaRepository) {
-        this.categoriaRepository = categoriaRepository;
+    public CategoriaService(CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
     }
 
 
     public List<Categoria> showAll(){
-        return (List<Categoria>) categoriaRepository.findAll();
+        return (List<Categoria>) categoryRepository.findAll();
     }
 
     public List<Categoria> showAllCategoryByUserId(Long id){
-        return categoriaRepository.findAllByUsuarioId(id);
+        return categoryRepository.findAllByUsuarioId(id);
     }
 
     public Categoria showCategoriaById(Long id){
-        return categoriaRepository.findById(id).get();
+        return categoryRepository.findById(id).get();
     }
 
     public Categoria showCategoriaByIdAndUserId(Long idCategoria, Long idUser){
-        return categoriaRepository.findByIdAndUsuarioId(idCategoria, idUser);
+        return categoryRepository.findByIdAndUsuarioId(idCategoria, idUser);
     }
 
     public Categoria novaCategoria(Categoria categoria){
-        categoriaRepository.save(categoria);
+        categoryRepository.save(categoria);
         return categoria;
     }
 
     public void removeCategoria(Long id){
-        categoriaRepository.deleteById(id);
+        categoryRepository.deleteById(id);
     }
 }

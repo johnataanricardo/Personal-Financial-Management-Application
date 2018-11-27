@@ -145,58 +145,60 @@ export default {
         }, 300)
       },
       confirm () {
+        const data = this
         const token = 'Bearer ' + localStorage.getItem('token');        
-        axios.delete(api + '/categoria/' + this.categoria.id, {
+        axios.delete(api + '/categoria/' + data.categoria.id, {
           headers: {        
             'Content-Type': 'application/json',
             'Authorization': token
           }
         }).then(response => (
-          this.categories.splice(this.editedIndex, 1),
-          this.initSnackbar('Categoria deletada com sucesso!')
+          data.categories.splice(data.editedIndex, 1),
+          data.initSnackbar('Categoria deletada com sucesso!')
         )).catch(function (error) {
-          console.log(error);
-          this.initSnackbar('Problema ao deletar!')
+          console.log(error)
+          data.initSnackbar('Problema ao deletar!')
         })
-        this.close()
+        data.close()
       },
       initSnackbar(text) {
         this.snackbarText = text
         this.snackbar = true
       },
       save () {
-        if (this.editedIndex > -1) {
+        const data = this
+        if (data.editedIndex > -1) {
           const token = 'Bearer ' + localStorage.getItem('token');
-          const categoria = this.categoria
+          const categoria = data.categoria          
           axios.put(api + '/categoria/' + categoria.id, JSON.stringify(categoria), {
             headers: {        
               'Content-Type': 'application/json',
               'Authorization': token
             }
-          }).then(response => (
-            Object.assign(this.categories[this.editedIndex], this.categoria),
-            this.initSnackbar('Categoria salva com sucesso!')
+          }).then(response => (            
+            data.initSnackbar('Categoria salva com sucesso!')
           )).catch(function (error) {
-            console.log(error);
-            this.initSnackbar('Problema ao deletar!')
-          })
+            console.log(error)
+            data.initSnackbar('Problema ao salvar!')
+          })          
+          Object.assign(data.categories[data.editedIndex], data.categoria)
         } else {
           const token = 'Bearer ' + localStorage.getItem('token');
-          const categoria = JSON.stringify(this.categoria)
+          const categoria = JSON.stringify(data.categoria)
           axios.post(api + '/categoria/', categoria, {
             headers: {        
               'Content-Type': 'application/json',
               'Authorization': token
             }
           }).then(response => (    
-            this.categories.push(response.data.data),
-            this.initSnackbar('Categoria salva com sucesso!')
+            data.categories.push(response.data.data),
+            data.initSnackbar('Categoria salva com sucesso!')
           )).catch(function (error) {
-            console.log(error);
-            this.initSnackbar('Problema ao deletar!')
+            console.log(error)
+            data.initSnackbar('Problema ao salvar!')
           })
         }
-        this.close()
+        data.close()
       }
     }
   }

@@ -2,6 +2,7 @@ package com.fean.seufinanceiro.controllers;
 
 import com.fean.seufinanceiro.dto.SignUpDto;
 import com.fean.seufinanceiro.dto.UsuarioDto;
+import com.fean.seufinanceiro.exceptions.UserNotFoundException;
 import com.fean.seufinanceiro.model.Usuario;
 import com.fean.seufinanceiro.responses.Response;
 import com.fean.seufinanceiro.security.JwtUser;
@@ -154,20 +155,22 @@ public class UsuarioController {
     }
 
     private Usuario convertUsuario(UsuarioDto usuarioDto, JwtUser jwtUser) {
-        Usuario usuario = new Usuario();
+        Optional<Usuario> usuario = usuarioService.findUsuarioById(jwtUser.getId());
 
-        if(usuarioDto.getSenha() == null || usuarioDto.getSenha().isEmpty()){
-            usuario.setSenha(
-                    PasswordUtils.generateBCrypt(usuarioService.findUsuarioById(jwtUser.getId()).get().getSenha())
-            );
-        }else{
-            usuario.setSenha(PasswordUtils.generateBCrypt(usuarioDto.getSenha()));
+        if (!usuario.isPresent()){
+                throw new UserNotFoundException("Usuário não encontrado");
         }
 
-        usuario.setId(jwtUser.getId());
-        usuario.setNome(usuarioDto.getNome());
-        usuario.setEmail(usuarioDto.getEmail());
-        usuario.setPerfil(ProfileEnum.ROLE_USUARIO);
-        return usuario;
+        if(usuarioDto.getSenha() != null){
+            if (!usuarioDto.getSenha().isEmpty()){
+                usuario.get().setSenha(PasswordUtils.generateBCrypt(usuarioDto.getSenha()));
+            }
+        }
+        usuario.get().setId(jwtUser.getId());
+        usuario.get().setNome(usuarioDto.getNome());
+        usuario.get().setEmail(usuarioDto.getEmail());
+        usuario.get().setPerfil(ProfileEnum.ROLE_USUARIO);
+        return usuario.get();
+
     }
 }
