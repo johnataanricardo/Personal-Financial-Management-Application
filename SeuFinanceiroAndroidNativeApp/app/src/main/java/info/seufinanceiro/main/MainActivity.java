@@ -44,7 +44,6 @@ public class MainActivity extends AppCompatActivity
         fragment.setArguments(bundle);
         setFragment(fragment);
 
-
         tabLayout = findViewById(R.id.month_tab);
         setTabLayoutListener(tabLayout);
         service = new TabContentService(getApplicationContext() ,findViewById(android.R.id.content));

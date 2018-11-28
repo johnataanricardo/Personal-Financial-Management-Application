@@ -1,82 +1,24 @@
-<?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    android:layout_height="match_parent">
+<android.support.design.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-
-    <LinearLayout
+    <ListView
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/list_view_categories"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/newCategorie"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_gravity="bottom|end"
+        app:borderWidth="0dp"
+        android:backgroundTint="@color/button"
+        android:layout_margin="@dimen/fab_margin"
+        app:srcCompat="@drawable/add" />
 
-        <android.support.v7.widget.CardView
-            android:id="@+id/input_cardview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            card_view:cardBackgroundColor="@android:color/white">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:paddingTop="10dp"
-                android:paddingBottom="10dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:paddingBottom="10dp"
-                    android:paddingLeft="25dp">
-
-
-                    <TextView
-                        android:id="@+id/title_categorias"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textSize="20sp"
-                        android:text="@string/categorias" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:paddingTop="10dp"
-                    android:paddingLeft="25dp">
-
-
-                    <TextView
-                        android:id="@+id/title_categorias_name"
-                        android:textColor="@color/colorGrey"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/name" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-
-        </android.support.v7.widget.CardView>
-
-
-        <ListView
-            android:id="@+id/list_view_categories"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            />
-
-        <!-- Tirar esse botão, adicionar uma listview -->
-        <Button
-            android:text="@string/show_modal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:id="@+id/novo"/>
-    </LinearLayout>
-
-</android.support.constraint.ConstraintLayout>
+</android.support.design.widget.CoordinatorLayout>
