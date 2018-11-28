@@ -1,10 +1,18 @@
 package info.seufinanceiro.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import info.seufinanceiro.model.Auth;
+import info.seufinanceiro.model.Movement;
+import info.seufinanceiro.model.MovementData;
+import info.seufinanceiro.model.MovementResponse;
 import info.seufinanceiro.model.SignUp;
 import info.seufinanceiro.model.Token;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
@@ -19,4 +27,7 @@ public interface HttpClientService {
 
     @POST("user/sign-up/")
     Call<SignUp> signup(@Body SignUp signUp);
+
+    @GET("movimentacoes")
+    Call <MovementData> getMovements(@Header("Authorization") String authorization);
 }

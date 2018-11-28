@@ -1,5 +1,6 @@
 package info.seufinanceiro.main;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity
     private TabContentService service;
     private TabLayout tabLayout;
     private Integer month = new Date().getMonth();
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +49,7 @@ public class MainActivity extends AppCompatActivity
 
         tabLayout = findViewById(R.id.month_tab);
         setTabLayoutListener(tabLayout);
-        service = new TabContentService(getApplicationContext() ,findViewById(android.R.id.content));
+        service = new TabContentService(getApplicationContext(),findViewById(android.R.id.content));
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -128,7 +130,7 @@ public class MainActivity extends AppCompatActivity
         tabLayoutListener.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                service.setContentTab(tab.getPosition());
+                service.setContentTab(tab.getPosition() + 1);
             }
 
             @Override
@@ -137,7 +139,7 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                service.setContentTab(tab.getPosition());
+                service.setContentTab(tab.getPosition() + 1);
             }
         });
     }

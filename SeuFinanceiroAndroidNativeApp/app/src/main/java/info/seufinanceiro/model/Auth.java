@@ -2,7 +2,7 @@ package info.seufinanceiro.model;
 
 public class Auth {
     private String email, password;
-    private Data data;
+    private AuthData data;
 
     public Auth() {
     }
@@ -23,11 +23,11 @@ public class Auth {
         this.password = password;
     }
 
-    public Data getData() {
+    public AuthData getData() {
         return data;
     }
 
-    public void setData(Data data) {
+    public void setData(AuthData data) {
         this.data = data;
     }
 }
