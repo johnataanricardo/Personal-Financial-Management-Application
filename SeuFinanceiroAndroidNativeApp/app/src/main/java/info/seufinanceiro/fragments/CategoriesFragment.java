@@ -1,71 +1,242 @@
 package info.seufinanceiro.fragments;
 
-import android.app.AlertDialog;
+import android.support.v7.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import info.seufinanceiro.R;
-//import info.seufinanceiro.adapter.CategoriaAdapter;
-//import info.seufinanceiro.main.MainActivity;
-//import info.seufinanceiro.model.Categoria;
-//import info.seufinanceiro.model.ListDataCategoria;
+import info.seufinanceiro.adapter.CategoryAdapter;
+import info.seufinanceiro.model.Category;
+import info.seufinanceiro.service.HttpClientService;
+import info.seufinanceiro.service.HttpClientServiceCreator;
+import info.seufinanceiro.service.SharedPreferencesService;
+import info.seufinanceiro.utils.ResponseData;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class CategoriesFragment extends Fragment{
 
+    private View view;
+    private LayoutInflater layoutInflater;
+    private EditText categoryName;
+    private ListView listView;
 
     @Nullable
     @Override
     public View onCreateView(final LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        final View view = inflater.inflate(R.layout.categories_layout, null);
+        view = inflater.inflate(R.layout.categories_layout, null);
 
-        ListView listView =  view.findViewById(R.id.list_view_categories);
-//
-//        ArrayList<Categoria> categorias = ListDataCategoria.getList();
-//
-//        CategoriaAdapter categoriaAdapter = new CategoriaAdapter(view.getContext(), categorias);
-//
-//        listView.setAdapter(categoriaAdapter);
+        layoutInflater = inflater;
 
-        final Button mShowDialog = (Button) view.findViewById(R.id.novo);
+        listView =  view.findViewById(R.id.list_view_categories);
 
-        mShowDialog.setOnClickListener(new View.OnClickListener() {
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
-            public void onClick(View v) {
-                AlertDialog.Builder mBuilder = new AlertDialog.Builder(view.getContext());
-                View mView = getLayoutInflater().inflate(R.layout.categories_register, null);
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                final Category category = (Category) listView.getItemAtPosition(position);
 
-                final EditText mNomeCategoria = (EditText) mView.findViewById(R.id.input_name_category);
-                Button mSalvar = (Button) mView.findViewById(R.id.btn_save_category);
+                final AlertDialog.Builder builder = new AlertDialog.Builder(inflater.getContext());
+                final AlertDialog dialog = builder.create();
 
-                mSalvar.setOnClickListener(new View.OnClickListener() {
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which){
+                            case DialogInterface.BUTTON_POSITIVE:
+                                deleteCategory(category.getId());
+                                dialog.dismiss();
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                dialog.dismiss();
+                                break;
+                        }
+                    }
+                };
+
+                builder.setMessage("Tem certeza de que deseja deletar?").setPositiveButton("Sim", dialogClickListener)
+                        .setNegativeButton("Não", dialogClickListener).show();
+
+                return true;
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                final Category category = (Category) listView.getItemAtPosition(position);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                final View dialogView = getLayoutInflater().inflate(R.layout.categories_register, null);
+
+                builder.setView(dialogView);
+                final AlertDialog dialog = builder.create();
+                categoryName = (EditText) dialogView.findViewById(R.id.input_name_category);
+                categoryName.setText(category.getDescricao());
+                Button save = (Button) dialogView.findViewById(R.id.btn_save_category);
+
+                save.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
-                        // Criar uma nova linha noo activity categories_layout.
-
-                        Toast.makeText(inflater.getContext(),
-                                      "CHEGOU AQUI!!",
-                                      Toast.LENGTH_SHORT).show();
+                        saveCategory(category);
+                        dialog.dismiss();
                     }
                 });
 
-                mBuilder.setView(mView);
-                AlertDialog dialog = mBuilder.create();
                 dialog.show();
+
             }
         });
+
+        populateListView();
+
+        final FloatingActionButton showDialog = view.findViewById(R.id.newCategorie);
+
+        showDialog.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AlertDialog.Builder mBuilder = new AlertDialog.Builder(view.getContext());
+                final View dialogView = getLayoutInflater().inflate(R.layout.categories_register, null);
+
+                categoryName = (EditText) dialogView.findViewById(R.id.input_name_category);
+                Button save = (Button) dialogView.findViewById(R.id.btn_save_category);
+
+                mBuilder.setView(dialogView);
+                final AlertDialog dialog = mBuilder.create();
+
+                save.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        saveCategory(null);
+                        dialog.dismiss();
+                    }
+                });
+
+                dialog.show();
+
+            }
+        });
+
         return view;
+    }
+
+    private void populateListView() {
+        SharedPreferencesService preferences = new SharedPreferencesService(layoutInflater.getContext());
+        String token = preferences.getToken();
+
+        HttpClientService service = HttpClientServiceCreator.createService(HttpClientService.class);
+
+        Call<ResponseData<Category>> call = service.getAllCategories("Bearer " + token);
+
+        call.enqueue(new Callback<ResponseData<Category>>() {
+            @Override
+            public void onResponse(Call<ResponseData<Category>> call, Response<ResponseData<Category>> response) {
+                if (response.isSuccessful()) {
+
+                    List<Category> categories = response.body().getData();
+
+                    CategoryAdapter categoriaAdapter = new CategoryAdapter(view.getContext(), categories);
+
+                    listView.setAdapter(null);
+                    listView.setAdapter(categoriaAdapter);
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseData<Category>> call, Throwable t) {
+                toastMessage(layoutInflater, "Ops! Algo deu errado...");
+            }
+
+        });
+
+    }
+
+    private void saveCategory(Category category) {
+
+        SharedPreferencesService preferences = new SharedPreferencesService(layoutInflater.getContext());
+        String token = preferences.getToken();
+
+        HttpClientService service = HttpClientServiceCreator.createService(HttpClientService.class);
+
+        Call<Category> call = null;
+
+        Category categoryFinal = category;
+        category.setDescricao(categoryName.getText().toString());
+        if (categoryFinal == null) {
+            call = service.saveCategory("Bearer " + token, category);
+        } else {
+            call = service.updateCategory("Bearer " + token, category, category.getId());
+        }
+
+        call.enqueue(new Callback<Category>() {
+            @Override
+            public void onResponse(Call<Category> call, Response<Category> response) {
+                if (response.isSuccessful()) {
+
+                    toastMessage(layoutInflater, "Categoria salva com sucesso!");
+
+                    populateListView();
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Category> call, Throwable t) {
+                toastMessage(layoutInflater, "Ops! Algo deu errado...");
+            }
+
+        });
+
+    }
+
+    private void deleteCategory(Long id) {
+
+        SharedPreferencesService preferences = new SharedPreferencesService(layoutInflater.getContext());
+        String token = preferences.getToken();
+
+        HttpClientService service = HttpClientServiceCreator.createService(HttpClientService.class);
+
+        Call<Category> call = service.deleteCategory("Bearer " + token, id);
+
+        call.enqueue(new Callback<Category>() {
+            @Override
+            public void onResponse(Call<Category> call, Response<Category> response) {
+                if (response.isSuccessful()) {
+
+                    toastMessage(layoutInflater, "Categoria deletada com sucesso!");
+
+                    populateListView();
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Category> call, Throwable t) {
+                toastMessage(layoutInflater, "Ops! Algo deu errado...");
+            }
+
+        });
+
+    }
+
+    private void toastMessage(final LayoutInflater inflater, String message) {
+        Toast.makeText(inflater.getContext(), message, Toast.LENGTH_SHORT).show();
     }
 
 }
