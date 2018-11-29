@@ -1,26 +1,33 @@
 package info.seufinanceiro.model;
 
-import info.seufinanceiro.model.Enums.MovementType;
-
 public class Movement {
-    private Long id;
-    private String descricao;
-    private Double valor;
-    private MovementType tipoDespesa;
-    private String ano;
-    private Integer mes;
-    private User usuario;
-    private Category categoria;
-    private MovementData data;
+    private String id, idCategoria,  nomeCategoria, descricao, valor, tipoDespesa, ano, mes;
 
-    public Movement() { }
+    public Movement() {
+    }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
+    }
+
+    public String getIdCategoria() {
+        return idCategoria;
+    }
+
+    public void setIdCategoria(String idCategoria) {
+        this.idCategoria = idCategoria;
+    }
+
+    public String getNomeCategoria() {
+        return nomeCategoria;
+    }
+
+    public void setNomeCategoria(String nomeCategoria) {
+        this.nomeCategoria = nomeCategoria;
     }
 
     public String getDescricao() {
@@ -31,19 +38,19 @@ public class Movement {
         this.descricao = descricao;
     }
 
-    public Double getValor() {
+    public String getValor() {
         return valor;
     }
 
-    public void setValor(Double valor) {
+    public void setValor(String valor) {
         this.valor = valor;
     }
 
-    public MovementType getTipoDespesa() {
+    public String getTipoDespesa() {
         return tipoDespesa;
     }
 
-    public void setTipoDespesa(MovementType tipoDespesa) {
+    public void setTipoDespesa(String tipoDespesa) {
         this.tipoDespesa = tipoDespesa;
     }
 
@@ -55,35 +62,11 @@ public class Movement {
         this.ano = ano;
     }
 
-    public Integer getMes() {
+    public String getMes() {
         return mes;
     }
 
-    public void setMes(Integer mes) {
+    public void setMes(String mes) {
         this.mes = mes;
-    }
-
-    public User getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(User usuario) {
-        this.usuario = usuario;
-    }
-
-    public Category getCategoria() {
-        return categoria;
-    }
-
-    public void setCategoria(Category categoria) {
-        this.categoria = categoria;
-    }
-
-    public MovementData getData() {
-        return data;
-    }
-
-    public void setData(MovementData data) {
-        this.data = data;
     }
 }

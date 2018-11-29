@@ -7,10 +7,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import info.seufinanceiro.R;
-import info.seufinanceiro.model.MovementData;
-import info.seufinanceiro.model.MovementResponse;
+import info.seufinanceiro.model.Enums.MovementType.TipoDespesa;
+import info.seufinanceiro.model.Movement;
+import info.seufinanceiro.utils.ResponseData;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -26,23 +30,23 @@ public class TabContentService extends View {
     }
 
     public void setContentTab(final Integer month) {
-        Call<MovementData> call = service.getMovements(String.format(
+        Call<ResponseData<Movement>> call = service.getMovements(String.format(
                 "Bearer %s", preferences.getToken()));
 
-        call.enqueue(new Callback<MovementData>() {
+        call.enqueue(new Callback<ResponseData<Movement>>() {
             @Override
-            public void onResponse(@NonNull Call<MovementData> call,
-                                   @NonNull Response<MovementData> response) {
+            public void onResponse(@NonNull Call<ResponseData<Movement>> call,
+                                   @NonNull Response<ResponseData<Movement>> response) {
                 if (response.isSuccessful()) {
 
-                    final MovementData movementData = response.body();
+                    final ResponseData responseData = response.body();
 
-                    if (movementData != null) {
-                        final ArrayList<MovementResponse> monthMovements = new ArrayList<>();
+                    if (responseData != null) {
+                        final ArrayList<Movement> monthMovements = new ArrayList<>();
 
-                        for (MovementResponse movement : movementData.getMovementResponses()) {
-                            if (movement.getMes().equals(month.toString())) {
-                                monthMovements.add(movement);
+                        for (Object movement : responseData.getData()) {
+                            if (((Movement) movement).getMes().equals(month.toString())) {
+                                monthMovements.add((Movement) movement);
                             }
                         }
 
@@ -70,43 +74,106 @@ public class TabContentService extends View {
         });
     }
 
-    private void setInputCardViewContent(ArrayList<MovementResponse> movements) {
+    private void setInputCardViewContent(List<Movement> movements) {
+        Map<String, Double> valueByCategories = new HashMap<>();
+        Double total = 0.0;
+
+        for (Movement movement : movements) {
+            String category = movement.getDescricao();
+            Double value = Double.valueOf(movement.getValor());
+
+            if (movement.getTipoDespesa().equals(TipoDespesa.ENTRADA.toString())) {
+                if (valueByCategories.containsKey(category)) {
+                    Double newValue = valueByCategories.get(category) + value;
+                    valueByCategories.put(category, newValue);
+                } else {
+                    valueByCategories.put(category, value);
+                }
+
+                total += value;
+            }
+        }
+
+        StringBuilder categories  = new StringBuilder("");
+        StringBuilder values = new StringBuilder("");
+
+        for(String categoryName : valueByCategories.keySet()) {
+            categories.append(String.format("\n%s", categoryName));
+            values.append(String.format("\nR$ %.02f", valueByCategories.get(categoryName)));
+        }
+
+        if(values.toString().equals("")){
+            categories.append("Não há entradas cadastradas");
+        }
+
         TextView titleInputCard = view.findViewById(R.id.title_input_card);
-        titleInputCard.setText(String.format("Entradas: R$%s", '0'));
+            titleInputCard.setText(String.format("Entradas: R$ %.02f", total));
 
         TextView inputsType = view.findViewById(R.id.inputs_type);
-        inputsType.setText("Salário" +
-                "\n" + "Rendimentos" +
-                "\n" + "Freelancer");
+        inputsType.setText(categories);
 
         TextView inputsValue = view.findViewById(R.id.inputs_value);
-        inputsValue.setText("R$: 2.000,00" +
-                "\n" + "R$: 120,00" +
-                "\n" + "R$: 1.000,00");
+        inputsValue.setText(values.toString());
     }
 
-    private void setOutputCardViewContent(ArrayList<MovementResponse> movements) {
+    private void setOutputCardViewContent(List<Movement> movements) {
+        Map<String, Double> valueByCategories = new HashMap<>();
+        Double total = 0.0;
+
+        for (Movement movement : movements) {
+            String category = movement.getDescricao();
+            Double value = Double.valueOf(movement.getValor());
+
+            if (movement.getTipoDespesa().equals(TipoDespesa.SAIDA.toString())) {
+                if (valueByCategories.containsKey(category)) {
+                    Double newValue = valueByCategories.get(category) + value;
+                    valueByCategories.put(category, newValue);
+                } else {
+                    valueByCategories.put(category, value);
+                }
+
+                total += value;
+            }
+        }
+
+        StringBuilder categories  = new StringBuilder("");
+        StringBuilder values = new StringBuilder("");
+
+        for(String categoryName : valueByCategories.keySet()) {
+            categories.append(String.format("\n%s", categoryName));
+            values.append(String.format("\nR$ %.02f", valueByCategories.get(categoryName)));
+        }
+
+        if(values.toString().equals("")){
+            categories.append("Não há saídas cadastradas");
+        }
+
         TextView titleInputCard = view.findViewById(R.id.title_output_card);
-        titleInputCard.setText("Saídas R$: 1.290,34");
+        titleInputCard.setText(String.format("Saídas: R$ %.02f", total));
 
-        TextView outputsType = view.findViewById(R.id.outputs_type);
-        outputsType.setText("Inglês" +
-                "\n" + "Faculdade" +
-                "\n" + "Almoço" +
-                "\n" + "Tênis" +
-                "\n" + "Calça");
+        TextView inputsType = view.findViewById(R.id.outputs_type);
+        inputsType.setText(categories);
 
-        TextView outputsValue = view.findViewById(R.id.outputs_value);
-        outputsValue.setText("R$: 300,00" +
-                "\n" + "R$: 650,00" +
-                "\n" + "R$: 20,34" +
-                "\n" + "R$: 200,00" +
-                "\n" + "R$: 120,00");
+        TextView inputsValue = view.findViewById(R.id.outputs_value);
+        inputsValue.setText(values.toString());
     }
 
-    private void setCashFlowCardViewContent(ArrayList<MovementResponse> movements) {
+    private void setCashFlowCardViewContent(ArrayList<Movement> movements) {
+        Double totalInput = 0.0;
+        Double totalOutput = 0.0;
+
+        for (Movement movement : movements) {
+            Double value = Double.valueOf(movement.getValor());
+
+            if (movement.getTipoDespesa().equals(TipoDespesa.ENTRADA.toString())) {
+                totalInput+=value;
+            } else if (movement.getTipoDespesa().equals(TipoDespesa.SAIDA.toString())) {
+                totalOutput+=value;
+            }
+        }
+
         TextView titleInputCard = view.findViewById(R.id.cash_flow);
-        titleInputCard.setText("Fluxo de Caixa R$: 1.829,66");
+        titleInputCard.setText(String.format("Fluxo de Caixa R$ %.02f", totalInput - totalOutput));
     }
 
     private void onCallFailed(String message) {

@@ -2,6 +2,7 @@ package info.seufinanceiro.service;
 
 import info.seufinanceiro.model.Auth;
 import info.seufinanceiro.model.Category;
+import info.seufinanceiro.model.Movement;
 import info.seufinanceiro.model.MovementData;
 import info.seufinanceiro.model.SignUp;
 import info.seufinanceiro.model.Token;
@@ -30,7 +31,7 @@ public interface HttpClientService {
     Call<SignUp> signup(@Body SignUp signUp);
 
     @GET("movimentacoes")
-    Call <MovementData> getMovements(@Header("Authorization") String authorization);
+    Call <ResponseData<Movement>> getMovements(@Header("Authorization") String authorization);
 
     // Crud Category
     @GET("categoria/")
