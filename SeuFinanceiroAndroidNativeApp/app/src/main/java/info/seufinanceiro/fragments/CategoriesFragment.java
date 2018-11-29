@@ -51,14 +51,13 @@ public class CategoriesFragment extends Fragment{
                 final Category category = (Category) listView.getItemAtPosition(position);
 
                 final AlertDialog.Builder builder = new AlertDialog.Builder(inflater.getContext());
-                final AlertDialog dialog = builder.create();
 
                 DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which){
                             case DialogInterface.BUTTON_POSITIVE:
-                                deleteCategory(category.getId());
+                                deleteCategory(category);
                                 dialog.dismiss();
                                 break;
 
@@ -151,7 +150,6 @@ public class CategoriesFragment extends Fragment{
                     List<Category> categories = response.body().getData();
 
                     CategoryAdapter categoriaAdapter = new CategoryAdapter(view.getContext(), categories);
-
                     listView.setAdapter(null);
                     listView.setAdapter(categoriaAdapter);
 
@@ -176,9 +174,9 @@ public class CategoriesFragment extends Fragment{
 
         Call<Category> call = null;
 
-        Category categoryFinal = category;
-        category.setDescricao(categoryName.getText().toString());
-        if (categoryFinal == null) {
+        if (category == null) {
+            category = new Category();
+            category.setDescricao(categoryName.getText().toString());
             call = service.saveCategory("Bearer " + token, category);
         } else {
             call = service.updateCategory("Bearer " + token, category, category.getId());
@@ -205,14 +203,14 @@ public class CategoriesFragment extends Fragment{
 
     }
 
-    private void deleteCategory(Long id) {
+    private void deleteCategory(Category category) {
 
         SharedPreferencesService preferences = new SharedPreferencesService(layoutInflater.getContext());
         String token = preferences.getToken();
 
         HttpClientService service = HttpClientServiceCreator.createService(HttpClientService.class);
 
-        Call<Category> call = service.deleteCategory("Bearer " + token, id);
+        Call<Category> call = service.deleteCategory("Bearer " + token, category.getId());
 
         call.enqueue(new Callback<Category>() {
             @Override
