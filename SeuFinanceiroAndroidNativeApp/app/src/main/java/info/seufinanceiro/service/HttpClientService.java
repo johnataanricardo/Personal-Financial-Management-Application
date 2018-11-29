@@ -4,7 +4,9 @@ import info.seufinanceiro.model.Auth;
 import info.seufinanceiro.model.Category;
 import info.seufinanceiro.model.SignUp;
 import info.seufinanceiro.model.Token;
+import info.seufinanceiro.model.User;
 import info.seufinanceiro.utils.ResponseData;
+import info.seufinanceiro.utils.ResponseDataSimple;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
@@ -40,5 +42,11 @@ public interface HttpClientService {
 
     @PUT("categoria/{id}")
     Call<Category> updateCategory(@Header("Authorization") String token, @Body Category category, @Path("id") Long id);
+
+    @GET("user")
+    Call<ResponseDataSimple<User>> getUser(@Header("Authorization") String token);
+
+    @PUT("user")
+    Call<ResponseDataSimple<String>> updateUser(@Header("Authorization") String token, @Body User user);
 
 }
