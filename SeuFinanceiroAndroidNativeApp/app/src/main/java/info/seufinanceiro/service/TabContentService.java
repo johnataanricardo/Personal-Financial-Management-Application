@@ -98,8 +98,17 @@ public class TabContentService extends View {
         StringBuilder values = new StringBuilder("");
 
         for(String categoryName : valueByCategories.keySet()) {
-            categories.append(String.format("\n%s", categoryName));
-            values.append(String.format("\nR$ %.02f", valueByCategories.get(categoryName)));
+            if(categories.toString().equals("")){
+                categories.append(String.format("%s", categoryName));
+            } else {
+                categories.append(String.format("\n%s", categoryName));
+            }
+
+            if(values.toString().equals("")){
+                values.append(String.format("R$ %.02f", valueByCategories.get(categoryName)));
+            } else {
+                values.append(String.format("\nR$ %.02f", valueByCategories.get(categoryName)));
+            }
         }
 
         if(values.toString().equals("")){
@@ -140,8 +149,17 @@ public class TabContentService extends View {
         StringBuilder values = new StringBuilder("");
 
         for(String categoryName : valueByCategories.keySet()) {
-            categories.append(String.format("\n%s", categoryName));
-            values.append(String.format("\nR$ %.02f", valueByCategories.get(categoryName)));
+            if(categories.toString().equals("")){
+                categories.append(String.format("%s", categoryName));
+            } else {
+                categories.append(String.format("\n%s", categoryName));
+            }
+
+            if(values.toString().equals("")){
+                values.append(String.format("R$ %.02f", valueByCategories.get(categoryName)));
+            } else {
+                values.append(String.format("\nR$ %.02f", valueByCategories.get(categoryName)));
+            }
         }
 
         if(values.toString().equals("")){

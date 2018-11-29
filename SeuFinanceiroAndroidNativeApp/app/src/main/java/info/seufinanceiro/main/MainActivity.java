@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity
         tabLayoutListener.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                service.setContentTab(tab.getPosition() + 1);
+                service.setContentTab(tab.getPosition());
             }
 
             @Override
@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void onTabReselected(TabLayout.Tab tab) {
-                service.setContentTab(tab.getPosition() + 1);
+                service.setContentTab(tab.getPosition());
             }
         });
     }
