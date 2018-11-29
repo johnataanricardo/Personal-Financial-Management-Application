@@ -1,7 +1,6 @@
 package info.seufinanceiro.model;
 
 public class Category {
-
     private Long id;
     private String descricao;
 
@@ -28,5 +27,4 @@ public class Category {
     public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
-
 }

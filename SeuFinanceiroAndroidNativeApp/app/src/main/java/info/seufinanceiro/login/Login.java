@@ -62,8 +62,7 @@ public class Login extends AppCompatActivity {
     }
 
     public void login() {
-        progressDialog = new ProgressDialog(Login.this,
-                R.style.AppCompatAlertDialogStyle);
+        progressDialog = new ProgressDialog(Login.this, R.style.AppCompatAlertDialogStyle);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Autenticando...");
         progressDialog.show();

@@ -2,7 +2,7 @@ package info.seufinanceiro.model;
 
 public class SignUp {
     private String nome, email, senha;
-    private Data data;
+    private AuthData data;
 
     public SignUp() {
     }
@@ -31,11 +31,11 @@ public class SignUp {
         this.senha = senha;
     }
 
-    public Data getData() {
+    public AuthData getData() {
         return data;
     }
 
-    public void setData(Data data) {
+    public void setData(AuthData data) {
         this.data = data;
     }
 }
