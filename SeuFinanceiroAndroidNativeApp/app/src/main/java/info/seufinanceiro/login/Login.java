@@ -14,9 +14,11 @@ import android.widget.Toast;
 import info.seufinanceiro.R;
 import info.seufinanceiro.main.MainActivity;
 import info.seufinanceiro.model.Auth;
+import info.seufinanceiro.model.User;
 import info.seufinanceiro.service.HttpClientService;
 import info.seufinanceiro.service.HttpClientServiceCreator;
 import info.seufinanceiro.service.SharedPreferencesService;
+import info.seufinanceiro.utils.ResponseDataSimple;
 import info.seufinanceiro.utils.SoftKeyboardUtils;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -62,8 +64,7 @@ public class Login extends AppCompatActivity {
     }
 
     public void login() {
-        progressDialog = new ProgressDialog(Login.this,
-                R.style.AppCompatAlertDialogStyle);
+        progressDialog = new ProgressDialog(Login.this, R.style.AppCompatAlertDialogStyle);
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Autenticando...");
         progressDialog.show();
@@ -108,6 +109,7 @@ public class Login extends AppCompatActivity {
                                 new Runnable() {
                                     public void run() {
                                         onLoginSuccess();
+
                                     }
                                 }, 3000);
                     } else {
@@ -157,6 +159,7 @@ public class Login extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
 
     public void onLoginFailed(String message) {
         progressDialog.dismiss();

@@ -2,6 +2,7 @@ package info.seufinanceiro.main;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -14,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import java.util.Date;
 
@@ -22,7 +24,16 @@ import info.seufinanceiro.fragments.AccountFragment;
 import info.seufinanceiro.fragments.CategoriesFragment;
 import info.seufinanceiro.fragments.HomeFragment;
 import info.seufinanceiro.login.Login;
+import info.seufinanceiro.model.Token;
+import info.seufinanceiro.model.User;
+import info.seufinanceiro.service.HttpClientService;
+import info.seufinanceiro.service.HttpClientServiceCreator;
+import info.seufinanceiro.service.SharedPreferencesService;
 import info.seufinanceiro.service.TabContentService;
+import info.seufinanceiro.utils.ResponseDataSimple;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.ContentTab {
@@ -35,7 +46,7 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         Bundle bundle = new Bundle();
@@ -46,21 +57,23 @@ public class MainActivity extends AppCompatActivity
 
         tabLayout = findViewById(R.id.month_tab);
         setTabLayoutListener(tabLayout);
-        service = new TabContentService(getApplicationContext() ,findViewById(android.R.id.content));
+        service = new TabContentService(getApplicationContext(), findViewById(android.R.id.content));
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        makeCallUserName();
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -70,19 +83,14 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action) {
             Intent intent = new Intent(MainActivity.this, Login.class);
             startActivity(intent);
@@ -96,7 +104,6 @@ public class MainActivity extends AppCompatActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         Fragment fragment = null;
@@ -118,7 +125,7 @@ public class MainActivity extends AppCompatActivity
 
         setFragment(fragment);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -151,9 +158,39 @@ public class MainActivity extends AppCompatActivity
 
     }
 
+    private void makeCallUserName() {
+
+        SharedPreferencesService sharedPreferencesService
+                = new SharedPreferencesService(getBaseContext());
+
+        final Token token = new Token( sharedPreferencesService.getToken());
+
+
+        HttpClientService service = HttpClientServiceCreator.createService(HttpClientService.class);
+
+        Call<ResponseDataSimple<User>> callUser = service.getUser(token.getToken());
+
+        callUser.enqueue(new Callback<ResponseDataSimple<User>>() {
+            @Override
+            public void onResponse(@NonNull Call<ResponseDataSimple<User>> call,
+                                   @NonNull Response<ResponseDataSimple<User>> response) {
+                if (response.isSuccessful()) {
+                    TextView txtNameView = findViewById(R.id.user_name);
+                    txtNameView.setText(response.body().getData().getNome());
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<ResponseDataSimple<User>> call,
+                                  @NonNull Throwable t) {
+            }
+        });
+    }
+
+
+
     @Override
     public void setContentTab(Integer tab) {
         tabLayout.getTabAt(month).select();
     }
-
 }

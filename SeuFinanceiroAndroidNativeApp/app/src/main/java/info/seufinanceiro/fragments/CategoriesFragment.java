@@ -179,6 +179,7 @@ public class CategoriesFragment extends Fragment{
             category.setDescricao(categoryName.getText().toString());
             call = service.saveCategory("Bearer " + token, category);
         } else {
+            category.setDescricao(categoryName.getText().toString());
             call = service.updateCategory("Bearer " + token, category, category.getId());
         }
 

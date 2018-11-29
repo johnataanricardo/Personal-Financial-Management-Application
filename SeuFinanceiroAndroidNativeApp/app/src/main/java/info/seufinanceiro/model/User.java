@@ -1,26 +1,24 @@
 package info.seufinanceiro.model;
 
+import java.util.List;
+
 public class User {
-    private String id, email, nome, senha;
-    private Data data;
+    private Long id;
+    private String nome;
+    private String email;
+    private String senha;
+    private List<Movement> movimentacaos;
+    private List<Category> categories;
 
     public User() {
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getNome() {
@@ -31,6 +29,14 @@ public class User {
         this.nome = nome;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     public String getSenha() {
         return senha;
     }
@@ -39,11 +45,19 @@ public class User {
         this.senha = senha;
     }
 
-    public Data getData() {
-        return data;
+    public List<Movement> getMovimentacaos() {
+        return movimentacaos;
     }
 
-    public void setData(Data data) {
-        this.data = data;
+    public void setMovimentacaos(List<Movement> movimentacaos) {
+        this.movimentacaos = movimentacaos;
+    }
+
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
     }
 }
