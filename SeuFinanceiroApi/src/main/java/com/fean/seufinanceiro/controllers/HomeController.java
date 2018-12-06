@@ -31,13 +31,13 @@ public class HomeController {
                                                      @PathVariable("month") String month,
                                                      @AuthenticationPrincipal JwtUser jwtUser){
 
-        LOGGER.info("Buscando dados da movimentação...");
+        LOGGER.info("Searching transaction data...");
         Response<HomeDto> response = new Response<>();
 
         HomeDto homeDto = homeService.showMovimentacaoByMonthYear(year, month, jwtUser.getId());
 
         if (homeDto == null ||  (homeDto.getInput() == null && homeDto.getOuput() == null)){
-            LOGGER.info("Nenhuma movimentação foi encontrada...");
+            LOGGER.info("No transaction found...");
         }
 
         response.setData(homeDto);

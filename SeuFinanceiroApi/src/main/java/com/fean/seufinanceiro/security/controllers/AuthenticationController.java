@@ -64,15 +64,16 @@ public class AuthenticationController {
 		Response<TokenDto> response = new Response<TokenDto>();
 
 		if (result.hasErrors()) {
-			LOGGER.error("Erro validando integridade dos dados: {}", result.getAllErrors());
+			LOGGER.error("Error Validating Data Integrity: {}", result.getAllErrors());
 			result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
 			return ResponseEntity.badRequest().body(response);
 		}
 
-		LOGGER.info("Gerando token para o email {}.", authenticationDto.getEmail());
+		LOGGER.info("Generating token for email {}.", authenticationDto.getEmail());
 
 		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(authenticationDto.getEmail(), authenticationDto.getPassword()));
+				new UsernamePasswordAuthenticationToken(authenticationDto.getEmail(),
+														authenticationDto.getPassword()));
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -92,7 +93,7 @@ public class AuthenticationController {
 	@PostMapping(value = "/refresh")
 	public ResponseEntity<Response<TokenDto>> generateRefreshTokenJwt(HttpServletRequest request) {
 
-		LOGGER.info("Gerando refresh token JWT.");
+		LOGGER.info("Generating refresh token JWT.");
 
 		Response<TokenDto> response = new Response<TokenDto>();
 
@@ -103,9 +104,9 @@ public class AuthenticationController {
         }
 		
 		if (!token.isPresent()) {
-			response.getErrors().add("Token não informado.");
+			response.getErrors().add("Token not informed.");
 		} else if (!jwtTokenUtil.validToken(token.get())) {
-			response.getErrors().add("Token inválido ou expirado.");
+			response.getErrors().add("Token invalid or expired.");
 		}
 		
 		if (!response.getErrors().isEmpty()) { 
@@ -127,7 +128,8 @@ public class AuthenticationController {
 	@PostMapping(value = "/valid")
 	public ResponseEntity<Response<Boolean>> verifyTokenJwt(@RequestBody TokenDto tokenDto){
 
-		LOGGER.info("Verificando o token recebido...");
+		LOGGER.info("Checking the token received...");
+
 		Response<Boolean> response = new Response<>();
 
 		if (tokenDto == null || jwtTokenUtil.getUsernameFromToken(tokenDto.getToken()) == null){
@@ -138,5 +140,4 @@ public class AuthenticationController {
 
 		return ResponseEntity.ok(response);
 	}
-
 }

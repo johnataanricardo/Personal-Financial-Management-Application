@@ -32,14 +32,14 @@ public class ChartController {
     public ResponseEntity<Response<ChartDto>> getChart(@PathVariable("year")  String year,
                                                        @AuthenticationPrincipal JwtUser jwtUser){
 
-        LOGGER.info("Buscando dados do gráfico...");
+        LOGGER.info("Searching chart data...");
         Response<ChartDto> response = new Response<>();
 
         ChartDto chartDto = chartService.findChartByYear(year, jwtUser.getId());
 
         if (chartDto == null){
-            LOGGER.info("Nenhum gráfico foi encontrado...");
-            response.getErrors().add("Nenhum gráfico foi encontrado...");
+            LOGGER.info("No Charts Found...");
+            response.getErrors().add("No Charts Found...");
             return ResponseEntity.badRequest().body(response);
         }
 

@@ -49,14 +49,14 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<Response<UserDto>> getUser(@AuthenticationPrincipal JwtUser jwtUser) {
-        LOGGER.info("Buscando dados de usuário pelo ID: ", jwtUser.getId());
+        LOGGER.info("Searching User data by ID: ", jwtUser.getId());
 
         Response<UserDto> response = new Response<>();
         Optional<User> user = userService.findUsuarioById(jwtUser.getId());
 
         if (!user.isPresent()) {
-            LOGGER.info("Usuário não encontrado pelo ID: ", jwtUser.getId());
-            response.getErrors().add("Usuário não encontrado pelo ID: " + jwtUser.getId());
+            LOGGER.info("User not found by ID: ", jwtUser.getId());
+            response.getErrors().add("User not found by ID: " + jwtUser.getId());
             return ResponseEntity.badRequest().body(response);
         }
 
@@ -91,7 +91,7 @@ public class UserController {
                                                    @AuthenticationPrincipal JwtUser jwtUser,
                                                    BindingResult result) {
 
-        LOGGER.info("Atualizando usuário: {}", userDto.toString());
+        LOGGER.info("Updating user: {}", userDto.toString());
         Response<String> response = new Response<>();
 
         if (result.hasErrors()) {
@@ -109,33 +109,33 @@ public class UserController {
     @DeleteMapping
     public ResponseEntity<Response<String>> remove(@AuthenticationPrincipal JwtUser jwtUser) {
 
-        LOGGER.info("Removendo usuário ID: {}", jwtUser.getId());
+        LOGGER.info("Removing user ID: {}", jwtUser.getId());
 
         Response<String> response = new Response<>();
         Optional<User> user = this.userService.findUsuarioById(jwtUser.getId());
 
         if (user == null) {
-            LOGGER.info("Erro ao remover devido ao usuário ID: {} ser inválido", jwtUser.getId());
-            response.getErrors().add("Erro ao remover usuário. Registro não encontrado para o id " + jwtUser.getId());
+            LOGGER.info("Error removing user ID: {} is invalid", jwtUser.getId());
+            response.getErrors().add("Error removing user. Record not found by id " + jwtUser.getId());
             return ResponseEntity.badRequest().body(response);
         }
 
         this.userService.removeUser(jwtUser.getId());
 
-        response.setData("Usuário removido com sucesso!");
+        response.setData("User removed successfully!");
         return ResponseEntity.ok(response);
     }
 
     private void checkUserSignUpData(SignUpDto signUpDto, BindingResult result) {
 
-        LOGGER.info("Validando Usuário ID {}: ", signUpDto.getEmail());
+        LOGGER.info("Validating user ID {}: ", signUpDto.getEmail());
 
         Optional<User> usuario = this.userService
                                     .findUserByUsernameEmail(signUpDto.getEmail());
 
         if (usuario.isPresent()) {
-            result.addError(new ObjectError("Usuário",
-                                         "Usuário já cadastrado."));
+            result.addError(new ObjectError("User",
+                                         "User already registered"));
         }
     }
 
@@ -158,7 +158,7 @@ public class UserController {
         Optional<User> user = userService.findUsuarioById(jwtUser.getId());
 
         if (!user.isPresent()){
-            throw new UserNotFoundException("Usuário não encontrado");
+            throw new UserNotFoundException("User not found!");
         }
 
         if(userDto.getPassword() != null){

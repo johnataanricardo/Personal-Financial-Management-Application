@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("categoria")
+@RequestMapping("category")
 public class CategoryController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CategoryController.class);
@@ -41,38 +41,39 @@ public class CategoryController {
     @GetMapping
     public ResponseEntity<Response<List<CategoryDto>>> getAllCategorys(@AuthenticationPrincipal JwtUser jwtUser){
 
-        LOGGER.info("Buscando todos dados de categoria do usuário ID: ", jwtUser.getId());
+        LOGGER.info("Searching for all user category data ID: ", jwtUser.getId());
 
         Response<List<CategoryDto>> response = new Response<>();
 
         List<Category> categories = categoryService.showAllCategoryByUserId(jwtUser.getId());
 
         if (categories.isEmpty()){
-            LOGGER.info("Nenhuma categoria foi encontrada...");
+            LOGGER.info("No categories found...");
         }
 
-        List<CategoryDto> categoryDtos = new ArrayList<>();
+        List<CategoryDto> categoryDtoList = new ArrayList<>();
 
         for (Category category : categories) {
-                categoryDtos.add(convertCategoryDto(category));
+                categoryDtoList.add(convertCategoryDto(category));
         }
 
-        response.setData(categoryDtos);
+        response.setData(categoryDtoList);
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Response<CategoryDto>> getCategoriaById(@PathVariable("id") Long id,
-                                                                  @AuthenticationPrincipal JwtUser jwtUser){
+    public ResponseEntity<Response<CategoryDto>> getCategoryById(@PathVariable("id") Long id,
+                                                                 @AuthenticationPrincipal JwtUser jwtUser){
 
-        LOGGER.info("Buscando dados de category pelo ID: ", id);
+        LOGGER.info("Searching for category data by ID: ", id);
+
         Response<CategoryDto> response = new Response<>();
 
         Category category = categoryService.showCategoryByIdAndUserId(id, jwtUser.getId());
 
         if (category == null){
-            LOGGER.info("Category não encontrada pelo ID: ", id);
-            response.getErrors().add("Category não encontrada pelo ID: " + id);
+            LOGGER.info("Category not found by ID: ", id);
+            response.getErrors().add("Category not found by ID: " + id);
             return ResponseEntity.badRequest().body(response);
         }
 
@@ -86,7 +87,7 @@ public class CategoryController {
                                                       @AuthenticationPrincipal JwtUser jwtUser,
                                                       BindingResult result) {
 
-        LOGGER.info("Salvando uma nova category para o usuário ID: ", jwtUser.getId());
+        LOGGER.info("Saving a new category to the user ID: ", jwtUser.getId());
         Response<CategoryDto> response = new Response<>();
 
         if (result.hasErrors()){
@@ -107,19 +108,19 @@ public class CategoryController {
                                                    @AuthenticationPrincipal JwtUser jwtUser,
                                                    BindingResult result) {
 
-        LOGGER.info("Atualizando categoria: {}", categoryDto.toString());
+        LOGGER.info("Updating category: {}", categoryDto.toString());
         categoryDto.setId(idCategoria);
 
         Response<String> response = new Response<>();
 
         if (result.hasErrors()) {
-            LOGGER.error("Erro validando categoria: {}", result.getAllErrors());
+            LOGGER.error("Error validating category: {}", result.getAllErrors());
             result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
             return ResponseEntity.badRequest().body(response);
         }
 
         this.categoryService.newCategory(convertCategory(categoryDto, jwtUser));
-        response.setData("Category atualizada com sucesso!!!");
+        response.setData("Category successfully updated!!!");
 
         return ResponseEntity.ok(response);
     }
@@ -128,20 +129,20 @@ public class CategoryController {
     public ResponseEntity<Response<String>> remove(@PathVariable("id") Long id,
                                                    @AuthenticationPrincipal JwtUser jwtUser){
 
-        LOGGER.info("Removendo category ID:"+ id +" do usuário ID: {}", jwtUser.getId());
+        LOGGER.info("Removing category ID:"+ id +" by user ID: {}", jwtUser.getId());
 
         Response<String> response = new Response<>();
 
         Category category = this.categoryService.showCategoryByIdAndUserId(id, jwtUser.getId());
 
         if (category == null){
-            LOGGER.info("Erro ao remover devido a category ID: {} ser inválido", id);
-            response.getErrors().add("Erro ao remover a category. Registro não encontrado para o id " + id);
+            LOGGER.info("Error removing category: {} invalid", id);
+            response.getErrors().add("Error removing category. Record not found by id " + id);
             return ResponseEntity.badRequest().body(response);
         }
 
         this.categoryService.removeCategory(id);
-        response.setData("Category removida com sucesso!");
+        response.setData("Category removed successfully!");
         return ResponseEntity.ok(response);
     }
 

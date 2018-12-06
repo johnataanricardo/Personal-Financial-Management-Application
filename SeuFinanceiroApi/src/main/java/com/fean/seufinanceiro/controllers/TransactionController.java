@@ -25,7 +25,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Controller
-@RequestMapping("movimentacoes")
+@RequestMapping("transaction")
 public class TransactionController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TransactionController.class);
@@ -49,7 +49,7 @@ public class TransactionController {
     @GetMapping
     public ResponseEntity<Response<List<TransactionDto>>> getTransaction(@AuthenticationPrincipal JwtUser jwtUser){
 
-        LOGGER.info("Buscando todos os dados de movimentações do usuário ID: ", jwtUser.getId());
+        LOGGER.info("Searching for all user transaction data ID: ", jwtUser.getId());
 
         Response<List<TransactionDto>> response = new Response<>();
 
@@ -60,7 +60,7 @@ public class TransactionController {
         });
 
         if (transactionDtoList.isEmpty()){
-            LOGGER.info("Nenhum fluxo de caixia foi encontrado...");
+            LOGGER.info("No transactions found...");
         }
 
         response.setData(transactionDtoList);
@@ -71,14 +71,14 @@ public class TransactionController {
     public ResponseEntity<Response<TransactionDto>> getTransactionById(@PathVariable("id") Long id,
                                                                        @AuthenticationPrincipal JwtUser jwtUser){
 
-        LOGGER.info("Buscando dados de movimentação pelo ID: ", id);
+        LOGGER.info("Searching transaction data by ID: ", id);
 
         Response<TransactionDto> response = new Response<>();
         Transaction transaction = transactionService.showTransactionByIdByUserId(id, jwtUser.getId());
 
         if (transaction == null){
-            LOGGER.info("Transaction não encontrada pelo ID: ", id);
-            response.getErrors().add("Transaction não encontrada pelo ID: " + id);
+            LOGGER.info("Transaction not found by ID: ", id);
+            response.getErrors().add("Transaction not found by ID: " + id);
             return ResponseEntity.badRequest().body(response);
         }
 
@@ -100,7 +100,7 @@ public class TransactionController {
         }
 
         transactionService.newTransaction(convertTransaction(transactionDto, jwtUser));
-        response.setData("Transaction salva com sucesso!!!");
+        response.setData("Transaction saved successfully!!!");
 
         return ResponseEntity.ok(response);
     }
@@ -114,18 +114,18 @@ public class TransactionController {
 
         transactionDto.setId(String.valueOf(id));
 
-        LOGGER.info("Atualizando movimentação: {}", transactionDto.toString());
+        LOGGER.info("Updating transaction: {}", transactionDto.toString());
 
         Response<String> response = new Response<>();
 
         if (result.hasErrors()) {
-            LOGGER.error("Erro validando movimentação: {}", result.getAllErrors());
+            LOGGER.error("Error removing transaction: {}", result.getAllErrors());
             result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
             return ResponseEntity.badRequest().body(response);
         }
 
         this.transactionService.newTransaction(convertTransaction(transactionDto, jwtUser));
-        response.setData("Movimentação atualizada com sucesso!!!");
+        response.setData("Transaction successfully updated!!!");
 
         return ResponseEntity.ok(response);
     }
@@ -134,20 +134,20 @@ public class TransactionController {
     public ResponseEntity<Response<String>> remove(@PathVariable("id") Long id,
                                                    @AuthenticationPrincipal JwtUser jwtUser){
 
-        LOGGER.info("Removendo movimentação ID:"+ id +" do usuário ID: {}", jwtUser.getId());
+        LOGGER.info("Removing transaction ID:"+ id +" by user ID: {}", jwtUser.getId());
 
         Response<String> response = new Response<>();
 
         Transaction transaction = this.transactionService.showTransactionByIdByUserId(id, jwtUser.getId());
 
         if (transaction == null){
-            LOGGER.info("Erro ao remover devido a movimentação ID: {} ser inválido", id);
-            response.getErrors().add("Erro ao remover a movimentação. Registro não encontrado para o id " + id);
+            LOGGER.info("Error removing transaction ID: {} is invalid", id);
+            response.getErrors().add("Error removing transaction transaction. Record not found by id " + id);
             return ResponseEntity.badRequest().body(response);
         }
 
         this.transactionService.removeTransaction(id);
-        response.setData("Movimentação removida com sucesso!");
+        response.setData("Transaction removed successfully!");
         return ResponseEntity.ok(response);
     }
 
