@@ -1,25 +1,25 @@
-package com.fean.seufinanceiro.dto;
+package com.fean.seufinanceiro.dtos;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FluxoDeCaixaDto {
 
-    private List<MovimentacaoDto> movimentacaos = new ArrayList<>();
+    private List<TransactionDto> movimentacaos = new ArrayList<>();
     private String fluxoCaixa;
 
     public FluxoDeCaixaDto() {}
 
-    public FluxoDeCaixaDto(List<MovimentacaoDto> movimentacaos, String fluxoCaixa) {
+    public FluxoDeCaixaDto(List<TransactionDto> movimentacaos, String fluxoCaixa) {
         this.movimentacaos = movimentacaos;
         this.fluxoCaixa = fluxoCaixa;
     }
 
-    public List<MovimentacaoDto> getMovimentacaos() {
+    public List<TransactionDto> getMovimentacaos() {
         return movimentacaos;
     }
 
-    public void setMovimentacaos(List<MovimentacaoDto> movimentacaos) {
+    public void setMovimentacaos(List<TransactionDto> movimentacaos) {
         this.movimentacaos = movimentacaos;
     }
 

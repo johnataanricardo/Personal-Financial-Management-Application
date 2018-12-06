@@ -1,9 +1,10 @@
 package com.fean.seufinanceiro.controllers;
 
-import com.fean.seufinanceiro.dto.ChartDto;
+import com.fean.seufinanceiro.dtos.ChartDto;
 import com.fean.seufinanceiro.responses.Response;
 import com.fean.seufinanceiro.security.JwtUser;
-import com.fean.seufinanceiro.service.ChartService;
+import com.fean.seufinanceiro.services.ChartService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,7 @@ public class ChartController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ChartController.class);
 
-    private ChartService chartService;
-
+    private final ChartService chartService;
 
     @Autowired
     public ChartController(ChartService chartService) {
@@ -29,8 +29,8 @@ public class ChartController {
     }
 
     @GetMapping("{year}")
-    public ResponseEntity<Response<ChartDto>> getHome(@PathVariable("year")  String year,
-                                                     @AuthenticationPrincipal JwtUser jwtUser){
+    public ResponseEntity<Response<ChartDto>> getChart(@PathVariable("year")  String year,
+                                                       @AuthenticationPrincipal JwtUser jwtUser){
 
         LOGGER.info("Buscando dados do gráfico...");
         Response<ChartDto> response = new Response<>();

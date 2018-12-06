@@ -41,7 +41,9 @@ public class AuthenticationController {
 	@Autowired
 	private UserDetailsService userDetailsService;
 
-	public AuthenticationController(AuthenticationManager authenticationManager, JwtTokenUtil jwtTokenUtil, UserDetailsService userDetailsService) {
+	public AuthenticationController(AuthenticationManager authenticationManager,
+									JwtTokenUtil jwtTokenUtil,
+									UserDetailsService userDetailsService) {
 		this.authenticationManager = authenticationManager;
 		this.jwtTokenUtil = jwtTokenUtil;
 		this.userDetailsService = userDetailsService;
@@ -56,7 +58,9 @@ public class AuthenticationController {
 	 * @throws AuthenticationException
 	 */
 	@PostMapping
-	public ResponseEntity<Response<TokenDto>> gerarTokenJwt(@Valid @RequestBody JwtAuthenticationDto authenticationDto, BindingResult result) throws AuthenticationException {
+	public ResponseEntity<Response<TokenDto>> generateTokenJwt(@Valid @RequestBody JwtAuthenticationDto authenticationDto,
+															   BindingResult result) throws AuthenticationException {
+
 		Response<TokenDto> response = new Response<TokenDto>();
 
 		if (result.hasErrors()) {
@@ -67,8 +71,8 @@ public class AuthenticationController {
 
 		LOGGER.info("Gerando token para o email {}.", authenticationDto.getEmail());
 
-		Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-				authenticationDto.getEmail(), authenticationDto.getPassword()));
+		Authentication authentication = authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(authenticationDto.getEmail(), authenticationDto.getPassword()));
 
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
@@ -87,10 +91,13 @@ public class AuthenticationController {
 	 */
 	@PostMapping(value = "/refresh")
 	public ResponseEntity<Response<TokenDto>> generateRefreshTokenJwt(HttpServletRequest request) {
+
 		LOGGER.info("Gerando refresh token JWT.");
+
 		Response<TokenDto> response = new Response<TokenDto>();
+
 		Optional<String> token = Optional.ofNullable(request.getHeader(TOKEN_HEADER));
-		
+
 		if (token.isPresent() && token.get().startsWith(BEARER_PREFIX)) {
 			token = Optional.of(token.get().substring(7));
         }
@@ -106,6 +113,7 @@ public class AuthenticationController {
 		}
 		
 		String refreshedToken = jwtTokenUtil.refreshToken(token.get());
+
 		response.setData(new TokenDto(refreshedToken));
 		return ResponseEntity.ok(response);
 	}
@@ -118,6 +126,7 @@ public class AuthenticationController {
 	 */
 	@PostMapping(value = "/valid")
 	public ResponseEntity<Response<Boolean>> verifyTokenJwt(@RequestBody TokenDto tokenDto){
+
 		LOGGER.info("Verificando o token recebido...");
 		Response<Boolean> response = new Response<>();
 

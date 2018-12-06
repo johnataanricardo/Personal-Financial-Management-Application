@@ -84,7 +84,7 @@ public class JwtTokenUtil {
 	 * @return boolean
 	 */
 	public boolean validToken(String token) {
-		return !expiratedToken(token);
+		return !expiredToken(token);
 	}
 
 	/**
@@ -134,7 +134,7 @@ public class JwtTokenUtil {
 	 * @param token
 	 * @return boolean
 	 */
-	private boolean expiratedToken(String token) {
+	private boolean expiredToken(String token) {
 		Date dataExpiracao = this.getExpirationDateFromToken(token);
 		if (dataExpiracao == null) {
 			return false;

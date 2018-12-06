@@ -1,31 +1,18 @@
-package com.fean.seufinanceiro.dto;
+package com.fean.seufinanceiro.dtos;
 
-import javax.validation.constraints.NotEmpty;
+public class SignUpDto {
 
-public class UsuarioDto {
-
-    private String id;
-    @NotEmpty
     private String nome;
-    @NotEmpty
     private String email;
     private String senha;
 
-    public UsuarioDto() {
+    public SignUpDto() {
     }
 
-    public UsuarioDto(String id, @NotEmpty String nome, @NotEmpty String email) {
-        this.id = id;
+    public SignUpDto(String nome, String email, String senha) {
         this.nome = nome;
         this.email = email;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
+        this.senha = senha;
     }
 
     public String getNome() {
@@ -51,5 +38,4 @@ public class UsuarioDto {
     public void setSenha(String senha) {
         this.senha = senha;
     }
-
 }

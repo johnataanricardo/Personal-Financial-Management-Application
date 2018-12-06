@@ -1,21 +1,20 @@
 package com.fean.seufinanceiro.controllers;
 
-import com.fean.seufinanceiro.dto.SignUpDto;
-import com.fean.seufinanceiro.dto.UsuarioDto;
+import com.fean.seufinanceiro.dtos.SignUpDto;
+import com.fean.seufinanceiro.dtos.UserDto;
 import com.fean.seufinanceiro.exceptions.UserNotFoundException;
-import com.fean.seufinanceiro.model.Usuario;
+import com.fean.seufinanceiro.models.User;
 import com.fean.seufinanceiro.responses.Response;
 import com.fean.seufinanceiro.security.JwtUser;
 import com.fean.seufinanceiro.security.dtos.TokenDto;
 import com.fean.seufinanceiro.security.enums.ProfileEnum;
 import com.fean.seufinanceiro.security.utils.JwtTokenUtil;
-import com.fean.seufinanceiro.service.UsuarioService;
+import com.fean.seufinanceiro.services.UserService;
 import com.fean.seufinanceiro.utils.PasswordUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -29,15 +28,12 @@ import java.util.Optional;
 
 @Controller
 @RequestMapping("user")
-public class UsuarioController {
+public class UserController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(UsuarioController.class);
-
-    @Autowired
-    private UsuarioService usuarioService;
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
-    private AuthenticationManager authenticationManager;
+    private UserService userService;
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
@@ -45,44 +41,44 @@ public class UsuarioController {
     @Autowired
     private UserDetailsService userDetailsService;
 
-    public UsuarioController(UsuarioService usuarioService, AuthenticationManager authenticationManager,
-                             JwtTokenUtil jwtTokenUtil, UserDetailsService userDetailsService) {
-        this.usuarioService = usuarioService;
-        this.authenticationManager = authenticationManager;
+    public UserController(UserService userService, JwtTokenUtil jwtTokenUtil, UserDetailsService userDetailsService) {
+        this.userService = userService;
         this.jwtTokenUtil = jwtTokenUtil;
         this.userDetailsService = userDetailsService;
     }
 
-
     @GetMapping
-    public ResponseEntity<Response<UsuarioDto>> getUsuario(@AuthenticationPrincipal JwtUser jwtUser) {
+    public ResponseEntity<Response<UserDto>> getUser(@AuthenticationPrincipal JwtUser jwtUser) {
         LOGGER.info("Buscando dados de usuário pelo ID: ", jwtUser.getId());
-        Response<UsuarioDto> response = new Response<>();
-        Optional<Usuario> usuario = usuarioService.findUsuarioById(jwtUser.getId());
 
-        if (!usuario.isPresent()) {
+        Response<UserDto> response = new Response<>();
+        Optional<User> user = userService.findUsuarioById(jwtUser.getId());
+
+        if (!user.isPresent()) {
             LOGGER.info("Usuário não encontrado pelo ID: ", jwtUser.getId());
             response.getErrors().add("Usuário não encontrado pelo ID: " + jwtUser.getId());
             return ResponseEntity.badRequest().body(response);
         }
 
-        response.setData(this.convertUsuarioDto(usuario.get()));
+        response.setData(this.convertUserDto(user.get()));
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/sign-up")
-    public ResponseEntity<Response<TokenDto>> save(@Valid @RequestBody SignUpDto signUpDto, BindingResult result) {
+    public ResponseEntity<Response<TokenDto>> save(@Valid @RequestBody SignUpDto signUpDto,
+                                                   BindingResult result) {
+
         Response<TokenDto> response = new Response<>();
 
-        checkUsuarioSignUpData(signUpDto, result);
+        checkUserSignUpData(signUpDto, result);
         if (result.hasErrors()) {
             result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
             return ResponseEntity.badRequest().body(response);
         }
 
-        Usuario usuario = usuarioService.newUser(convertUsuarioNovoDto(signUpDto));
+        User user = userService.newUser(convertNewUserDto(signUpDto));
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(usuario.getEmail());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(user.getEmail());
         String token = jwtTokenUtil.obtainToken(userDetails);
 
         response.setData(new TokenDto(token));
@@ -91,11 +87,11 @@ public class UsuarioController {
     }
 
     @PutMapping
-    public ResponseEntity<Response<String>> update(@Valid @RequestBody UsuarioDto usuarioDto,
+    public ResponseEntity<Response<String>> update(@Valid @RequestBody UserDto userDto,
                                                    @AuthenticationPrincipal JwtUser jwtUser,
                                                    BindingResult result) {
 
-        LOGGER.info("Atualizando usuário: {}", usuarioDto.toString());
+        LOGGER.info("Atualizando usuário: {}", userDto.toString());
         Response<String> response = new Response<>();
 
         if (result.hasErrors()) {
@@ -104,7 +100,7 @@ public class UsuarioController {
             return ResponseEntity.badRequest().body(response);
         }
 
-        this.usuarioService.newUser(convertUsuario(usuarioDto, jwtUser));
+        this.userService.newUser(convertUser(userDto, jwtUser));
         response.setData("Usuário atualizado com sucesso!!!");
 
         return ResponseEntity.ok(response);
@@ -112,65 +108,71 @@ public class UsuarioController {
 
     @DeleteMapping
     public ResponseEntity<Response<String>> remove(@AuthenticationPrincipal JwtUser jwtUser) {
-        LOGGER.info("Removendo usuário ID: {}", jwtUser.getId());
-        Response<String> response = new Response<>();
-        Optional<Usuario> usuario = this.usuarioService.findUsuarioById(jwtUser.getId());
 
-        if (usuario == null) {
+        LOGGER.info("Removendo usuário ID: {}", jwtUser.getId());
+
+        Response<String> response = new Response<>();
+        Optional<User> user = this.userService.findUsuarioById(jwtUser.getId());
+
+        if (user == null) {
             LOGGER.info("Erro ao remover devido ao usuário ID: {} ser inválido", jwtUser.getId());
             response.getErrors().add("Erro ao remover usuário. Registro não encontrado para o id " + jwtUser.getId());
             return ResponseEntity.badRequest().body(response);
         }
 
-        this.usuarioService.removeUser(jwtUser.getId());
+        this.userService.removeUser(jwtUser.getId());
+
         response.setData("Usuário removido com sucesso!");
         return ResponseEntity.ok(response);
     }
 
-    private void checkUsuarioSignUpData(SignUpDto signUpDto, BindingResult result) {
+    private void checkUserSignUpData(SignUpDto signUpDto, BindingResult result) {
+
         LOGGER.info("Validando Usuário ID {}: ", signUpDto.getEmail());
 
-        Optional<Usuario> usuario = this.usuarioService
+        Optional<User> usuario = this.userService
                                     .findUserByUsernameEmail(signUpDto.getEmail());
 
         if (usuario.isPresent()) {
             result.addError(new ObjectError("Usuário",
-                    "Usuário já cadastrado."));
+                                         "Usuário já cadastrado."));
         }
     }
 
-    private Usuario convertUsuarioNovoDto(SignUpDto signUpDto) {
-        Usuario usuario = new Usuario();
-        usuario.setNome(signUpDto.getNome());
-        usuario.setEmail(signUpDto.getEmail());
-        usuario.setSenha(PasswordUtils.generateBCrypt(signUpDto.getSenha()));
-        usuario.setPerfil(ProfileEnum.ROLE_USUARIO);
-        return usuario;
+    private User convertNewUserDto(SignUpDto signUpDto) {
+        User user = new User();
+        user.setName(signUpDto.getNome());
+        user.setEmail(signUpDto.getEmail());
+        user.setPassword(PasswordUtils.generateBCrypt(signUpDto.getSenha()));
+        user.setProfile(ProfileEnum.ROLE_USER);
+        return user;
     }
 
-    private UsuarioDto convertUsuarioDto(Usuario usuario) {
-        return new UsuarioDto(String.valueOf(usuario.getId()),
-                usuario.getNome(),
-                usuario.getEmail());
+    private UserDto convertUserDto(User user) {
+        return new UserDto(String.valueOf(user.getId()),
+                user.getName(),
+                user.getEmail());
     }
 
-    private Usuario convertUsuario(UsuarioDto usuarioDto, JwtUser jwtUser) {
-        Optional<Usuario> usuario = usuarioService.findUsuarioById(jwtUser.getId());
+    private User convertUser(UserDto userDto, JwtUser jwtUser) {
+        Optional<User> user = userService.findUsuarioById(jwtUser.getId());
 
-        if (!usuario.isPresent()){
-                throw new UserNotFoundException("Usuário não encontrado");
+        if (!user.isPresent()){
+            throw new UserNotFoundException("Usuário não encontrado");
         }
 
-        if(usuarioDto.getSenha() != null){
-            if (!usuarioDto.getSenha().isEmpty()){
-                usuario.get().setSenha(PasswordUtils.generateBCrypt(usuarioDto.getSenha()));
+        if(userDto.getPassword() != null){
+            if (!userDto.getPassword().isEmpty()){
+                user.get().setPassword(PasswordUtils.generateBCrypt(userDto.getPassword()));
             }
         }
-        usuario.get().setId(jwtUser.getId());
-        usuario.get().setNome(usuarioDto.getNome());
-        usuario.get().setEmail(usuarioDto.getEmail());
-        usuario.get().setPerfil(ProfileEnum.ROLE_USUARIO);
-        return usuario.get();
 
+        user.get().setId(jwtUser.getId());
+        user.get().setName(userDto.getName());
+        user.get().setEmail(userDto.getEmail());
+        user.get().setProfile(ProfileEnum.ROLE_USER);
+
+        return user.get();
     }
+
 }

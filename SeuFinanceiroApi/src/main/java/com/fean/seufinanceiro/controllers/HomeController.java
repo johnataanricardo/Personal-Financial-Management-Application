@@ -1,9 +1,10 @@
 package com.fean.seufinanceiro.controllers;
 
-import com.fean.seufinanceiro.dto.HomeDto;
+import com.fean.seufinanceiro.dtos.HomeDto;
 import com.fean.seufinanceiro.responses.Response;
 import com.fean.seufinanceiro.security.JwtUser;
-import com.fean.seufinanceiro.service.HomeService;
+import com.fean.seufinanceiro.services.HomeService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +19,7 @@ public class HomeController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HomeController.class);
 
-    private HomeService homeService;
-
+    private final HomeService homeService;
 
     @Autowired
     public HomeController(HomeService homeService) {
@@ -36,7 +36,7 @@ public class HomeController {
 
         HomeDto homeDto = homeService.showMovimentacaoByMonthYear(year, month, jwtUser.getId());
 
-        if (homeDto == null ||  (homeDto.getEntrada() == null && homeDto.getSaida() == null)){
+        if (homeDto == null ||  (homeDto.getInput() == null && homeDto.getOuput() == null)){
             LOGGER.info("Nenhuma movimentação foi encontrada...");
         }
 
