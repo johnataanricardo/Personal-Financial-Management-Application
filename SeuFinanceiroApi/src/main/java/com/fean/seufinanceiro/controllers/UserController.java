@@ -131,19 +131,19 @@ public class UserController {
         LOGGER.info("Validating user ID {}: ", signUpDto.getEmail());
 
         Optional<User> usuario = this.userService
-                                    .findUserByUsernameEmail(signUpDto.getEmail());
+                .findUserByUsernameEmail(signUpDto.getEmail());
 
         if (usuario.isPresent()) {
             result.addError(new ObjectError("User",
-                                         "User already registered"));
+                    "User already registered"));
         }
     }
 
     private User convertNewUserDto(SignUpDto signUpDto) {
         User user = new User();
-        user.setName(signUpDto.getNome());
+        user.setName(signUpDto.getName());
         user.setEmail(signUpDto.getEmail());
-        user.setPassword(PasswordUtils.generateBCrypt(signUpDto.getSenha()));
+        user.setPassword(PasswordUtils.generateBCrypt(signUpDto.getPassword()));
         user.setProfile(ProfileEnum.ROLE_USER);
         return user;
     }
@@ -157,12 +157,12 @@ public class UserController {
     private User convertUser(UserDto userDto, JwtUser jwtUser) {
         Optional<User> user = userService.findUsuarioById(jwtUser.getId());
 
-        if (!user.isPresent()){
+        if (!user.isPresent()) {
             throw new UserNotFoundException("User not found!");
         }
 
-        if(userDto.getPassword() != null){
-            if (!userDto.getPassword().isEmpty()){
+        if (userDto.getPassword() != null) {
+            if (!userDto.getPassword().isEmpty()) {
                 user.get().setPassword(PasswordUtils.generateBCrypt(userDto.getPassword()));
             }
         }

@@ -7,7 +7,8 @@ public class ChartDto {
 
     private List<CashFlowMonthlyDto> cashFlowMonthlyDto;
 
-    public ChartDto() {}
+    public ChartDto() {
+    }
 
     public ChartDto(List<CashFlowMonthlyDto> cashFlowMonthlyDto) {
         this.cashFlowMonthlyDto = cashFlowMonthlyDto;
@@ -18,4 +19,5 @@ public class ChartDto {
             this.cashFlowMonthlyDto = new ArrayList<>();
         return cashFlowMonthlyDto;
     }
+
 }

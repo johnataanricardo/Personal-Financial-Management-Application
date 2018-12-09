@@ -11,7 +11,8 @@ public class HomeDto {
     private Double totalOutput;
     private Double cashFlow;
 
-    public HomeDto() { }
+    public HomeDto() {
+    }
 
     public HomeDto(List<TransactionDto> input,
                    List<TransactionDto> ouput,
@@ -25,14 +26,14 @@ public class HomeDto {
     }
 
     public List<TransactionDto> getInput() {
-        if(this.input == null)
+        if (this.input == null)
             this.input = new ArrayList<>();
         return input;
     }
 
     public List<TransactionDto> getOuput() {
         if (this.ouput == null)
-             this.ouput = new ArrayList<>();
+            this.ouput = new ArrayList<>();
         return ouput;
     }
 
@@ -46,13 +47,13 @@ public class HomeDto {
 
     public Double getTotalInput() {
         if (this.totalInput == null)
-                this.totalInput = 0.0;
+            this.totalInput = 0.0;
         return totalInput;
     }
 
     public void setTotalInput(Double totalInput) {
         if (this.totalOutput == null)
-                this.totalOutput = 0.0;
+            this.totalOutput = 0.0;
         this.totalInput = totalInput;
     }
 
@@ -75,4 +76,5 @@ public class HomeDto {
     public void setCashFlow(Double cashFlow) {
         this.cashFlow = cashFlow;
     }
+
 }

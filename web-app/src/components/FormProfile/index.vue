@@ -14,25 +14,26 @@
         <h3 class="headline mb-0" v-else>Cadastrar-se</h3>
       </v-flex>
     </v-layout>
+    <!-- Form -->
     <v-form ref="form" v-model="valid" @keyup.native.enter="submit" lazy-validation>
-      <v-text-field  v-model="user.nome" :rules="textFieldRule" color="teal" label="Nome" required ></v-text-field>
+      <v-text-field  v-model="user.name" :rules="textFieldRule" color="teal" label="Nome" required ></v-text-field>
       <v-text-field v-model="user.email" :rules="emailRules" color="teal" label="E-mail" required :disabled="emailDisabled"></v-text-field>    
       <v-text-field
-        v-model="user.senha"
+        v-model="user.password"
         :append-icon="invisibility1 ? 'visibility' : 'visibility_off'"
         @click:append="() => (invisibility1 = !invisibility1)"
         :type="invisibility1 ? 'password' : 'text'"
-        :rules="account ? simplePasswordRules : passwordRules"
+        :rules="account ? passwordRule : textFieldRule"
         color="teal"
         label="Senha"
         required>
       </v-text-field>
       <v-text-field
-        v-model="senhaRepetida"
+        v-model="repeatedPassword"
         :append-icon="invisibility2 ? 'visibility' : 'visibility_off'"
         @click:append="() => (invisibility2 = !invisibility2)"
         :type="invisibility2 ? 'password' : 'text'"
-        :rules="account ? simplePasswordRules : passwordRules"
+        :rules="account ? passwordRule : textFieldRule"
         color="teal"
         label="Repita a Senha"
         required>
@@ -54,7 +55,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 export default {
   name: 'FormProfile',
   props: ['account', 'emailDisabled', 'cleanButton', 'titleSaveButton'],
@@ -65,37 +65,26 @@ export default {
     snackbar: false,
     text: '',
     user: {
-      nome: '',
+      name: '',
       email: '',
-      senha: '',
+      password: '',
     },
-    senhaRepetida: '',
+    repeatedPassword: '',
     emailRules: [
       v => !!v || 'Campo obrigatório!',
       v => /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,4})+$/.test(v) || 'E-mail inválido'
     ],
-    passwordRules: [
-      v => !!v || 'Campo obrigatório!',
-      v =>  /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])/.test(v) || 'A senha precisa ter uma no mínimo um número, uma letra maíscula e uma mínuscula.'
-    ],
-    simplePasswordRules:[
-       v => {
-        const pattern =  /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])/
-        if (v.length) {
-          return pattern.test(v) || 'A senha precisa ter uma no mínimo um número, uma letra maíscula e uma mínuscula.'
-        } else {
-          return true;
-        }
-      }
-    ],
     textFieldRule: [
       v => !!v || 'Campo obrigatório!'
     ],
+    passwordRule: [
+      v => true
+    ]
   }),
   methods: {
     submit () {
       if (this.$refs.form.validate()) {
-        if (this.user.senha == this.senhaRepetida) {
+        if (this.user.password == this.repeatedPassword) {
           this.$emit('click')
         } else {
           this.text = 'As senhas não estão iguais.'

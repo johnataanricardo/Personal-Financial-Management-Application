@@ -11,7 +11,8 @@ public class UserDto {
     private String email;
     private String password;
 
-    public UserDto() {}
+    public UserDto() {
+    }
 
     public UserDto(String id, @NotEmpty String name, @NotEmpty String email) {
         this.id = id;

@@ -1,7 +1,7 @@
 package com.fean.seufinanceiro.services;
 
-import com.fean.seufinanceiro.dtos.ChartDto;
 import com.fean.seufinanceiro.dtos.CashFlowMonthlyDto;
+import com.fean.seufinanceiro.dtos.ChartDto;
 import com.fean.seufinanceiro.models.Transaction;
 import com.fean.seufinanceiro.models.enums.TypeTransaction;
 import com.fean.seufinanceiro.utils.NumberUtils;
@@ -25,20 +25,20 @@ public class ChartService {
         ChartDto chartDto = new ChartDto();
         List<CashFlowMonthlyDto> cashFlowMonthlyDtoList = new ArrayList<>();
 
-        for(int month = 0; month < 12; month++){
+        for (int month = 0; month < 12; month++) {
             CashFlowMonthlyDto cashFlowMonthlyDto = new CashFlowMonthlyDto(month);
             List<Transaction> transactions = transactionService
-                                                    .showAllTransactionByYearMonth(year, String.valueOf(month), userId);
+                    .showAllTransactionByYearMonth(year, String.valueOf(month), userId);
 
             transactions.forEach(transaction -> {
-                if( transaction.getTypeTransaction().equals(TypeTransaction.INPUT)){
+                if (transaction.getTypeTransaction().equals(TypeTransaction.INPUT)) {
                     cashFlowMonthlyDto.setCashFlow(
-                                            NumberUtils.formatDouble(cashFlowMonthlyDto.getCashFlow() +
-                                                                           transaction.getValue()));
-                }else {
+                            NumberUtils.formatDouble(cashFlowMonthlyDto.getCashFlow() +
+                                    transaction.getValue()));
+                } else {
                     cashFlowMonthlyDto.setCashFlow(
-                                            NumberUtils.formatDouble(cashFlowMonthlyDto.getCashFlow() -
-                                                                           transaction.getValue()));
+                            NumberUtils.formatDouble(cashFlowMonthlyDto.getCashFlow() -
+                                    transaction.getValue()));
                 }
             });
 

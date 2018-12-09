@@ -4,7 +4,6 @@ import com.fean.seufinanceiro.dtos.ChartDto;
 import com.fean.seufinanceiro.responses.Response;
 import com.fean.seufinanceiro.security.JwtUser;
 import com.fean.seufinanceiro.services.ChartService;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,15 +28,15 @@ public class ChartController {
     }
 
     @GetMapping("{year}")
-    public ResponseEntity<Response<ChartDto>> getChart(@PathVariable("year")  String year,
-                                                       @AuthenticationPrincipal JwtUser jwtUser){
+    public ResponseEntity<Response<ChartDto>> getChart(@PathVariable("year") String year,
+                                                       @AuthenticationPrincipal JwtUser jwtUser) {
 
         LOGGER.info("Searching chart data...");
         Response<ChartDto> response = new Response<>();
 
         ChartDto chartDto = chartService.findChartByYear(year, jwtUser.getId());
 
-        if (chartDto == null){
+        if (chartDto == null) {
             LOGGER.info("No Charts Found...");
             response.getErrors().add("No Charts Found...");
             return ResponseEntity.badRequest().body(response);

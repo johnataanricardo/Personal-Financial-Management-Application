@@ -7,10 +7,10 @@
         </v-card-title>
         <v-form ref="recordDialog" v-model="valid" @keyup.native.enter="saveRecord" lazy-validation>
           <div class="form">
-            <v-text-field color="teal" ref="valor" v-model.lazy="valor" v-money="money" label="Valor"></v-text-field>
-            <v-select no-data-text="Nenhuma categoria cadastrada" color="teal" v-model="idCategoria" 
-              :items="items" item-value="id" item-text="descricao" label="Categoria"></v-select>
-            <v-text-field color="teal" v-model="descricao" label="Descrição"></v-text-field>
+            <v-text-field color="teal" ref="value" v-model.lazy="transaction.value" v-money="money" label="Valor"></v-text-field>
+            <v-select no-data-text="Nenhuma categoria cadastrada" color="teal" v-model="transaction.categoryId" 
+              :items="items" item-value="id" item-text="description" label="Categoria"></v-select>
+            <v-text-field color="teal" v-model="transaction.description" label="Descrição"></v-text-field>
           </div>
           <v-card-actions>
             <v-spacer></v-spacer>
@@ -33,12 +33,15 @@ export default {
       valid: true,
       title: '',
       showDialog: false,
-      valor: '',
-      idCategoria: '',
-      descricao: '',
-      tipoDespesa: '',
-      ano: '',
-      mes: '',
+      transaction: {
+        id: null,
+        categoryId: '',
+        description: '',
+        value: '',
+        typeTransaction: '',
+        year: '',
+        month: ''
+      },
       money: {
         decimal: '.',
         thousands: '',
@@ -56,8 +59,8 @@ export default {
   },
   watch: {
     showDialog: function() {
-       // the only way to reset de value of valor, v-money has a bug in v-text-field of vuetify
-      this.$refs.valor.$el.getElementsByTagName('input')[0].value = 0;
+       // the only way to reset value, v-money has a bug in v-text-field of vuetify
+      this.$refs.value.$el.getElementsByTagName('input')[0].value = 0;
       this.$refs.recordDialog.reset()
     }
   }

@@ -11,7 +11,8 @@ public class TransactionDto {
     private String year;
     private String month;
 
-    public TransactionDto() {}
+    public TransactionDto() {
+    }
 
     public TransactionDto(String id, String categoryId, String categoryName,
                           String description, String value, String typeTransaction,

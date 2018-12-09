@@ -10,7 +10,8 @@ public class Category {
     private User user;
     private Transaction transaction;
 
-    public Category() {}
+    public Category() {
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

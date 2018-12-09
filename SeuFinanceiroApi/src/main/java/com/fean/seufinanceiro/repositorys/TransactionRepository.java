@@ -10,7 +10,9 @@ import java.util.List;
 public interface TransactionRepository extends CrudRepository<Transaction, Long> {
 
     List<Transaction> findByYearAndMonthAndUserId(String year, Integer month, Long userId);
+
     List<Transaction> findAllByUserId(Long userId);
+
     Transaction findByIdAndUserId(Long transactionId, Long userId);
 
 }

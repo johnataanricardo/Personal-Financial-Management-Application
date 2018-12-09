@@ -7,7 +7,7 @@
       <v-data-table :headers="headers" :items="categories" class="elevation-1"
         :rows-per-page-items="rowsPerPage" :rows-per-page-text="rowsPerPageText" :no-data-text="noDataText">
         <template slot="items" slot-scope="props">
-          <td class="text-xs-left">{{ props.item.descricao }}</td>
+          <td class="text-xs-left">{{ props.item.description }}</td>
           <td class="justify-center layout px-0">
             <v-icon small class="mr-2" @click="editItem(props.item)">
               edit
@@ -35,7 +35,7 @@
                 <v-card-text>Tem certeza de que deseja deletar?</v-card-text>
               </v-flex>
               <v-flex v-else>
-                <v-text-field color="teal" v-model="categoria.descricao" label="Nome"></v-text-field>
+                <v-text-field color="teal" v-model="category.description" label="Nome"></v-text-field>
               </v-flex>
             </v-layout>
           </v-container>
@@ -60,10 +60,8 @@
 </template>
 
 <script>
+import { getAllCategories, remove, post, put } from '@/services/category'
 import Menu from '@/components/Menu'
-import axios from 'axios'
-
-const api = process.env.API_URL
 
 export default {
   name: 'Category', 
@@ -82,12 +80,12 @@ export default {
       ],
       categories: [],
       editedIndex: -1,
-      categoria: {
+      category: {
         id: '',
-        descricao: ''
+        description: ''
       },
       defaultItem: {
-        descricao: '',
+        description: '',
       },
       rowsPerPage: [5,10],
       rowsPerPageText: 'Items por página',
@@ -113,26 +111,17 @@ export default {
     },
     methods: {
       initialize () {
-        const token = 'Bearer ' + localStorage.getItem('token')
-        axios.get(api + '/categoria/', {
-          headers: {       
-            'Content-Type': 'application/json',
-            'Authorization': token
-          }
-        }).then(response => (      
-          this.categories = response.data.data
-        )).catch(function (error) {
-          console.log(error);
-        })
+        const data = this
+        getAllCategories().then(response => { data.categories = response })
       },
       editItem (item) {
         this.editedIndex = this.categories.indexOf(item)
-        this.categoria = Object.assign({}, item)
+        this.category = Object.assign({}, item)
         this.dialog = true
       },
       deleteItem (item) {
         this.deleteMode = !this.deleteMode
-        this.categoria = item
+        this.category = item
         this.editedIndex = this.categories.indexOf(item)
         this.dialog = true
       },
@@ -140,23 +129,16 @@ export default {
         this.dialog = false
         setTimeout(() => {
           this.deleteMode = this.deleteMode === true? !this.deleteMode : this.deleteMode
-          this.categoria = Object.assign({}, this.defaultItem)
+          this.category = Object.assign({}, this.defaultItem)
           this.editedIndex = -1
         }, 300)
       },
       confirm () {
         const data = this
-        const token = 'Bearer ' + localStorage.getItem('token');        
-        axios.delete(api + '/categoria/' + data.categoria.id, {
-          headers: {        
-            'Content-Type': 'application/json',
-            'Authorization': token
-          }
-        }).then(response => (
+        remove(data.category.id).then(response => {
           data.categories.splice(data.editedIndex, 1),
-          data.initSnackbar('Categoria deletada com sucesso!')
-        )).catch(function (error) {
-          console.log(error)
+          data.initSnackbar('Categoria deletada com sucesso!')  
+        }).catch(function (error) {
           data.initSnackbar('Problema ao deletar!')
         })
         data.close()
@@ -167,34 +149,19 @@ export default {
       },
       save () {
         const data = this
+        const category = data.category
         if (data.editedIndex > -1) {
-          const token = 'Bearer ' + localStorage.getItem('token');
-          const categoria = data.categoria          
-          axios.put(api + '/categoria/' + categoria.id, JSON.stringify(categoria), {
-            headers: {        
-              'Content-Type': 'application/json',
-              'Authorization': token
-            }
-          }).then(response => (            
+          put(JSON.stringify(category)).then(response => (
+            Object.assign(data.categories[data.editedIndex], category),
             data.initSnackbar('Categoria salva com sucesso!')
           )).catch(function (error) {
-            console.log(error)
             data.initSnackbar('Problema ao salvar!')
-          })          
-          Object.assign(data.categories[data.editedIndex], data.categoria)
+          })
         } else {
-          const token = 'Bearer ' + localStorage.getItem('token');
-          const categoria = JSON.stringify(data.categoria)
-          axios.post(api + '/categoria/', categoria, {
-            headers: {        
-              'Content-Type': 'application/json',
-              'Authorization': token
-            }
-          }).then(response => (    
-            data.categories.push(response.data.data),
+          post(JSON.stringify(data.category)).then(response => (    
+            data.categories.push(response),
             data.initSnackbar('Categoria salva com sucesso!')
           )).catch(function (error) {
-            console.log(error)
             data.initSnackbar('Problema ao salvar!')
           })
         }

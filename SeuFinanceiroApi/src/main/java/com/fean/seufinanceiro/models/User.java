@@ -1,6 +1,7 @@
 package com.fean.seufinanceiro.models;
 
 import com.fean.seufinanceiro.security.enums.ProfileEnum;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -15,7 +16,8 @@ public class User {
     private List<Transaction> transactions;
     private List<Category> categories;
 
-    public User() {}
+    public User() {
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

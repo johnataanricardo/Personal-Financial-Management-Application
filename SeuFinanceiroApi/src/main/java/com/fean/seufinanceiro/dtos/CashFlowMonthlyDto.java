@@ -5,7 +5,8 @@ public class CashFlowMonthlyDto {
     private Integer month;
     private Double cashFlow;
 
-    public CashFlowMonthlyDto() {}
+    public CashFlowMonthlyDto() {
+    }
 
     public CashFlowMonthlyDto(Integer month) {
         this.month = month;
@@ -24,6 +25,5 @@ public class CashFlowMonthlyDto {
     public void setCashFlow(Double cashFlow) {
         this.cashFlow = cashFlow;
     }
-
 
 }

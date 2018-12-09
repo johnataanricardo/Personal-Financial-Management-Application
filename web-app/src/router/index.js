@@ -1,14 +1,12 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import axios from 'axios';
 import Account from '@/pages/Account';
 import Home from '@/pages/Home/';
 import Login from '@/pages/Login/';
 import SignUp from '@/pages/SignUp';
 import Welcome from '@/pages/Welcome';
 import Category from '@/pages/Registers/Category';
-
-const api = process.env.API_URL;
+import { validateToken } from '@/services/auth';
 
 Vue.use(Router)
 
@@ -27,19 +25,15 @@ const router = new Router({
       beforeEnter(to, from, next) {
         const token = localStorage.getItem('token');
         if (token) {
-          axios.post(api + '/auth/valid/', JSON.stringify(token), { 
-            headers: {        
-              'Content-Type': 'application/json',
-            },
-          }).then(function(response){
-            if (response.data.data === true) {
+          validateToken(JSON.stringify(token)).then(response => {
+            if (response === true) {
               return next({ path: '/home'});   
             } else {
-              delete localStorage.token
-              return next({path: '/login'});    
+              delete localStorage.token;
+              return next({ path: '/login'});
             }
           }).catch(function(error) {
-            throw error
+            throw error;
           })
         } else {
           return next();
@@ -76,20 +70,16 @@ router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     const token = localStorage.getItem('token');
     if (token) {
-      axios.post(api + '/auth/valid/', JSON.stringify(token), { 
-        headers: {        
-          'Content-Type': 'application/json',
-        },
-      }).then(function(response){
-        if (response.data.data === true) {
+      validateToken(JSON.stringify(token)).then(response => {
+        if (response === true) {
           return next();
         } else {
-          delete localStorage.token
-          return next({path: '/login'});   
+          delete localStorage.token;
+          return next({ path: '/login'});
         }
-      }).catch(function(error){
-        throw error
-      });
+      }).catch(function(error) {
+        throw error;
+      })
     } else {
       return next({path: '/login'});   
     }

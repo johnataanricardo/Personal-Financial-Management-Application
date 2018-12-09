@@ -9,5 +9,6 @@ import java.util.List;
 @Repository
 public interface CategoryRepository extends CrudRepository<Category, Long> {
     List<Category> findAllByUserId(Long id);
+
     Category findByIdAndUserId(Long idCategory, Long userId);
 }

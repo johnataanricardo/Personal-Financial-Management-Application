@@ -6,7 +6,7 @@
       <v-spacer></v-spacer>      
       <v-menu transition="slide-y-transition" bottom offset-y>
         <v-avatar open-on-hover slot="activator" size="35" color="grey lighten-4">
-          <img src="../../../static/Perfil.jpg" >
+          <img src="../../../static/profile.jpg" >
         </v-avatar>
         <v-list>
           <v-list-tile>
@@ -19,7 +19,7 @@
       <v-list class="pa-1">
         <v-list-tile avatar>
           <v-list-tile-avatar size="35">
-            <img src="../../../static/Perfil.jpg" >
+            <img src="../../../static/profile.jpg" >
           </v-list-tile-avatar>
           <v-list-tile-content>
             <v-list-tile-title>{{ user.name }}</v-list-tile-title>
@@ -52,10 +52,8 @@
 </template>
 
 <script>
+import { getUserLogged } from '@/services/user'
 import router from '@/router'
-import axios from 'axios'
-
-const api = process.env.API_URL
 
 export default {
   name: 'Menu',
@@ -76,17 +74,8 @@ export default {
     }
   },
   mounted () {
-    const token = 'Bearer ' + localStorage.getItem('token')
-    axios.get(api + '/user/', {
-      headers: {        
-        'Content-Type': 'application/json',
-        'Authorization': token
-      }
-    }).then(response => (      
-      this.user.name = response.data.data.nome
-    )).catch(function (error) {
-      console.log(error);
-    })
+    const data = this
+    getUserLogged().then(response => { data.user.name = response.name })
   },
   methods: {
     logOut () {    

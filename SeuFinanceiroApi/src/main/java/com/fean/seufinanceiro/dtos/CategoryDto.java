@@ -9,7 +9,8 @@ public class CategoryDto {
     @NotEmpty
     private String description;
 
-    public CategoryDto() {}
+    public CategoryDto() {
+    }
 
     public CategoryDto(Long id, String description) {
         this.id = id;

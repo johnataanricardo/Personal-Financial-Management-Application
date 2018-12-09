@@ -4,17 +4,17 @@
       <v-data-iterator v-if="items.length > 0" :items="items" :rows-per-page-items="rowsPerPageItems"
         :pagination.sync="pagination" content-tag="v-layout" hide-actions row wrap>
         <v-flex slot="item" slot-scope="props" xs12 sm12 md12 lg12>
-          <v-card v-if="props.item.registers.length !== 0 ">
+          <v-card v-if="props.item.transactions.length !== 0 ">
             <v-card-title class="subheading font-weight-bold">{{ props.item.name }}</v-card-title>
             <v-divider></v-divider>
             <v-list dense>
-              <v-list-tile v-for="register in props.item.registers" :key="register.id" xs12>
+              <v-list-tile v-for="transaction in props.item.transactions" :key="transaction.id" xs12>
                 <v-list-tile-content>
-                  {{register.nomeCategoria ? 
-                    register.nomeCategoria + ': ' + (register.descricao ? register.descricao : 'sem descrição') : 
-                    'Sem Categoria' + ': ' + (register.descricao ? register.descricao : 'sem descrição')}}
+                  {{transaction.categoryName ? 
+                    transaction.categoryName + ': ' + (transaction.description ? transaction.description : 'sem descrição') : 
+                    'Sem Categoria' + ': ' + (transaction.description ? transaction.description : 'sem descrição')}}
                 </v-list-tile-content>
-                <v-list-tile-content class="align-end">R$: {{ register.valor }}</v-list-tile-content>
+                <v-list-tile-content class="align-end">R$: {{ transaction.value }}</v-list-tile-content>
               </v-list-tile>              
             </v-list>
           </v-card>

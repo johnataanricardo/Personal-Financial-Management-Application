@@ -2,25 +2,25 @@ package com.fean.seufinanceiro.dtos;
 
 public class SignUpDto {
 
-    private String nome;
+    private String name;
     private String email;
-    private String senha;
+    private String password;
 
     public SignUpDto() {
     }
 
-    public SignUpDto(String nome, String email, String senha) {
-        this.nome = nome;
+    public SignUpDto(String name, String email, String password) {
+        this.name = name;
         this.email = email;
-        this.senha = senha;
+        this.password = password;
     }
 
-    public String getNome() {
-        return nome;
+    public String getName() {
+        return name;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getEmail() {
@@ -31,11 +31,12 @@ public class SignUpDto {
         this.email = email;
     }
 
-    public String getSenha() {
-        return senha;
+    public String getPassword() {
+        return password;
     }
 
-    public void setSenha(String senha) {
-        this.senha = senha;
+    public void setPassword(String password) {
+        this.password = password;
     }
+
 }

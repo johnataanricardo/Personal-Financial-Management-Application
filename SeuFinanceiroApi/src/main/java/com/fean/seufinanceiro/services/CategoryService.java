@@ -18,24 +18,24 @@ public class CategoryService {
         this.categoryRepository = categoryRepository;
     }
 
-    public List<Category> showAllCategoryByUserId(Long id){
+    public List<Category> showAllCategoryByUserId(Long id) {
         return categoryRepository.findAllByUserId(id);
     }
 
-    public Optional<Category> showCategoryById(Long id){
+    public Optional<Category> showCategoryById(Long id) {
         return categoryRepository.findById(id);
     }
 
-    public Category showCategoryByIdAndUserId(Long categoryId, Long userId){
+    public Category showCategoryByIdAndUserId(Long categoryId, Long userId) {
         return categoryRepository.findByIdAndUserId(categoryId, userId);
     }
 
-    public Category newCategory(Category category){
+    public Category newCategory(Category category) {
         categoryRepository.save(category);
         return category;
     }
 
-    public void removeCategory(Long id){
+    public void removeCategory(Long id) {
         categoryRepository.deleteById(id);
     }
 

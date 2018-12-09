@@ -1,6 +1,7 @@
 package com.fean.seufinanceiro.models;
 
 import com.fean.seufinanceiro.models.enums.TypeTransaction;
+
 import javax.persistence.*;
 
 @Entity
@@ -15,7 +16,8 @@ public class Transaction {
     private User user;
     private Category category;
 
-    public Transaction() { }
+    public Transaction() {
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

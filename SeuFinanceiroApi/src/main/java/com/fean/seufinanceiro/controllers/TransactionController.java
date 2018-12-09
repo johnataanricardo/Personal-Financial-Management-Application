@@ -40,14 +40,13 @@ public class TransactionController {
     public TransactionController(TransactionService transactionService,
                                  UserService userService,
                                  CategoryService categoryService) {
-
         this.transactionService = transactionService;
         this.userService = userService;
         this.categoryService = categoryService;
     }
 
     @GetMapping
-    public ResponseEntity<Response<List<TransactionDto>>> getTransaction(@AuthenticationPrincipal JwtUser jwtUser){
+    public ResponseEntity<Response<List<TransactionDto>>> getTransaction(@AuthenticationPrincipal JwtUser jwtUser) {
 
         LOGGER.info("Searching for all user transaction data ID: ", jwtUser.getId());
 
@@ -59,7 +58,7 @@ public class TransactionController {
             transactionDtoList.add(convertTransactionDto(transaction));
         });
 
-        if (transactionDtoList.isEmpty()){
+        if (transactionDtoList.isEmpty()) {
             LOGGER.info("No transactions found...");
         }
 
@@ -69,14 +68,14 @@ public class TransactionController {
 
     @GetMapping("{id}")
     public ResponseEntity<Response<TransactionDto>> getTransactionById(@PathVariable("id") Long id,
-                                                                       @AuthenticationPrincipal JwtUser jwtUser){
+                                                                       @AuthenticationPrincipal JwtUser jwtUser) {
 
         LOGGER.info("Searching transaction data by ID: ", id);
 
         Response<TransactionDto> response = new Response<>();
         Transaction transaction = transactionService.showTransactionByIdByUserId(id, jwtUser.getId());
 
-        if (transaction == null){
+        if (transaction == null) {
             LOGGER.info("Transaction not found by ID: ", id);
             response.getErrors().add("Transaction not found by ID: " + id);
             return ResponseEntity.badRequest().body(response);
@@ -94,7 +93,7 @@ public class TransactionController {
 
         Response<String> response = new Response<>();
 
-        if (result.hasErrors()){
+        if (result.hasErrors()) {
             result.getAllErrors().forEach(error -> response.getErrors().add(error.getDefaultMessage()));
             return ResponseEntity.badRequest().body(response);
         }
@@ -110,7 +109,7 @@ public class TransactionController {
     public ResponseEntity<Response<String>> update(@PathVariable("id") Long id,
                                                    @Valid @RequestBody TransactionDto transactionDto,
                                                    @AuthenticationPrincipal JwtUser jwtUser,
-                                                   BindingResult result)    {
+                                                   BindingResult result) {
 
         transactionDto.setId(String.valueOf(id));
 
@@ -132,15 +131,15 @@ public class TransactionController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<Response<String>> remove(@PathVariable("id") Long id,
-                                                   @AuthenticationPrincipal JwtUser jwtUser){
+                                                   @AuthenticationPrincipal JwtUser jwtUser) {
 
-        LOGGER.info("Removing transaction ID:"+ id +" by user ID: {}", jwtUser.getId());
+        LOGGER.info("Removing transaction ID:" + id + " by user ID: {}", jwtUser.getId());
 
         Response<String> response = new Response<>();
 
         Transaction transaction = this.transactionService.showTransactionByIdByUserId(id, jwtUser.getId());
 
-        if (transaction == null){
+        if (transaction == null) {
             LOGGER.info("Error removing transaction ID: {} is invalid", id);
             response.getErrors().add("Error removing transaction transaction. Record not found by id " + id);
             return ResponseEntity.badRequest().body(response);
@@ -152,23 +151,23 @@ public class TransactionController {
     }
 
     private TransactionDto convertTransactionDto(Transaction transaction) {
-        return  new TransactionDto(String.valueOf(transaction.getId()),
-                         String.valueOf(transaction.getCategory() != null ? transaction.getCategory().getId() : ""),
-                         transaction.getCategory() != null ? transaction.getCategory().getDescription() : "",
-                         transaction.getDescription(),
-                         String.valueOf(transaction.getValue()),
-                         String.valueOf(transaction.getTypeTransaction()),
-                         transaction.getYear(),
-                         String.valueOf(transaction.getMonth()));
+        return new TransactionDto(String.valueOf(transaction.getId()),
+                String.valueOf(transaction.getCategory() != null ? transaction.getCategory().getId() : ""),
+                transaction.getCategory() != null ? transaction.getCategory().getDescription() : "",
+                transaction.getDescription(),
+                String.valueOf(transaction.getValue()),
+                String.valueOf(transaction.getTypeTransaction()),
+                transaction.getYear(),
+                String.valueOf(transaction.getMonth()));
     }
 
     private Transaction convertTransaction(TransactionDto transactionDto, JwtUser jwtUser) {
         Transaction transaction;
 
-        if(transactionDto.getId() != null){
+        if (transactionDto.getId() != null) {
             transaction = transactionService.showTransactionByIdByUserId(Long.parseLong(transactionDto.getId()),
-                                                                         jwtUser.getId());
-        }else {
+                    jwtUser.getId());
+        } else {
             transaction = new Transaction();
             Optional<User> user = userService.findUsuarioById(jwtUser.getId());
             user.ifPresent(transaction::setUser);

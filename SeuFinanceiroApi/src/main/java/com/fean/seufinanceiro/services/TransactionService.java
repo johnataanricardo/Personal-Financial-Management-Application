@@ -17,24 +17,24 @@ public class TransactionService {
         this.transactionRepository = transactionRepository;
     }
 
-    public List<Transaction> showAllTransactionsByUserId(Long id){
+    public List<Transaction> showAllTransactionsByUserId(Long id) {
         return transactionRepository.findAllByUserId(id);
     }
 
-    public Transaction showTransactionByIdByUserId(Long transactionId, Long idUser){
+    public Transaction showTransactionByIdByUserId(Long transactionId, Long idUser) {
         return transactionRepository.findByIdAndUserId(transactionId, idUser);
     }
 
-
-    public List<Transaction> showAllTransactionByYearMonth(String year, String month, Long userId){
-        return  transactionRepository.findByYearAndMonthAndUserId(year, Integer.parseInt(month), userId);
+    public List<Transaction> showAllTransactionByYearMonth(String year, String month, Long userId) {
+        return transactionRepository.findByYearAndMonthAndUserId(year, Integer.parseInt(month), userId);
     }
 
-    public void newTransaction(Transaction transaction){
+    public void newTransaction(Transaction transaction) {
         transactionRepository.save(transaction);
     }
 
-    public void removeTransaction(Long id){
+    public void removeTransaction(Long id) {
         transactionRepository.deleteById(id);
     }
+
 }

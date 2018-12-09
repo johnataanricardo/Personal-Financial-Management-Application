@@ -7,6 +7,7 @@ import com.fean.seufinanceiro.models.enums.TypeTransaction;
 import com.fean.seufinanceiro.utils.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 
 @Service
@@ -19,21 +20,23 @@ public class HomeService {
         this.transactionService = transactionService;
     }
 
-    public HomeDto showMovimentacaoByMonthYear(String year, String month, Long userId){
+    public HomeDto showMovimentacaoByMonthYear(String year, String month, Long userId) {
 
         HomeDto homeDto = new HomeDto();
 
         List<Transaction> transactions = transactionService.showAllTransactionByYearMonth(year, month, userId);
 
-        if (transactions.isEmpty()) { return null; }
+        if (transactions.isEmpty()) {
+            return null;
+        }
 
-        transactions.forEach(movimentacao -> {
-            if (movimentacao.getTypeTransaction().equals(TypeTransaction.INPUT)){
-                    homeDto.getInput().add(convertMovimentacaoDto(movimentacao));
-                    homeDto.setTotalInput(homeDto.getTotalInput() + movimentacao.getValue());
-            }else  {
-                    homeDto.getOuput().add(convertMovimentacaoDto(movimentacao));
-                    homeDto.setTotalOutput(homeDto.getTotalOutput() + movimentacao.getValue());
+        transactions.forEach(transaction -> {
+            if (transaction.getTypeTransaction().equals(TypeTransaction.INPUT)) {
+                homeDto.getInput().add(convertMovimentacaoDto(transaction));
+                homeDto.setTotalInput(homeDto.getTotalInput() + transaction.getValue());
+            } else {
+                homeDto.getOuput().add(convertMovimentacaoDto(transaction));
+                homeDto.setTotalOutput(homeDto.getTotalOutput() + transaction.getValue());
             }
         });
 
