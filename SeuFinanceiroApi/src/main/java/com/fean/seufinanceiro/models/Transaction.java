@@ -50,7 +50,7 @@ public class Transaction {
         return user;
     }
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "transaction", cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     public Category getCategory() {
         return category;
     }

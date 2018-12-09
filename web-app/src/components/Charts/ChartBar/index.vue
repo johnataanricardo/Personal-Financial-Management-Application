@@ -4,7 +4,7 @@ import { Bar } from 'vue-chartjs'
 export default {
   extends: Bar,
   props: ['label', 'labels'],
-  ref: 'graphic',
+  ref: 'chart',
   mounted () {
     this.fillData([])
   },

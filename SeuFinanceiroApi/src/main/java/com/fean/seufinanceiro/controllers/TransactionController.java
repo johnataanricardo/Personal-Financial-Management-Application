@@ -183,7 +183,6 @@ public class TransactionController {
             Optional<Category> category = categoryService.showCategoryById(Long.valueOf(transactionDto.getCategoryId()));
             if (category.isPresent()) {
                 transaction.setCategory(category.get());
-                category.get().setTransaction(transaction);
             }
         }
 

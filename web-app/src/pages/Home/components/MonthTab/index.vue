@@ -14,10 +14,10 @@
         <ContentTab ref="contentTab"/>
       </v-tab-item>
     </v-tabs-items>
-    <!-- Record Dialog -->
-    <RecordDialog ref="recordDialog"/>
-    <!-- Graphic Dialog -->
-    <GraphicDialog ref="graphicDialog"/>
+    <!-- Transaction Dialog -->
+    <TransactionDialog ref="transactionDialog"/>
+    <!-- Chart Dialog -->
+    <ChartDialog ref="chartDialog"/>
     <!-- Action Buttons -->
     <v-speed-dial v-model="fab" :bottom="bottom" :right="right" 
       :direction="direction" :open-on-hover="hover" :transition="transition">
@@ -26,19 +26,19 @@
         <v-icon>close</v-icon>
       </v-btn>
       <v-tooltip disabled left :value="true">
-        <v-btn @click="openIncomeRecordDialog" fab dark small color="green" slot="activator">
+        <v-btn @click="openIncomeTransactionDialog" fab dark small color="green" slot="activator">
           <v-icon>attach_money</v-icon>
         </v-btn>
         <span>Entradas</span>
       </v-tooltip>
       <v-tooltip disabled left :value="true">
-        <v-btn @click="openExpenseRecordDialog" fab dark small color="indigo" slot="activator">
+        <v-btn @click="openExpenseTransactionDialog" fab dark small color="indigo" slot="activator">
           <v-icon>money_off</v-icon>
         </v-btn>
         <span>Saídas</span>
       </v-tooltip>
       <v-tooltip disabled left :value="true">
-        <v-btn @click="openGraphicDialog" fab dark small color="red" slot="activator">
+        <v-btn @click="openChartDialog" fab dark small color="red" slot="activator">
           <v-icon>bar_chart</v-icon>
         </v-btn>
         <span>Fluxo de Caixa</span>
@@ -61,12 +61,12 @@ import { getAllCategories } from '@/services/category'
 import { getTransactionsByMonthAndYear } from '@/services/home'
 import { post as saveTransaction } from '@/services/transaction'
 import ContentTab from './components/ContentTab'
-import RecordDialog from './components/RecordDialog/'
-import GraphicDialog from './components/GraphicDialog'
+import ChartDialog from './components/ChartDialog'
+import TransactionDialog from './components/TransactionDialog/'
 
 export default {
   name: 'MonthTab', 
-  components: { ContentTab, RecordDialog, GraphicDialog },
+  components: { ContentTab, TransactionDialog, ChartDialog },
   data () {
     return {
       direction: 'top',
@@ -131,26 +131,26 @@ export default {
         contentTab.flow = 'Fluxo de Caixa R$: ' + data.cashFlow
       }      
     },
-    openIncomeRecordDialog() {
+    openIncomeTransactionDialog() {
       this.openDialog('Entradas')
     },
-    openExpenseRecordDialog() {
+    openExpenseTransactionDialog() {
       this.openDialog('Saídas')
     },
     openDialog(dialogTitle) {
       const data = this
-      const recordDialog = data.$refs.recordDialog      
-      recordDialog.title = dialogTitle
-      recordDialog.saveRecord = data.saveRecordDialog
-      recordDialog.transaction.typeTransaction = dialogTitle == 'Entradas' ? 'INPUT' : 'OUTPUT'
-      recordDialog.transaction.year = data.year
-      recordDialog.transaction.month = data.month
-      getAllCategories().then(response => {  recordDialog.items = response, recordDialog.showDialog = true})
+      const transactionDialog = data.$refs.transactionDialog      
+      transactionDialog.title = dialogTitle
+      transactionDialog.saveTransaction = data.saveTransactionDialog
+      transactionDialog.transaction.typeTransaction = dialogTitle == 'Entradas' ? 'INPUT' : 'OUTPUT'
+      transactionDialog.transaction.year = data.year
+      transactionDialog.transaction.month = data.month
+      getAllCategories().then(response => {  transactionDialog.items = response, transactionDialog.showDialog = true})
     },
-    openGraphicDialog() {
+    openChartDialog() {
       const data = this
-      const graphicDialog = data.$refs.graphicDialog      
-      getChartByYear(data.year).then(response => { graphicDialog.fillData(data.prepareChartData(response)), graphicDialog.showDialog = true })
+      const chartDialog = data.$refs.chartDialog      
+      getChartByYear(data.year).then(response => { chartDialog.fillData(data.prepareChartData(response)), chartDialog.showDialog = true })
     },
     prepareChartData(data) {
       const monthData = data.cashFlowMonthlyDto
@@ -160,11 +160,11 @@ export default {
       }
       return cashFlowMonthly
     },
-    saveRecordDialog() {      
+    saveTransactionDialog() {      
       const data = this
-      const recordDialog = data.$refs.recordDialog
-      recordDialog.showDialog = false
-      saveTransaction(recordDialog.transaction).then(response => { 
+      const transactionDialog = data.$refs.transactionDialog
+      transactionDialog.showDialog = false
+      saveTransaction(transactionDialog.transaction).then(response => { 
         data.initSnackbar('Registro salvo com sucesso!'), data.fillContentTab() 
       }).catch(function (error) {
         this.initSnackbar('Problema ao salvar registro!')

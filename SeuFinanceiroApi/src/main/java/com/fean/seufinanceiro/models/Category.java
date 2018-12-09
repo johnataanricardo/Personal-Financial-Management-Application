@@ -1,6 +1,7 @@
 package com.fean.seufinanceiro.models;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Category {
@@ -8,7 +9,7 @@ public class Category {
     private Long id;
     private String description;
     private User user;
-    private Transaction transaction;
+    private List<Transaction> transactions;
 
     public Category() {
     }
@@ -29,9 +30,9 @@ public class Category {
         return user;
     }
 
-    @OneToOne(fetch = FetchType.LAZY)
-    public Transaction getTransaction() {
-        return transaction;
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    public List<Transaction> getTransactions() {
+        return transactions;
     }
 
     public void setId(Long id) {
@@ -46,8 +47,8 @@ public class Category {
         this.user = user;
     }
 
-    public void setTransaction(Transaction transaction) {
-        this.transaction = transaction;
+    public void setTransactions(List<Transaction> transactions) {
+        this.transactions = transactions;
     }
 
 }

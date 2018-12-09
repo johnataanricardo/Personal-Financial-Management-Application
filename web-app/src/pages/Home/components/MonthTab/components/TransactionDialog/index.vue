@@ -5,7 +5,7 @@
         <v-card-title>
           <span class="headline">{{title}}</span>
         </v-card-title>
-        <v-form ref="recordDialog" v-model="valid" @keyup.native.enter="saveRecord" lazy-validation>
+        <v-form ref="transactionDialog" v-model="valid" @keyup.native.enter="saveTransaction" lazy-validation>
           <div class="form">
             <v-text-field color="teal" ref="value" v-model.lazy="transaction.value" v-money="money" label="Valor"></v-text-field>
             <v-select no-data-text="Nenhuma categoria cadastrada" color="teal" v-model="transaction.categoryId" 
@@ -15,7 +15,7 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="teal" flat @click.native="showDialog = false">Fechar</v-btn>
-            <v-btn color="teal" flat @click.native="saveRecord">Inserir</v-btn>
+            <v-btn color="teal" flat @click.native="saveTransaction">Inserir</v-btn>
           </v-card-actions>
         </v-form>
       </v-card>
@@ -54,14 +54,14 @@ export default {
   },
   directives: { money: VMoney },
   methods: {
-    saveRecord() {      
+    saveTransaction() {      
     }    
   },
   watch: {
     showDialog: function() {
        // the only way to reset value, v-money has a bug in v-text-field of vuetify
       this.$refs.value.$el.getElementsByTagName('input')[0].value = 0;
-      this.$refs.recordDialog.reset()
+      this.$refs.transactionDialog.reset()
     }
   }
 }

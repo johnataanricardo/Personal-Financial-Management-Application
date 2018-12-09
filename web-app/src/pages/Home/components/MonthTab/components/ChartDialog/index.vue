@@ -1,11 +1,11 @@
 <template>
-  <div id="graphicDialog">
-    <v-dialog class="dialog" v-model="showDialog" ref="graphicDialog" persistent max-width="500px">
+  <div id="chartDialog">
+    <v-dialog class="dialog" v-model="showDialog" ref="chartDialog" persistent max-width="500px">
       <v-card>
         <v-card-title>
           <span class="headline">Fluxo de Caixa</span>
         </v-card-title>
-        <GraphicBar ref="graphic" :label="label" :labels="labels"/>
+        <ChartBar ref="chart" :label="label" :labels="labels"/>
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="teal" flat @click.native="showDialog = false">Fechar</v-btn>
@@ -16,13 +16,11 @@
 </template>
 
 <script>
-import GraphicBar from '@/components/Graphics/GraphicBar'
-
-const api = process.env.API_URL
+import ChartBar from '@/components/Charts/ChartBar'
 
 export default {
-  name: 'Graphic',
-  components: { GraphicBar },  
+  name: 'ChartDialog',
+  components: { ChartBar },  
   data() {
     return {
       showDialog: false,
@@ -37,7 +35,7 @@ export default {
     fillData(data) {
       this.label = 'Fluxo de Caixa'
       this.labels = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro']
-      this.$refs.graphic.fillData(data)
+      this.$refs.chart.fillData(data)
     }
   }
 }
@@ -45,7 +43,7 @@ export default {
 
 <style scoped>
 
-  #graphicDialog {
+  #chartDialog {
     padding: 5%;
   }
 
