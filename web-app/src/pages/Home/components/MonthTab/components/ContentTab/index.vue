@@ -15,8 +15,14 @@
                     'Sem Categoria' + ': ' + (transaction.description ? transaction.description : 'sem descrição')}}
                 </v-list-tile-content>
                 <v-list-tile-content class="align-end">R$: {{ transaction.value }}</v-list-tile-content>
-              </v-list-tile>              
-            </v-list>
+                <v-icon small class="mr-2 actions" @click="openTransactionDialog(transaction)">
+                  edit
+                </v-icon>
+                <v-icon small @click="openRemoveTransactionDialog(transaction)">
+                  delete
+                </v-icon>
+              </v-list-tile>                            
+            </v-list>            
           </v-card>
         </v-flex>
         <v-toolbar slot="footer" class="mt-2" color="teal" dark dense flat>
@@ -40,7 +46,13 @@ export default {
     },
     items: [],
     flow: ''
-  })
+  }),  
+  methods: {
+    openTransactionDialog() {
+    },
+    openRemoveTransactionDialog() {      
+    }    
+  },
 }
 </script>
 
@@ -49,6 +61,10 @@ export default {
   .image {
     width: 20%;
     margin-top: 5%;
+  }
+
+  .actions {
+    margin-left: 1%;
   }
 
   @media screen and (max-width: 800px)  {

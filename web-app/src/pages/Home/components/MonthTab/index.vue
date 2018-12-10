@@ -18,21 +18,33 @@
     <TransactionDialog ref="transactionDialog"/>
     <!-- Chart Dialog -->
     <ChartDialog ref="chartDialog"/>
+    <!-- Delete Transaction Dialog -->
+    <v-dialog v-model="dialog" persistent max-width="290">
+      <v-card>
+        <v-card-title class="headline">Deletar registro?</v-card-title>
+        <v-card-text>Tem certeza de que deseja deletar?</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="teal darken-1" flat @click.native="closeRemoveTransactionDialog()">cancelar</v-btn>
+          <v-btn color="teal darken-1" flat @click.native="confirmRemoveTransaction()">confirmar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <!-- Action Buttons -->
     <v-speed-dial v-model="fab" :bottom="bottom" :right="right" 
-      :direction="direction" :open-on-hover="hover" :transition="transition">
+      :direction="direction" :open-on-hover="hover" transition="slide-y-reverse-transition">
       <v-btn slot="activator" v-model="fab" fab dark color="pink">
         <v-icon>add</v-icon>
         <v-icon>close</v-icon>
       </v-btn>
       <v-tooltip disabled left :value="true">
-        <v-btn @click="openIncomeTransactionDialog" fab dark small color="green" slot="activator">
+        <v-btn @click="openTransactionDialog(null, 'Entrada')" fab dark small color="green" slot="activator">
           <v-icon>attach_money</v-icon>
         </v-btn>
         <span>Entradas</span>
       </v-tooltip>
       <v-tooltip disabled left :value="true">
-        <v-btn @click="openExpenseTransactionDialog" fab dark small color="indigo" slot="activator">
+        <v-btn @click="openTransactionDialog(null, 'Saída')" fab dark small color="indigo" slot="activator">
           <v-icon>money_off</v-icon>
         </v-btn>
         <span>Saídas</span>
@@ -59,7 +71,7 @@
 import { getChartByYear } from '@/services/chart'
 import { getAllCategories } from '@/services/category'
 import { getTransactionsByMonthAndYear } from '@/services/home'
-import { post as saveTransaction } from '@/services/transaction'
+import { save as saveTransaction, remove as removeTransaction } from '@/services/transaction'
 import ContentTab from './components/ContentTab'
 import ChartDialog from './components/ChartDialog'
 import TransactionDialog from './components/TransactionDialog/'
@@ -74,7 +86,7 @@ export default {
       hover: false,            
       right: true,
       bottom: true,
-      transition: 'slide-y-reverse-transition',
+      dialog: false,
       itemsMenu : [
         { month: 0, description: 'Janeiro' },
         { month: 1, description: 'Fevereiro' },
@@ -94,6 +106,7 @@ export default {
       month: null,
       snackbar: false,
       snackbarText: '',
+      idTransaction: null
     }
   },
   mounted () {
@@ -129,23 +142,26 @@ export default {
         items.push(ouputs)
         contentTab.items = items
         contentTab.flow = 'Fluxo de Caixa R$: ' + data.cashFlow
+        contentTab.openTransactionDialog = this.openTransactionDialog
+        contentTab.openRemoveTransactionDialog = this.openRemoveTransactionDialog
       }      
     },
-    openIncomeTransactionDialog() {
-      this.openDialog('Entradas')
-    },
-    openExpenseTransactionDialog() {
-      this.openDialog('Saídas')
-    },
-    openDialog(dialogTitle) {
+    openTransactionDialog(item, dialogTitle) {
       const data = this
-      const transactionDialog = data.$refs.transactionDialog      
-      transactionDialog.title = dialogTitle
-      transactionDialog.saveTransaction = data.saveTransactionDialog
-      transactionDialog.transaction.typeTransaction = dialogTitle == 'Entradas' ? 'INPUT' : 'OUTPUT'
-      transactionDialog.transaction.year = data.year
-      transactionDialog.transaction.month = data.month
-      getAllCategories().then(response => {  transactionDialog.items = response, transactionDialog.showDialog = true})
+      const transactionDialog = data.$refs.transactionDialog
+      transactionDialog.saveTransaction = data.saveTransaction
+      getAllCategories().then(response => {  transactionDialog.items = response })
+      if (item) {
+        transactionDialog.title = 'Registrar ' + (item.typeTransaction == 'INPUT' ? 'Entrada' : 'Saída')
+        transactionDialog.transaction = Object.assign({}, item)
+      } else {
+        transactionDialog.transaction.id = 0
+        transactionDialog.title = 'Registrar ' + dialogTitle
+        transactionDialog.transaction.typeTransaction = dialogTitle == 'Entrada' ? 'INPUT' : 'OUTPUT'  
+        transactionDialog.transaction.year = data.year
+        transactionDialog.transaction.month = data.month     
+      }       
+      transactionDialog.showDialog = true
     },
     openChartDialog() {
       const data = this
@@ -160,14 +176,33 @@ export default {
       }
       return cashFlowMonthly
     },
-    saveTransactionDialog() {      
+    saveTransaction() {      
       const data = this
       const transactionDialog = data.$refs.transactionDialog
       transactionDialog.showDialog = false
       saveTransaction(transactionDialog.transaction).then(response => { 
-        data.initSnackbar('Registro salvo com sucesso!'), data.fillContentTab() 
+        data.initSnackbar('Registro salvo com sucesso!'),
+        data.fillContentTab()
       }).catch(function (error) {
-        this.initSnackbar('Problema ao salvar registro!')
+        data.initSnackbar('Problema ao salvar registro!')
+      })      
+    },
+    openRemoveTransactionDialog(transaction) {
+      this.dialog = true
+      this.idTransaction = transaction.id
+    },
+    closeRemoveTransactionDialog() {
+      this.dialog = false
+      this.idTransaction = null
+    },
+    confirmRemoveTransaction() {
+      const data = this
+      removeTransaction(data.idTransaction).then(response => {
+        data.initSnackbar('Registro deletado com sucesso!'),
+        data.fillContentTab(),
+        data.dialog = false
+      }).catch(function (error) {
+        data.initSnackbar('Problema ao deletar!')
       })
     },
     initSnackbar(text) {

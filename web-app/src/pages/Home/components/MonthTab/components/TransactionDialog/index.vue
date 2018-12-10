@@ -15,7 +15,7 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="teal" flat @click.native="showDialog = false">Fechar</v-btn>
-            <v-btn color="teal" flat @click.native="saveTransaction">Inserir</v-btn>
+            <v-btn color="teal" flat @click.native="saveTransaction">Salvar</v-btn>
           </v-card-actions>
         </v-form>
       </v-card>
@@ -59,9 +59,14 @@ export default {
   },
   watch: {
     showDialog: function() {
-       // the only way to reset value, v-money has a bug in v-text-field of vuetify
-      this.$refs.value.$el.getElementsByTagName('input')[0].value = 0;
-      this.$refs.transactionDialog.reset()
+      const transaction = this.transaction
+      if (transaction.id == 0) {
+        // v-money has a bug in v-text-field of vuetify, so it isn't possible on reset form
+        this.$refs.value.$el.getElementsByTagName('input')[0].value = 0
+        this.$refs.transactionDialog.reset()        
+      } else {
+        this.$refs.value.$el.getElementsByTagName('input')[0].value = transaction.value
+      }
     }
   }
 }

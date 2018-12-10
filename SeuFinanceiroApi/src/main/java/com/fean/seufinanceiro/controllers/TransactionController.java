@@ -104,14 +104,10 @@ public class TransactionController {
         return ResponseEntity.ok(response);
     }
 
-
-    @PutMapping("{id}")
-    public ResponseEntity<Response<String>> update(@PathVariable("id") Long id,
-                                                   @Valid @RequestBody TransactionDto transactionDto,
+    @PutMapping
+    public ResponseEntity<Response<String>> update(@Valid @RequestBody TransactionDto transactionDto,
                                                    @AuthenticationPrincipal JwtUser jwtUser,
                                                    BindingResult result) {
-
-        transactionDto.setId(String.valueOf(id));
 
         LOGGER.info("Updating transaction: {}", transactionDto.toString());
 
@@ -151,8 +147,8 @@ public class TransactionController {
     }
 
     private TransactionDto convertTransactionDto(Transaction transaction) {
-        return new TransactionDto(String.valueOf(transaction.getId()),
-                String.valueOf(transaction.getCategory() != null ? transaction.getCategory().getId() : ""),
+        return new TransactionDto(transaction.getId(),
+                transaction.getCategory() != null ? transaction.getCategory().getId() : 0,
                 transaction.getCategory() != null ? transaction.getCategory().getDescription() : "",
                 transaction.getDescription(),
                 String.valueOf(transaction.getValue()),
@@ -164,9 +160,8 @@ public class TransactionController {
     private Transaction convertTransaction(TransactionDto transactionDto, JwtUser jwtUser) {
         Transaction transaction;
 
-        if (transactionDto.getId() != null) {
-            transaction = transactionService.showTransactionByIdByUserId(Long.parseLong(transactionDto.getId()),
-                    jwtUser.getId());
+        if (transactionDto.getId() > 0) {
+            transaction = transactionService.showTransactionByIdByUserId(transactionDto.getId(), jwtUser.getId());
         } else {
             transaction = new Transaction();
             Optional<User> user = userService.findUsuarioById(jwtUser.getId());

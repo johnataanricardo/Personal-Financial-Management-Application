@@ -2,8 +2,8 @@ package com.fean.seufinanceiro.dtos;
 
 public class TransactionDto {
 
-    private String id;
-    private String categoryId;
+    private Long id;
+    private Long categoryId;
     private String categoryName;
     private String description;
     private String value;
@@ -14,7 +14,7 @@ public class TransactionDto {
     public TransactionDto() {
     }
 
-    public TransactionDto(String id, String categoryId, String categoryName,
+    public TransactionDto(Long id, Long categoryId, String categoryName,
                           String description, String value, String typeTransaction,
                           String year, String month) {
         this.id = id;
@@ -27,19 +27,19 @@ public class TransactionDto {
         this.month = month;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public String getCategoryId() {
+    public Long getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(String categoryId) {
+    public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
     }
 

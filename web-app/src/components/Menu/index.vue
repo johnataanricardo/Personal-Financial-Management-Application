@@ -92,8 +92,4 @@ export default {
     height: 0px;
   }
 
-  @media screen and (max-width: 600px)  {
-
-  }
-
 </style>

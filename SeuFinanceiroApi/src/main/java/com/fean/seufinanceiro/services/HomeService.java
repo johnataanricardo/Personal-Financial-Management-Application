@@ -32,11 +32,11 @@ public class HomeService {
 
         transactions.forEach(transaction -> {
             if (transaction.getTypeTransaction().equals(TypeTransaction.INPUT)) {
-                homeDto.getInput().add(convertMovimentacaoDto(transaction));
-                homeDto.setTotalInput(homeDto.getTotalInput() + transaction.getValue());
+                homeDto.getInput().add(convertTransactionDto(transaction));
+                homeDto.setTotalInput(NumberUtils.formatDouble(homeDto.getTotalInput() + transaction.getValue()));
             } else {
-                homeDto.getOuput().add(convertMovimentacaoDto(transaction));
-                homeDto.setTotalOutput(homeDto.getTotalOutput() + transaction.getValue());
+                homeDto.getOuput().add(convertTransactionDto(transaction));
+                homeDto.setTotalOutput(NumberUtils.formatDouble(homeDto.getTotalOutput() + transaction.getValue()));
             }
         });
 
@@ -44,9 +44,9 @@ public class HomeService {
         return homeDto;
     }
 
-    private TransactionDto convertMovimentacaoDto(Transaction transaction) {
-        return new TransactionDto(String.valueOf(transaction.getId()),
-                String.valueOf(transaction.getCategory() != null ? transaction.getCategory().getId() : ""),
+    private TransactionDto convertTransactionDto(Transaction transaction) {
+        return new TransactionDto(transaction.getId(),
+                transaction.getCategory() != null ? transaction.getCategory().getId() : 0,
                 transaction.getCategory() != null ? transaction.getCategory().getDescription() : "",
                 transaction.getDescription(),
                 String.valueOf(transaction.getValue()),
