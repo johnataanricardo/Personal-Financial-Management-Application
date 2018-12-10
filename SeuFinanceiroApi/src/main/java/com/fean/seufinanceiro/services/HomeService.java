@@ -33,14 +33,14 @@ public class HomeService {
         transactions.forEach(transaction -> {
             if (transaction.getTypeTransaction().equals(TypeTransaction.INPUT)) {
                 homeDto.getInput().add(convertTransactionDto(transaction));
-                homeDto.setTotalInput(NumberUtils.formatDouble(homeDto.getTotalInput() + transaction.getValue()));
+                homeDto.setTotalInput(NumberUtils.roundDouble(homeDto.getTotalInput() + transaction.getValue()));
             } else {
                 homeDto.getOuput().add(convertTransactionDto(transaction));
-                homeDto.setTotalOutput(NumberUtils.formatDouble(homeDto.getTotalOutput() + transaction.getValue()));
+                homeDto.setTotalOutput(NumberUtils.roundDouble(homeDto.getTotalOutput() + transaction.getValue()));
             }
         });
 
-        homeDto.setCashFlow(NumberUtils.formatDouble(homeDto.getTotalInput() - homeDto.getTotalOutput()));
+        homeDto.setCashFlow(NumberUtils.roundDouble(homeDto.getTotalInput() - homeDto.getTotalOutput()));
         return homeDto;
     }
 
@@ -49,7 +49,7 @@ public class HomeService {
                 transaction.getCategory() != null ? transaction.getCategory().getId() : 0,
                 transaction.getCategory() != null ? transaction.getCategory().getDescription() : "",
                 transaction.getDescription(),
-                String.valueOf(transaction.getValue()),
+                String.valueOf(NumberUtils.formatDouble(transaction.getValue())),
                 String.valueOf(transaction.getTypeTransaction()),
                 transaction.getYear(),
                 String.valueOf(transaction.getMonth()));

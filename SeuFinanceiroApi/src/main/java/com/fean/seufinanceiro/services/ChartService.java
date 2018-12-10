@@ -33,11 +33,11 @@ public class ChartService {
             transactions.forEach(transaction -> {
                 if (transaction.getTypeTransaction().equals(TypeTransaction.INPUT)) {
                     cashFlowMonthlyDto.setCashFlow(
-                            NumberUtils.formatDouble(cashFlowMonthlyDto.getCashFlow() +
+                            NumberUtils.roundDouble(cashFlowMonthlyDto.getCashFlow() +
                                     transaction.getValue()));
                 } else {
                     cashFlowMonthlyDto.setCashFlow(
-                            NumberUtils.formatDouble(cashFlowMonthlyDto.getCashFlow() -
+                            NumberUtils.roundDouble(cashFlowMonthlyDto.getCashFlow() -
                                     transaction.getValue()));
                 }
             });
