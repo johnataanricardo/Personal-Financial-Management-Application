@@ -30,7 +30,7 @@ public class Category {
         return user;
     }
 
-    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     public List<Transaction> getTransactions() {
         return transactions;
     }

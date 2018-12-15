@@ -15,4 +15,6 @@ public interface TransactionRepository extends CrudRepository<Transaction, Long>
 
     Transaction findByIdAndUserId(Long transactionId, Long userId);
 
+    Transaction findByCategoryId(Long categoryId);
+
 }

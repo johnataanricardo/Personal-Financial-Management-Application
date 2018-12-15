@@ -2,10 +2,12 @@ package com.fean.seufinanceiro.controllers;
 
 import com.fean.seufinanceiro.dtos.CategoryDto;
 import com.fean.seufinanceiro.models.Category;
+import com.fean.seufinanceiro.models.Transaction;
 import com.fean.seufinanceiro.models.User;
 import com.fean.seufinanceiro.responses.Response;
 import com.fean.seufinanceiro.security.JwtUser;
 import com.fean.seufinanceiro.services.CategoryService;
+import com.fean.seufinanceiro.services.TransactionService;
 import com.fean.seufinanceiro.services.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,15 +28,15 @@ import java.util.Optional;
 public class CategoryController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CategoryController.class);
-
     private final CategoryService categoryService;
-
     private final UserService userService;
+    private final TransactionService transactionService;
 
     @Autowired
-    public CategoryController(CategoryService categoryService, UserService userService) {
+    public CategoryController(CategoryService categoryService, UserService userService, TransactionService transactionService) {
         this.categoryService = categoryService;
         this.userService = userService;
+        this.transactionService = transactionService;
     }
 
     @GetMapping
@@ -130,9 +132,9 @@ public class CategoryController {
 
         Response<String> response = new Response<>();
 
-        Category category = this.categoryService.showCategoryByIdAndUserId(id, jwtUser.getId());
+        Transaction transaction = this.transactionService.showTransactionByCategoryId(id);
 
-        if (category == null) {
+        if (transaction != null) {
             LOGGER.info("Error removing category: {} invalid", id);
             response.getErrors().add("Error removing category. Record not found by id " + id);
             return ResponseEntity.badRequest().body(response);

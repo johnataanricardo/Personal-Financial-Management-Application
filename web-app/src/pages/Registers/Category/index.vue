@@ -136,10 +136,12 @@ export default {
       confirm () {
         const data = this
         remove(data.category.id).then(response => {
-          data.categories.splice(data.editedIndex, 1),
-          data.initSnackbar('Categoria deletada com sucesso!')  
-        }).catch(function (error) {
-          data.initSnackbar('Problema ao deletar!')
+          if (response) {
+            data.categories.splice(data.editedIndex, 1)
+            data.initSnackbar('Categoria deletada com sucesso!')  
+          } else {
+            data.initSnackbar('Categoria relacionada a transação!')  
+          }
         })
         data.close()
       },
@@ -151,18 +153,22 @@ export default {
         const data = this
         const category = data.category
         if (data.editedIndex > -1) {
-          put(JSON.stringify(category)).then(response => (
-            Object.assign(data.categories[data.editedIndex], category),
-            data.initSnackbar('Categoria salva com sucesso!')
-          )).catch(function (error) {
-            data.initSnackbar('Problema ao salvar!')
+          put(JSON.stringify(category)).then(response => {
+            if (response) {
+              Object.assign(data.categories[data.editedIndex], category),
+              data.initSnackbar('Categoria salva com sucesso!')
+            } else {
+              data.initSnackbar('Problema ao salvar!')
+            }
           })
         } else {
-          post(JSON.stringify(data.category)).then(response => (    
-            data.categories.push(response),
-            data.initSnackbar('Categoria salva com sucesso!')
-          )).catch(function (error) {
-            data.initSnackbar('Problema ao salvar!')
+          post(JSON.stringify(data.category)).then(response => {
+            if (response) {
+              data.categories.push(response),
+              data.initSnackbar('Categoria salva com sucesso!')
+            } else {
+              data.initSnackbar('Problema ao salvar!')
+            }
           })
         }
         data.close()

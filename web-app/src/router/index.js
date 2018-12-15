@@ -8,7 +8,7 @@ import Welcome from '@/pages/Welcome';
 import Category from '@/pages/Registers/Category';
 import { validateToken } from '@/services/auth';
 
-Vue.use(Router)
+Vue.use(Router);
 
 const router = new Router({
   mode: 'history',

@@ -29,6 +29,10 @@ public class TransactionService {
         return transactionRepository.findByYearAndMonthAndUserId(year, Integer.parseInt(month), userId);
     }
 
+    public Transaction showTransactionByCategoryId(Long id) {
+        return transactionRepository.findByCategoryId(id);
+    }
+
     public void newTransaction(Transaction transaction) {
         transactionRepository.save(transaction);
     }

@@ -180,12 +180,14 @@ export default {
       const data = this
       const transactionDialog = data.$refs.transactionDialog
       transactionDialog.showDialog = false
-      saveTransaction(transactionDialog.transaction).then(response => { 
-        data.initSnackbar('Registro salvo com sucesso!'),
-        data.fillContentTab()
-      }).catch(function (error) {
-        data.initSnackbar('Problema ao salvar registro!')
-      })      
+      saveTransaction(transactionDialog.transaction).then(response => {
+        if (response) {
+          data.initSnackbar('Registro salvo com sucesso!')
+          data.fillContentTab()
+        } else {
+          data.initSnackbar('Problema ao salvar registro!')
+        }
+      })
     },
     openRemoveTransactionDialog(transaction) {
       this.dialog = true
@@ -198,11 +200,13 @@ export default {
     confirmRemoveTransaction() {
       const data = this
       removeTransaction(data.idTransaction).then(response => {
-        data.initSnackbar('Registro deletado com sucesso!'),
-        data.fillContentTab(),
+        if (response) {
+          data.initSnackbar('Registro deletado com sucesso!')
+          data.fillContentTab()
+        } else {
+          data.initSnackbar('Problema ao deletar!')
+        }
         data.dialog = false
-      }).catch(function (error) {
-        data.initSnackbar('Problema ao deletar!')
       })
     },
     initSnackbar(text) {
