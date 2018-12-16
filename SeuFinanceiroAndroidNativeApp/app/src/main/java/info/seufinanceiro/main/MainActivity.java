@@ -35,8 +35,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.ContentTab {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.ContentTab {
 
     private TabContentService service;
     private TabLayout tabLayout;
@@ -49,13 +48,14 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        tabLayout = findViewById(R.id.month_tab);
+
         Bundle bundle = new Bundle();
         bundle.putInt("tab", month);
-        Fragment fragment = new HomeFragment();
+        Fragment fragment = new HomeFragment(tabLayout);
         fragment.setArguments(bundle);
         setFragment(fragment);
 
-        tabLayout = findViewById(R.id.month_tab);
         setTabLayoutListener(tabLayout);
         service = new TabContentService(getApplicationContext(), findViewById(android.R.id.content));
 
@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity
             tabLayout.setVisibility(View.VISIBLE);
             Bundle bundle = new Bundle();
             bundle.putInt("tab", month);
-            fragment = new HomeFragment();
+            fragment = new HomeFragment(this.tabLayout);
             fragment.setArguments(bundle);
         } else if (id == R.id.account) {
             tabLayout.setVisibility(View.GONE);
@@ -149,48 +149,36 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setFragment(Fragment fragment) {
-
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
         transaction.replace(R.id.main_frame, fragment);
         transaction.addToBackStack(null);
         transaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
         transaction.commit();
-
     }
 
     private void makeCallUserName() {
-
-        SharedPreferencesService sharedPreferencesService
-                = new SharedPreferencesService(getBaseContext());
-
-        final Token token = new Token( sharedPreferencesService.getToken());
-
-
+        SharedPreferencesService sharedPreferencesService = new SharedPreferencesService(getBaseContext());
+        final Token token = new Token(sharedPreferencesService.getToken());
         HttpClientService service = HttpClientServiceCreator.createService(HttpClientService.class);
-
         Call<ResponseDataSimple<User>> callUser = service.getUser(token.getToken());
-
         callUser.enqueue(new Callback<ResponseDataSimple<User>>() {
             @Override
-            public void onResponse(@NonNull Call<ResponseDataSimple<User>> call,
-                                   @NonNull Response<ResponseDataSimple<User>> response) {
+            public void onResponse(@NonNull Call<ResponseDataSimple<User>> call, @NonNull Response<ResponseDataSimple<User>> response) {
                 if (response.isSuccessful()) {
                     TextView txtNameView = findViewById(R.id.user_name);
-                    txtNameView.setText(response.body().getData().getNome());
+                    txtNameView.setText(response.body().getData().getName());
                 }
             }
 
             @Override
-            public void onFailure(@NonNull Call<ResponseDataSimple<User>> call,
-                                  @NonNull Throwable t) {
+            public void onFailure(@NonNull Call<ResponseDataSimple<User>> call, @NonNull Throwable t) {
             }
         });
     }
-
-
 
     @Override
     public void setContentTab(Integer tab) {
         tabLayout.getTabAt(month).select();
     }
+
 }

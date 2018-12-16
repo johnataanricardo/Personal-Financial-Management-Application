@@ -2,7 +2,7 @@ package info.seufinanceiro.service;
 
 import info.seufinanceiro.model.Auth;
 import info.seufinanceiro.model.Category;
-import info.seufinanceiro.model.Movement;
+import info.seufinanceiro.model.Transaction;
 import info.seufinanceiro.model.SignUp;
 import info.seufinanceiro.model.Token;
 import info.seufinanceiro.model.User;
@@ -31,31 +31,28 @@ public interface HttpClientService {
     @POST("user/sign-up/")
     Call<SignUp> signup(@Body SignUp signUp);
 
-    @GET("movimentacoes")
-    Call<ResponseData<Movement>> getMovements(@Header("Authorization") String authorization);
+    @GET("transaction/")
+    Call<ResponseData<Transaction>> getMovements(@Header("Authorization") String authorization);
 
-    @POST("movimentacoes")
-    Call<Movement> saveMovement(@Header("Authorization") String authorization,
-                                @Body Movement movement);
+    @POST("transaction/")
+    Call<Transaction> saveMovement(@Header("Authorization") String authorization, @Body Transaction transaction);
 
-    @GET("categoria/")
+    @GET("category/")
     Call<ResponseData<Category>> getAllCategories(@Header("Authorization") String token);
 
-    @POST("categoria/")
+    @POST("category/")
     Call<Category> saveCategory(@Header("Authorization") String token, @Body Category category);
 
-    @DELETE("categoria/{id}")
+    @DELETE("category/{id}")
     Call<Category> deleteCategory(@Header("Authorization") String token, @Path("id") Long id);
 
-    @PUT("categoria/{id}")
-    Call<Category> updateCategory(@Header("Authorization") String token, @Body Category category,
-                                  @Path("id") Long id);
+    @PUT("category/")
+    Call<Category> updateCategory(@Header("Authorization") String token, @Body Category category);
 
     @GET("user")
     Call<ResponseDataSimple<User>> getUser(@Header("Authorization") String token);
 
     @PUT("user")
-    Call<ResponseDataSimple<String>> updateUser(@Header("Authorization") String token,
-                                                @Body User user);
+    Call<ResponseDataSimple<String>> updateUser(@Header("Authorization") String token, @Body User user);
 
 }

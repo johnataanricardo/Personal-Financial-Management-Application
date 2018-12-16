@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 public class SharedPreferencesService {
+
     private SharedPreferences preferences;
 
     public SharedPreferencesService(Context context) {
@@ -20,4 +21,5 @@ public class SharedPreferencesService {
     public String getToken() {
         return preferences.getString("token", "");
     }
+
 }

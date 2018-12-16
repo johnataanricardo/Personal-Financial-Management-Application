@@ -5,11 +5,9 @@
 </template>
 
 <script>
+import { post } from '@/services/user'
 import FormProfile from '@/components/FormProfile'
 import router from '@/router'
-import axios from 'axios'
-
-const api = process.env.API_URL
 
 export default {
   name: 'SignUp',
@@ -25,22 +23,15 @@ export default {
     onSave: function (){
       const form = this.$refs.form
       const user = JSON.stringify(form.user)
-      
-      axios.post(api + '/user/sign-up/', user, { 
-        headers: {        
-          'Content-Type': 'application/json',
-        },
-      }).then(response => (
-        localStorage.token = response.data.data.token == null ? '' : response.data.data.token,
-        setTimeout(function() {
-          if (localStorage.token) {
-            router.push('/home')
-          }
-        }, 100)
-      )).catch(function (error) {
+      post(user).then(response => {
+        if (response) {
+          localStorage.token = response  
+          router.push('/home')
+        } else {
           form.text = 'Email informado já está em uso.'
           form.snackbar = true
-      })      
+        }
+      })
     },
   }
 }

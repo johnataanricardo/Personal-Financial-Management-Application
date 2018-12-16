@@ -1,16 +1,18 @@
 package com.fean.seufinanceiro.controllers;
 
-import com.fean.seufinanceiro.dto.HomeDto;
+import com.fean.seufinanceiro.dtos.HomeDto;
 import com.fean.seufinanceiro.responses.Response;
 import com.fean.seufinanceiro.security.JwtUser;
-import com.fean.seufinanceiro.service.HomeService;
+import com.fean.seufinanceiro.services.HomeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("home")
@@ -18,8 +20,7 @@ public class HomeController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HomeController.class);
 
-    private HomeService homeService;
-
+    private final HomeService homeService;
 
     @Autowired
     public HomeController(HomeService homeService) {
@@ -31,13 +32,13 @@ public class HomeController {
                                                      @PathVariable("month") String month,
                                                      @AuthenticationPrincipal JwtUser jwtUser){
 
-        LOGGER.info("Buscando dados da movimentação...");
+        LOGGER.info("Searching transaction data...");
         Response<HomeDto> response = new Response<>();
 
         HomeDto homeDto = homeService.showMovimentacaoByMonthYear(year, month, jwtUser.getId());
 
-        if (homeDto == null ||  (homeDto.getEntrada() == null && homeDto.getSaida() == null)){
-            LOGGER.info("Nenhuma movimentação foi encontrada...");
+        if (homeDto == null ||  (homeDto.getInput() == null && homeDto.getOuput() == null)){
+            LOGGER.info("No transaction found...");
         }
 
         response.setData(homeDto);

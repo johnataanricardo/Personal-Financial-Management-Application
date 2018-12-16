@@ -1,10 +1,10 @@
 package info.seufinanceiro.login;
 
- import android.app.ProgressDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
- import android.support.annotation.NonNull;
- import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -12,16 +12,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import info.seufinanceiro.R;
- import info.seufinanceiro.model.SignUp;
- import info.seufinanceiro.service.HttpClientService;
- import info.seufinanceiro.service.HttpClientServiceCreator;
- import info.seufinanceiro.service.SharedPreferencesService;
- import info.seufinanceiro.utils.SoftKeyboardUtils;
- import retrofit2.Call;
- import retrofit2.Callback;
- import retrofit2.Response;
+import info.seufinanceiro.model.SignUp;
+import info.seufinanceiro.service.HttpClientService;
+import info.seufinanceiro.service.HttpClientServiceCreator;
+import info.seufinanceiro.service.SharedPreferencesService;
+import info.seufinanceiro.utils.SoftKeyboardUtils;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class Signup extends AppCompatActivity {
+
     private EditText nameText;
     private EditText emailText;
     private EditText passwordText;
@@ -82,8 +83,8 @@ public class Signup extends AppCompatActivity {
         SignUp signUp = new SignUp();
 
         signUp.setEmail(emailText.getText().toString());
-        signUp.setSenha(passwordText.getText().toString());
-        signUp.setNome(nameText.getText().toString());
+        signUp.setPassword(passwordText.getText().toString());
+        signUp.setName(nameText.getText().toString());
         Call<SignUp> call = service.signup(signUp);
 
         call.enqueue(new Callback<SignUp>() {
@@ -186,4 +187,5 @@ public class Signup extends AppCompatActivity {
 
         return valid;
     }
+
 }

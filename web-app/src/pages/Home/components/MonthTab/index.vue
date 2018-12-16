@@ -2,43 +2,55 @@
   <div class="text-xs-center">
     <!-- MonthTabs -->
     <v-toolbar color="teal" tabs>
-      <v-select :items="years" color="teal" label="Ano" v-model="selected" solo @change="fillContentTab"></v-select>
-      <v-tabs slot="extension" v-model="tabs" centered color="transparent"
+      <v-select :items="years" color="teal" label="Ano" v-model="year" solo @change="fillContentTab"></v-select>
+      <v-tabs slot="extension" v-model="month" centered color="transparent"
         slider-color="white" dark show-arrows @change="fillContentTab">
         <v-tab v-for="item in itemsMenu" :key="item.month">{{item.description}}</v-tab>
       </v-tabs>
     </v-toolbar>
     <!-- ContentTab -->
-    <v-tabs-items v-model="tabs">
+    <v-tabs-items v-model="month">
       <v-tab-item v-for="item in itemsMenu" :key="item.month">
         <ContentTab ref="contentTab"/>
       </v-tab-item>
     </v-tabs-items>
-    <!-- Record Dialog -->
-    <RecordDialog ref="recordDialog"/>
-    <!-- Graphic Dialog -->
-    <GraphicDialog ref="graphicDialog"/>
+    <!-- Transaction Dialog -->
+    <TransactionDialog ref="transactionDialog"/>
+    <!-- Chart Dialog -->
+    <ChartDialog ref="chartDialog"/>
+    <!-- Delete Transaction Dialog -->
+    <v-dialog v-model="dialog" persistent max-width="290">
+      <v-card>
+        <v-card-title class="headline">Deletar registro?</v-card-title>
+        <v-card-text>Tem certeza de que deseja deletar?</v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="teal darken-1" flat @click.native="closeRemoveTransactionDialog()">cancelar</v-btn>
+          <v-btn color="teal darken-1" flat @click.native="confirmRemoveTransaction()">confirmar</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     <!-- Action Buttons -->
     <v-speed-dial v-model="fab" :bottom="bottom" :right="right" 
-      :direction="direction" :open-on-hover="hover" :transition="transition">
+      :direction="direction" :open-on-hover="hover" transition="slide-y-reverse-transition">
       <v-btn slot="activator" v-model="fab" fab dark color="pink">
         <v-icon>add</v-icon>
         <v-icon>close</v-icon>
       </v-btn>
       <v-tooltip disabled left :value="true">
-        <v-btn @click="openIncomeRecordDialog" fab dark small color="green" slot="activator">
+        <v-btn @click="openTransactionDialog(null, 'Entrada')" fab dark small color="green" slot="activator">
           <v-icon>attach_money</v-icon>
         </v-btn>
         <span>Entradas</span>
       </v-tooltip>
       <v-tooltip disabled left :value="true">
-        <v-btn @click="openExpenseRecordDialog" fab dark small color="indigo" slot="activator">
+        <v-btn @click="openTransactionDialog(null, 'Saída')" fab dark small color="indigo" slot="activator">
           <v-icon>money_off</v-icon>
         </v-btn>
         <span>Saídas</span>
       </v-tooltip>
       <v-tooltip disabled left :value="true">
-        <v-btn @click="openGraphicDialog" fab dark small color="red" slot="activator">
+        <v-btn @click="openChartDialog" fab dark small color="red" slot="activator">
           <v-icon>bar_chart</v-icon>
         </v-btn>
         <span>Fluxo de Caixa</span>
@@ -56,16 +68,17 @@
 </template>
 
 <script>
-import axios from 'axios'
+import { getChartByYear } from '@/services/chart'
+import { getAllCategories } from '@/services/category'
+import { getTransactionsByMonthAndYear } from '@/services/home'
+import { save as saveTransaction, remove as removeTransaction } from '@/services/transaction'
 import ContentTab from './components/ContentTab'
-import RecordDialog from './components/RecordDialog/'
-import GraphicDialog from './components/GraphicDialog'
-
-const api = process.env.API_URL
+import ChartDialog from './components/ChartDialog'
+import TransactionDialog from './components/TransactionDialog/'
 
 export default {
   name: 'MonthTab', 
-  components: { ContentTab, RecordDialog, GraphicDialog },
+  components: { ContentTab, TransactionDialog, ChartDialog },
   data () {
     return {
       direction: 'top',
@@ -73,8 +86,7 @@ export default {
       hover: false,            
       right: true,
       bottom: true,
-      transition: 'slide-y-reverse-transition',
-      tabs: null,
+      dialog: false,
       itemsMenu : [
         { month: 0, description: 'Janeiro' },
         { month: 1, description: 'Fevereiro' },
@@ -90,129 +102,111 @@ export default {
         { month: 11, description: 'Dezembro' },
       ],
       years: [2018, 2019, 2020],
-      selected: null,
+      year: null,
+      month: null,
       snackbar: false,
       snackbarText: '',
+      idTransaction: null
     }
   },
   mounted () {
     const date = new Date()
-    this.tabs = date.getMonth()
-    this.selected = date.getFullYear()
+    this.month = date.getMonth()
+    this.year = date.getFullYear()
     this.fillContentTab()
   },
   methods: {
     fillContentTab() {   
-      const tab = this.$refs.contentTab
+      const data = this
+      const tab = data.$refs.contentTab
       if (tab) {
         const token = 'Bearer ' + localStorage.getItem('token')
-        const contentTab = tab[this.tabs]
+        const contentTab = tab[data.month]
         contentTab.items = []
         contentTab.flow = ''
-        axios.get(api + '/home/' + this.selected + '/' + this.tabs, {
-          headers: {       
-            'Content-Type': 'application/json',
-            'Authorization': token
-          }
-        }).then(response =>( 
-          this.prepareContentTab(response.data.data, contentTab)
-        )).catch(function (error) {
-          console.log(error)
-        })
+        getTransactionsByMonthAndYear(data.year, data.month).then(response => { data.prepareContentTab(response, contentTab) })
       }
     },
     prepareContentTab(data, contentTab) {      
       if (data != null) {
         const items = []
-        const itemsEntrada = {
-          name: 'Entradas R$: ' + data.totalEntrada,
-          registers: data.entrada
+        const inputs = {
+          name: 'Entradas R$: ' + data.totalInput,
+          transactions: data.input
         }
-        const itemsSaida = {
-          name: 'Saídas R$:' + data.totalSaida,
-          registers: data.saida
+        const ouputs = {
+          name: 'Saídas R$:' + data.totalOutput,
+          transactions: data.ouput
         }
-        items.push(itemsEntrada)
-        items.push(itemsSaida)
+        items.push(inputs)
+        items.push(ouputs)
         contentTab.items = items
-        contentTab.flow = 'Fluxo de Caixa R$: ' + data.fluxoCaixa
+        contentTab.flow = 'Fluxo de Caixa R$: ' + data.cashFlow
+        contentTab.openTransactionDialog = this.openTransactionDialog
+        contentTab.openRemoveTransactionDialog = this.openRemoveTransactionDialog
       }      
     },
-    openIncomeRecordDialog() {
-      this.openDialog('Entradas')
-    },
-    openExpenseRecordDialog() {
-      this.openDialog('Saídas')
-    },
-    openDialog(dialogTitle) {
+    openTransactionDialog(item, dialogTitle) {
       const data = this
-      const recordDialog = data.$refs.recordDialog      
-      recordDialog.title = dialogTitle
-      recordDialog.saveRecord = data.saveRecordDialog
-      recordDialog.tipoDespesa = dialogTitle == 'Entradas' ? 'ENTRADA' : 'SAIDA'
-      recordDialog.ano = data.selected
-      recordDialog.mes = data.tabs
-      const token = 'Bearer ' + localStorage.getItem('token')
-      axios.get(api + '/categoria/', {
-        headers: {       
-          'Content-Type': 'application/json',
-          'Authorization': token
-        }
-      }).then(response => (      
-        recordDialog.items = response.data.data,
-        recordDialog.showDialog = true
-      )).catch(function (error) {
-        console.log(error)
-      })
+      const transactionDialog = data.$refs.transactionDialog
+      transactionDialog.saveTransaction = data.saveTransaction
+      getAllCategories().then(response => {  transactionDialog.items = response })
+      if (item) {
+        transactionDialog.title = 'Registrar ' + (item.typeTransaction == 'INPUT' ? 'Entrada' : 'Saída')
+        transactionDialog.transaction = Object.assign({}, item)
+      } else {
+        transactionDialog.transaction.id = 0
+        transactionDialog.title = 'Registrar ' + dialogTitle
+        transactionDialog.transaction.typeTransaction = dialogTitle == 'Entrada' ? 'INPUT' : 'OUTPUT'  
+        transactionDialog.transaction.year = data.year
+        transactionDialog.transaction.month = data.month     
+      }       
+      transactionDialog.showDialog = true
     },
-    openGraphicDialog() {
+    openChartDialog() {
       const data = this
-      const graphicDialog = this.$refs.graphicDialog      
-      const token = 'Bearer ' + localStorage.getItem('token')
-      axios.get(api + '/chart/' + this.selected, {
-        headers: {       
-          'Content-Type': 'application/json',
-          'Authorization': token
-        }
-      }).then(response => (                    
-        graphicDialog.fillData(this.prepareChartData(response.data.data)),
-        graphicDialog.showDialog = true
-      )).catch(function (error) {
-        console.log(error)
-      })
+      const chartDialog = data.$refs.chartDialog      
+      getChartByYear(data.year).then(response => { chartDialog.fillData(data.prepareChartData(response)), chartDialog.showDialog = true })
     },
     prepareChartData(data) {
-      const monthData = data.fluxoDeCaixaMensalDtos
-      let monthDataFinal = []
+      const monthData = data.cashFlowMonthlyDto
+      let cashFlowMonthly = []
       for (let i = 0; i < monthData.length; i++) {
-        monthDataFinal.push(monthData[i].fluxoDeCaixa)
+        cashFlowMonthly.push(monthData[i].cashFlow)
       }
-      return monthDataFinal
+      return cashFlowMonthly
     },
-    saveRecordDialog() {      
+    saveTransaction() {      
       const data = this
-      const recordDialog = data.$refs.recordDialog
-      recordDialog.showDialog = false
-      const movimentacao = {
-        valor: recordDialog.valor,
-        idCategoria: recordDialog.idCategoria,
-        descricao: recordDialog.descricao,
-        tipoDespesa: recordDialog.tipoDespesa,
-        ano: recordDialog.ano,
-        mes: recordDialog.mes
-      }
-      const token = 'Bearer ' + localStorage.getItem('token')
-      axios.post(api + '/movimentacoes/', movimentacao, {
-        headers: {        
-          'Content-Type': 'application/json',
-          'Authorization': token
+      const transactionDialog = data.$refs.transactionDialog
+      transactionDialog.showDialog = false
+      saveTransaction(transactionDialog.transaction).then(response => {
+        if (response) {
+          data.initSnackbar('Registro salvo com sucesso!')
+          data.fillContentTab()
+        } else {
+          data.initSnackbar('Problema ao salvar registro!')
         }
-      }).then(response => ( 
-        this.initSnackbar('Registro salvo com sucesso!'),
-        this.fillContentTab()
-      )).catch(function (error) {
-        console.log(error)
-        this.initSnackbar('Problema ao salvar registro!')
+      })
+    },
+    openRemoveTransactionDialog(transaction) {
+      this.dialog = true
+      this.idTransaction = transaction.id
+    },
+    closeRemoveTransactionDialog() {
+      this.dialog = false
+      this.idTransaction = null
+    },
+    confirmRemoveTransaction() {
+      const data = this
+      removeTransaction(data.idTransaction).then(response => {
+        if (response) {
+          data.initSnackbar('Registro deletado com sucesso!')
+          data.fillContentTab()
+        } else {
+          data.initSnackbar('Problema ao deletar!')
+        }
+        data.dialog = false
       })
     },
     initSnackbar(text) {

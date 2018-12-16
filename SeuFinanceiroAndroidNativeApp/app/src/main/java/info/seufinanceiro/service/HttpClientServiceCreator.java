@@ -14,7 +14,6 @@ public class HttpClientServiceCreator {
     private static final String API_BASE_URL = "https://seufinanceiro.info/api/";
 
     public static <S> S createService(Class<S> serviceClass) {
-
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
@@ -31,4 +30,5 @@ public class HttpClientServiceCreator {
 
         return retrofit.create(serviceClass);
     }
+
 }

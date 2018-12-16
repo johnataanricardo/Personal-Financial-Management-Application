@@ -17,20 +17,24 @@ import java.io.IOException;
 
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
-	private static final String AUTH_HEADER = "Authorization";
-	private static final String BEARER_PREFIX = "Bearer ";
+    private static final String AUTH_HEADER = "Authorization";
+    private static final String BEARER_PREFIX = "Bearer ";
 
-	@Autowired
+    @Autowired
     private UserDetailsService userDetailsService;
-	
-	@Autowired
+
+    @Autowired
     private JwtTokenUtil jwtTokenUtil;
 
-	@Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain chain) throws ServletException, IOException {
+
         String token = request.getHeader(AUTH_HEADER);
+
         if (token != null && token.startsWith(BEARER_PREFIX)) {
-        	token = token.substring(7);
+            token = token.substring(7);
         }
 
         String username = jwtTokenUtil.getUsernameFromToken(token);
@@ -38,9 +42,11 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-            
+
             if (jwtTokenUtil.validToken(token)) {
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails,
+                        null, userDetails.getAuthorities());
+
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }

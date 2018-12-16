@@ -11,11 +11,12 @@ import java.io.IOException;
 @Component
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
-	@Override
-	public void commence(HttpServletRequest request, HttpServletResponse response,
+    @Override
+    public void commence(HttpServletRequest request, HttpServletResponse response,
                          AuthenticationException authException) throws IOException {
-		response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
-				"Acesso negado. Você deve estar autenticado no sistema para acessar a URL solicitada.");
-	}
+
+        response.sendError(HttpServletResponse.SC_UNAUTHORIZED,
+                "User is unauthorised. You must be logged in to access the requested URL.");
+    }
 
 }

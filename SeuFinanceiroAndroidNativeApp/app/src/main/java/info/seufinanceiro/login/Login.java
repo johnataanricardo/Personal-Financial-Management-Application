@@ -25,6 +25,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class Login extends AppCompatActivity {
+
     private static final int REQUEST_SIGNUP = 0;
     private EditText emailText;
     private EditText passwordText;

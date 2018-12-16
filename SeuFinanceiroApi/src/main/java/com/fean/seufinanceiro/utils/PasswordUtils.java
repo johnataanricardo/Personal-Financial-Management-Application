@@ -1,11 +1,11 @@
 package com.fean.seufinanceiro.utils;
 
-
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 public class PasswordUtils {
 
-    public PasswordUtils(){}
+    public PasswordUtils() {
+    }
 
     /**
      * Generate a hash using BCrypt.
@@ -13,8 +13,8 @@ public class PasswordUtils {
      * @param password
      * @return String
      */
-    public static String generateBCrypt(String password){
-        if (password == null){
+    public static String generateBCrypt(String password) {
+        if (password == null) {
             return password;
         }
 
