@@ -12,15 +12,16 @@ import java.util.List;
 import java.util.Map;
 
 import info.seufinanceiro.R;
-import info.seufinanceiro.model.Enums.MovementType.TipoDespesa;
-import info.seufinanceiro.model.Movement;
+import info.seufinanceiro.model.enums.TypeTransaction;
+import info.seufinanceiro.model.Transaction;
 import info.seufinanceiro.utils.ResponseData;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class TabContentService extends View {
-    HttpClientService service = HttpClientServiceCreator.createService(HttpClientService.class);
+
+    private HttpClientService service = HttpClientServiceCreator.createService(HttpClientService.class);
     private SharedPreferencesService preferences = new SharedPreferencesService(getContext());
     private View view;
 
@@ -30,34 +31,34 @@ public class TabContentService extends View {
     }
 
     public void setContentTab(final Integer month) {
-        Call<ResponseData<Movement>> call = service.getMovements(String.format(
+        Call<ResponseData<Transaction>> call = service.getMovements(String.format(
                 "Bearer %s", preferences.getToken()));
 
-        call.enqueue(new Callback<ResponseData<Movement>>() {
+        call.enqueue(new Callback<ResponseData<Transaction>>() {
             @Override
-            public void onResponse(@NonNull Call<ResponseData<Movement>> call,
-                                   @NonNull Response<ResponseData<Movement>> response) {
+            public void onResponse(@NonNull Call<ResponseData<Transaction>> call,
+                                   @NonNull Response<ResponseData<Transaction>> response) {
                 if (response.isSuccessful()) {
 
                     final ResponseData responseData = response.body();
 
                     if (responseData != null) {
-                        final ArrayList<Movement> monthMovements = new ArrayList<>();
+                        final ArrayList<Transaction> monthTransactions = new ArrayList<>();
 
                         for (Object movement : responseData.getData()) {
-                            if (((Movement) movement).getMes().equals(month.toString())) {
-                                monthMovements.add((Movement) movement);
+                            if (((Transaction) movement).getMonth().equals(month.toString())) {
+                                monthTransactions.add((Transaction) movement);
                             }
                         }
 
                         new android.os.Handler().postDelayed(
                                 new Runnable() {
                                     public void run() {
-                                        setInputCardViewContent(monthMovements);
-                                        setOutputCardViewContent(monthMovements);
-                                        setCashFlowCardViewContent(monthMovements);
+                                        setInputCardViewContent(monthTransactions);
+                                        setOutputCardViewContent(monthTransactions);
+                                        setCashFlowCardViewContent(monthTransactions);
                                     }
-                                }, 3000);
+                                }, 0);
                     } else {
                         onCallFailed("");
                     }
@@ -74,15 +75,15 @@ public class TabContentService extends View {
         });
     }
 
-    private void setInputCardViewContent(List<Movement> movements) {
+    private void setInputCardViewContent(List<Transaction> transactions) {
         Map<String, Double> valueByCategories = new HashMap<>();
         Double total = 0.0;
 
-        for (Movement movement : movements) {
-            String category = movement.getDescricao();
-            Double value = Double.valueOf(movement.getValor());
+        for (Transaction transaction : transactions) {
+            String category = !transaction.getCategoryName().equals("") ? transaction.getCategoryName() : "Sem categoria";
+            Double value = Double.valueOf(transaction.getValue());
 
-            if (movement.getTipoDespesa().equals(TipoDespesa.ENTRADA.toString())) {
+            if (transaction.getTypeTransaction().equals(TypeTransaction.INPUT.toString())) {
                 if (valueByCategories.containsKey(category)) {
                     Double newValue = valueByCategories.get(category) + value;
                     valueByCategories.put(category, newValue);
@@ -94,29 +95,29 @@ public class TabContentService extends View {
             }
         }
 
-        StringBuilder categories  = new StringBuilder("");
+        StringBuilder categories = new StringBuilder("");
         StringBuilder values = new StringBuilder("");
 
-        for(String categoryName : valueByCategories.keySet()) {
-            if(categories.toString().equals("")){
+        for (String categoryName : valueByCategories.keySet()) {
+            if (categories.toString().equals("")) {
                 categories.append(String.format("%s", categoryName));
             } else {
                 categories.append(String.format("\n%s", categoryName));
             }
 
-            if(values.toString().equals("")){
+            if (values.toString().equals("")) {
                 values.append(String.format("R$ %.02f", valueByCategories.get(categoryName)));
             } else {
                 values.append(String.format("\nR$ %.02f", valueByCategories.get(categoryName)));
             }
         }
 
-        if(values.toString().equals("")){
+        if (values.toString().equals("")) {
             categories.append("Não há entradas cadastradas");
         }
 
         TextView titleInputCard = view.findViewById(R.id.title_input_card);
-            titleInputCard.setText(String.format("Entradas: R$ %.02f", total));
+        titleInputCard.setText(String.format("Entradas: R$ %.02f", total));
 
         TextView inputsType = view.findViewById(R.id.inputs_type);
         inputsType.setText(categories);
@@ -125,15 +126,15 @@ public class TabContentService extends View {
         inputsValue.setText(values.toString());
     }
 
-    private void setOutputCardViewContent(List<Movement> movements) {
+    private void setOutputCardViewContent(List<Transaction> transactions) {
         Map<String, Double> valueByCategories = new HashMap<>();
         Double total = 0.0;
 
-        for (Movement movement : movements) {
-            String category = movement.getDescricao();
-            Double value = Double.valueOf(movement.getValor());
+        for (Transaction transaction : transactions) {
+            String category = transaction.getCategoryName() != null ? transaction.getCategoryName() : "Sem categoria";
+            Double value = Double.valueOf(transaction.getValue());
 
-            if (movement.getTipoDespesa().equals(TipoDespesa.SAIDA.toString())) {
+            if (transaction.getTypeTransaction().equals(TypeTransaction.OUTPUT.toString())) {
                 if (valueByCategories.containsKey(category)) {
                     Double newValue = valueByCategories.get(category) + value;
                     valueByCategories.put(category, newValue);
@@ -145,24 +146,24 @@ public class TabContentService extends View {
             }
         }
 
-        StringBuilder categories  = new StringBuilder("");
+        StringBuilder categories = new StringBuilder("");
         StringBuilder values = new StringBuilder("");
 
-        for(String categoryName : valueByCategories.keySet()) {
-            if(categories.toString().equals("")){
+        for (String categoryName : valueByCategories.keySet()) {
+            if (categories.toString().equals("")) {
                 categories.append(String.format("%s", categoryName));
             } else {
                 categories.append(String.format("\n%s", categoryName));
             }
 
-            if(values.toString().equals("")){
+            if (values.toString().equals("")) {
                 values.append(String.format("R$ %.02f", valueByCategories.get(categoryName)));
             } else {
                 values.append(String.format("\nR$ %.02f", valueByCategories.get(categoryName)));
             }
         }
 
-        if(values.toString().equals("")){
+        if (values.toString().equals("")) {
             categories.append("Não há saídas cadastradas");
         }
 
@@ -176,17 +177,17 @@ public class TabContentService extends View {
         inputsValue.setText(values.toString());
     }
 
-    private void setCashFlowCardViewContent(ArrayList<Movement> movements) {
+    private void setCashFlowCardViewContent(ArrayList<Transaction> transactions) {
         Double totalInput = 0.0;
         Double totalOutput = 0.0;
 
-        for (Movement movement : movements) {
-            Double value = Double.valueOf(movement.getValor());
+        for (Transaction transaction : transactions) {
+            Double value = Double.valueOf(transaction.getValue());
 
-            if (movement.getTipoDespesa().equals(TipoDespesa.ENTRADA.toString())) {
-                totalInput+=value;
-            } else if (movement.getTipoDespesa().equals(TipoDespesa.SAIDA.toString())) {
-                totalOutput+=value;
+            if (transaction.getTypeTransaction().equals(TypeTransaction.INPUT.toString())) {
+                totalInput += value;
+            } else if (transaction.getTypeTransaction().equals(TypeTransaction.OUTPUT.toString())) {
+                totalOutput += value;
             }
         }
 
@@ -201,4 +202,5 @@ public class TabContentService extends View {
 
         Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
     }
+
 }

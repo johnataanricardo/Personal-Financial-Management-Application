@@ -1,6 +1,7 @@
 package info.seufinanceiro.model;
 
 public class Auth {
+
     private String email, password;
     private AuthData data;
 
@@ -30,4 +31,5 @@ public class Auth {
     public void setData(AuthData data) {
         this.data = data;
     }
+
 }

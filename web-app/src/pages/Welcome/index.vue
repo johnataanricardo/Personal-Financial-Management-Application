@@ -68,7 +68,21 @@
       <section>
         <v-container grid-list-xl>
           <v-layout row wrap justify-center class="my-5">
-            <v-flex xs12 md6>
+            <v-flex xs12 md3>
+              <v-card class="elevation-0 transparent">
+                <v-card-title primary-title class="layout justify-center">
+                  <div class="headline">Download Aplicativos Android</div>
+                </v-card-title>
+                <v-card-text>
+                  <a href="../../../static/apps/webview.apk" download>Android WebView</a>
+                  <br/>
+                  <a href="../../../static/apps/hybrid.apk" download>Android Híbrido</a>
+                  <br/>
+                  <a href="../../../static/apps/native.apk" download>Android Nativo</a>
+                </v-card-text>
+              </v-card>
+            </v-flex>
+            <v-flex xs12 md3>
               <v-card class="elevation-0 transparent">
                 <v-card-title primary-title class="layout justify-center">
                   <div class="headline">Sobre</div>
@@ -80,7 +94,7 @@
                 </v-card-text>
               </v-card>
             </v-flex>
-            <v-flex xs12 md6>
+            <v-flex xs12 md3>
               <v-card class="elevation-0 transparent">
                 <v-card-title primary-title class="layout justify-center">
                   <div class="headline">Linkedin</div>
@@ -113,7 +127,7 @@
                       </v-avatar>
                     </v-list-tile-action>
                     <v-list-tile-content>
-                      <a target="_blank" href="https://www.linkedin.com/in/johnataanmartins  ">Johnatan Ricardo Martins</A>
+                      <a target="_blank" href="https://www.linkedin.com/in/johnataanmartins">Johnatan Ricardo Martins</A>
                     </v-list-tile-content>
                   </v-list-tile>
                   <v-list-tile>
@@ -131,7 +145,7 @@
             </v-flex>
           </v-layout>
         </v-container>
-      </section>      
+      </section>            
       <a target="_blank" href="http://www.freepik.com">Imagens Designed by Freepik</a>
       <v-footer class="footer-background darken-2">
         <v-layout row wrap align-center>

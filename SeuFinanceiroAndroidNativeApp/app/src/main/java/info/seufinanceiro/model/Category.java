@@ -1,15 +1,16 @@
 package info.seufinanceiro.model;
 
 public class Category {
+
     private Long id;
-    private String descricao;
+    private String description;
 
     public Category() {
     }
 
-    public Category(Long id, String descricao) {
+    public Category(Long id, String description) {
         this.id = id;
-        this.descricao = descricao;
+        this.description = description;
     }
 
     public Long getId() {
@@ -20,11 +21,12 @@ public class Category {
         this.id = id;
     }
 
-    public String getDescricao() {
-        return descricao;
+    public String getDescription() {
+        return description;
     }
 
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
+    public void setDescription(String description) {
+        this.description = description;
     }
+
 }

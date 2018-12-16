@@ -19,7 +19,7 @@ public class CategoryAdapter extends BaseAdapter {
 
     public CategoryAdapter(Context context, List<Category> categories) {
         this.context = context;
-        this.categories= categories;
+        this.categories = categories;
     }
 
     @Override
@@ -51,7 +51,7 @@ public class CategoryAdapter extends BaseAdapter {
         }
 
         TextView description = (TextView) view.findViewById(R.id.description);
-        description.setText(category.getDescricao());
+        description.setText(category.getDescription());
 
         return view;
     }

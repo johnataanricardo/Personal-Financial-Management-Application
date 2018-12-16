@@ -1,5 +1,5 @@
 # Personal Financial Management Application
-This is a college project and the purpose of the project was to make an application to manage personal financials.
+This is a college project and the purpose of it was to make an application to manage personal financials.
 
 The application has as functional requisites:
 
@@ -51,4 +51,4 @@ Team
  - [Johnatan Ricardo Martins](https://www.linkedin.com/in/johnataanmartins): Front-End Web Application
  - [Lucas Riberio](https://www.linkedin.com/in/lucas-ribeiro691/): API
 
- The application can be accessed by [Seu Financeiro](https://seufinanceiro.info)
+ The application can be accessed on [Seu Financeiro](https://seufinanceiro.info)

@@ -14,4 +14,5 @@ public class SplashScreen extends ValidateTokenActivity {
         setContentView(R.layout.activity_splash_screen);
         validateToken(MainActivity.class);
     }
+
 }

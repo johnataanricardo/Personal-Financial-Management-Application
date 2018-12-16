@@ -3,6 +3,7 @@ package info.seufinanceiro.model;
 import java.util.List;
 
 public class Token {
+
     private String token;
     private Boolean data;
     private List errors;
@@ -34,4 +35,5 @@ public class Token {
     public void setErrors(List errors) {
         this.errors = errors;
     }
+
 }

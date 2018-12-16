@@ -1,8 +1,7 @@
 package info.seufinanceiro.model;
 
-import java.util.List;
-
 public class AuthData {
+
     private String token;
 
     public AuthData() {

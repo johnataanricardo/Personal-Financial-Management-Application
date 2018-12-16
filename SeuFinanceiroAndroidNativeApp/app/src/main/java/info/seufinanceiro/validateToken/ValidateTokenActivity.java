@@ -26,9 +26,7 @@ public class ValidateTokenActivity extends Activity {
             @Override
             public void onResponse(@NonNull Call<Token> call, @NonNull Response<Token> response) {
                 if (response.isSuccessful()) {
-
                     final Token tokenResponse = response.body();
-
                     new android.os.Handler().postDelayed(
                             new Runnable() {
                                 public void run() {
@@ -56,4 +54,5 @@ public class ValidateTokenActivity extends Activity {
         startActivity(i);
         finish();
     }
+
 }
