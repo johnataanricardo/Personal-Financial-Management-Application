@@ -47,7 +47,7 @@ This application is running on Google Cloud Compute Engine.
 Team
  - <a href="https://www.linkedin.com/in/alanadomitbittar/" target="_blank">Alana Domit Bittar</a>: Native Android Application
  - <a href="https://www.linkedin.com/in/eduardo-pereira-56281368/" target="_blank">Eduardo Pereira</a>: Infraestructure
- - <a href="https://www.linkedin.com/in/johnataanmartins/" target="_blank">Johnatan Ricardo Martins</a>: Front-End Web Application
+ - <a href="https://www.linkedin.com/in/johnataanmartins/" target="_blank">Johnatan Ricardo Martins</a>: Front-End Web Application and Project Leader
  - <a href="https://www.linkedin.com/in/lucas-ribeiro691/" target="_blank">Lucas Ribeiro</a>: API
 
  The application can be accessed on <a href="https://seufinanceiro.info" target="_blank">Seu Financeiro</a>
